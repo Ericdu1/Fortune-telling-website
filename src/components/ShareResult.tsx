@@ -447,18 +447,6 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
             <DateTime>{formatDate()} 今日运势</DateTime>
           </Header>
 
-          <div style={{ background: 'red', color: 'white', padding: '10px', margin: '10px' }}>
-            <h3>调试信息</h3>
-            <p>tarotResult存在: {tarotResult ? '是' : '否'}</p>
-            <p>卡片数量: {tarotResult?.cards?.length || 0}</p>
-            <p>卡片数据: {JSON.stringify(tarotResult?.cards?.map(c => ({
-              name: c.name,
-              position: c.position,
-              meaning: c.meaning?.substring(0, 20) + '...',
-              reversedMeaning: c.reversedMeaning?.substring(0, 20) + '...'
-            })))}</p>
-          </div>
-
           {tarotResult && tarotResult.cards && tarotResult.cards.length > 0 && (
             <>
               <CardsContainer>
@@ -476,9 +464,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                     </CardImageWrapper>
                     <CardName>{card.name}</CardName>
                     <CardPosition>
-                      {card.position === 'past' ? '过去' :
-                       card.position === 'present' ? '现在' :
-                       card.position === 'future' ? '未来' : ''}
+                      {card.position}
                     </CardPosition>
                   </CardItem>
                 ))}
@@ -487,27 +473,18 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <InterpretationSection>
                 <InterpretationTitle>塔罗解读</InterpretationTitle>
                 <InterpretationText>
-                  {(() => {
-                    console.log('Cards for interpretation:', tarotResult.cards);
-                    return tarotResult.cards.map((card, index) => {
-                      console.log('Card for interpretation:', card);
-                      console.log('Card meaning:', card.isReversed ? card.reversedMeaning : card.meaning);
-                      return (
-                        <p key={index} style={{ color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '5px', marginBottom: '10px', border: '1px solid #ffd700' }}>
-                          <strong style={{ color: '#ffd700', marginRight: '10px', fontSize: '16px' }}>
-                            {card.position === 'past' ? '过去' :
-                             card.position === 'present' ? '现在' :
-                             card.position === 'future' ? '未来' : ''}：
-                          </strong>
-                          <span style={{ color: '#e0e0e0', display: 'inline-block' }}>
-                            {card.isReversed 
-                              ? (card.reversedMeaning || '无逆位解读') 
-                              : (card.meaning || '无正位解读')}
-                          </span>
-                        </p>
-                      );
-                    });
-                  })()}
+                  {tarotResult.cards.map((card, index) => (
+                    <p key={index} style={{ color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '5px', marginBottom: '10px', border: '1px solid #ffd700' }}>
+                      <strong style={{ color: '#ffd700', marginRight: '10px', fontSize: '16px' }}>
+                        {card.position}：
+                      </strong>
+                      <span style={{ color: '#e0e0e0', display: 'inline-block' }}>
+                        {card.isReversed 
+                          ? (card.reversedMeaning || '无逆位解读') 
+                          : (card.meaning || '无正位解读')}
+                      </span>
+                    </p>
+                  ))}
                 </InterpretationText>
               </InterpretationSection>
 
@@ -515,15 +492,15 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                 <GuidanceTitle>整体指引</GuidanceTitle>
                 <GuidanceText>
                   根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，
-                  {tarotResult.cards.find(c => c.position === 'past')?.isReversed 
-                    ? tarotResult.cards.find(c => c.position === 'past')?.reversedMeaning 
-                    : tarotResult.cards.find(c => c.position === 'past')?.meaning}的状态影响着您的决策和行动。目前，您正处于
-                  {tarotResult.cards.find(c => c.position === 'present')?.isReversed 
-                    ? tarotResult.cards.find(c => c.position === 'present')?.reversedMeaning 
-                    : tarotResult.cards.find(c => c.position === 'present')?.meaning}的阶段。展望未来，
-                  {tarotResult.cards.find(c => c.position === 'future')?.isReversed 
-                    ? tarotResult.cards.find(c => c.position === 'future')?.reversedMeaning 
-                    : tarotResult.cards.find(c => c.position === 'future')?.meaning}的征兆预示着即将到来的变化和机遇。
+                  {tarotResult.cards.find(c => c.position === '过去')?.isReversed 
+                    ? tarotResult.cards.find(c => c.position === '过去')?.reversedMeaning 
+                    : tarotResult.cards.find(c => c.position === '过去')?.meaning}的状态影响着您的决策和行动。目前，您正处于
+                  {tarotResult.cards.find(c => c.position === '现在')?.isReversed 
+                    ? tarotResult.cards.find(c => c.position === '现在')?.reversedMeaning 
+                    : tarotResult.cards.find(c => c.position === '现在')?.meaning}的阶段。展望未来，
+                  {tarotResult.cards.find(c => c.position === '未来')?.isReversed 
+                    ? tarotResult.cards.find(c => c.position === '未来')?.reversedMeaning 
+                    : tarotResult.cards.find(c => c.position === '未来')?.meaning}的征兆预示着即将到来的变化和机遇。
                   保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
                 </GuidanceText>
               </GuidanceSection>
