@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Fortune-telling-website/static/css/main.e6c13ad2.css",
+    "main.js": "/Fortune-telling-website/static/js/main.01a509f4.js",
+    "static/js/453.45f44d9f.chunk.js": "/Fortune-telling-website/static/js/453.45f44d9f.chunk.js",
+    "index.html": "/Fortune-telling-website/index.html",
+    "main.e6c13ad2.css.map": "/Fortune-telling-website/static/css/main.e6c13ad2.css.map",
+    "main.01a509f4.js.map": "/Fortune-telling-website/static/js/main.01a509f4.js.map",
+    "453.45f44d9f.chunk.js.map": "/Fortune-telling-website/static/js/453.45f44d9f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.01a509f4.js"
+  ]
+}
