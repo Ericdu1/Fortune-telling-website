@@ -112,7 +112,9 @@ const App: React.FC = () => {
 
   // 每次进入塔罗牌阅读页面时重新随机抽取牌
   const getRandomCards = () => {
+    // 打乱所有22张塔罗牌
     const shuffled = [...tarotCards].sort(() => Math.random() - 0.5);
+    // 从打乱的牌组中选择前8张
     return shuffled.slice(0, 8).map(card => ({
       ...card,
       isReversed: Math.random() < 0.5,

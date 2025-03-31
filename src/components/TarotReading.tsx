@@ -294,7 +294,7 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                     borderRadius: '15px'
                   }}>
                     <img 
-                      src={`${process.env.PUBLIC_URL}/card-back.jpg`} 
+                      src={`./images/tarot/Tarot_Card_Back.png`} 
                       alt="Card Back" 
                       style={{
                         width: '100%',
@@ -329,9 +329,10 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                 marginTop: '10px',
                 fontWeight: 500,
                 color: 'white',
-                textAlign: 'center'
+                textAlign: 'center',
+                display: isSelected ? 'block' : 'none'
               }}>
-                {card.name} {isSelected ? `(${positions[selectedCards.indexOf(card.id)]})` : '(点击选择)'}
+                {isSelected ? `${positions[selectedCards.indexOf(card.id)]}` : ''}
               </div>
               {isCardRevealed[index] && (
                 <div style={{
