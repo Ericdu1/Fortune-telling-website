@@ -10,17 +10,26 @@ const Container = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem;
   background: #1a1a2e;
   color: #ffffff;
   min-height: 100vh;
   position: relative;
+  
+  @media (max-width: 768px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 const Title = styled.h2`
   color: white;
   text-align: center;
   margin-bottom: 1rem;
+  font-size: 2rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const Description = styled.p`
@@ -28,6 +37,12 @@ const Description = styled.p`
   text-align: center;
   margin-bottom: 2rem;
   font-size: 1.1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+  }
 `;
 
 const CardsContainer = styled.div`
@@ -37,6 +52,25 @@ const CardsContainer = styled.div`
   padding: 2rem;
   margin: 2rem 0;
   justify-items: center;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    padding: 0.5rem;
+  }
   
   &.fade-out {
     animation: fadeOut 0.6s ease-in-out forwards;
@@ -62,6 +96,15 @@ const CardWrapper = styled.div`
   width: 100%;
   max-width: 200px;
   perspective: 1000px;
+  
+  @media (max-width: 768px) {
+    max-width: 150px;
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    max-width: 130px;
+  }
 `;
 
 const Card = styled.div<{ isSelected?: boolean; isRevealed?: boolean; isReversed?: boolean }>`
@@ -76,6 +119,15 @@ const Card = styled.div<{ isSelected?: boolean; isRevealed?: boolean; isReversed
     : '0 8px 20px rgba(0, 0, 0, 0.3)'};
   transition: transform 0.6s, box-shadow 0.3s;
   transform: ${props => props.isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)'};
+  
+  @media (max-width: 768px) {
+    height: 210px;
+  }
+  
+  @media (max-width: 480px) {
+    height: 180px;
+    border-radius: 10px;
+  }
   
   &:hover {
     box-shadow: ${props => props.isSelected 
@@ -103,6 +155,12 @@ const PositionLabel = styled.div`
   pointer-events: none;
   border: 1px solid rgba(255, 215, 0, 0.5);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  
+  @media (max-width: 480px) {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 15px;
+  }
 `;
 
 const CardFace = styled.div`
@@ -112,6 +170,10 @@ const CardFace = styled.div`
   backface-visibility: hidden;
   border-radius: 15px;
   overflow: hidden;
+  
+  @media (max-width: 480px) {
+    border-radius: 10px;
+  }
 `;
 
 const CardBack = styled(CardFace)`
@@ -269,6 +331,10 @@ const ButtonContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-top: 2rem;
+  
+  @media (max-width: 768px) {
+    margin-top: 1.5rem;
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -277,6 +343,19 @@ const StyledButton = styled(Button)`
   color: white;
   padding: 0 2rem;
   height: 40px;
+  font-size: 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+    height: 38px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 1.2rem;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+  
   &:hover {
     opacity: 0.9;
     color: white;

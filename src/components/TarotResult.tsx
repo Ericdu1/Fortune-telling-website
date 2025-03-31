@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Button, message } from 'antd';
+import { Button as AntdButton, message } from 'antd';
 import { ArrowLeftOutlined, ShareAltOutlined, CopyOutlined } from '@ant-design/icons';
 import { TarotCardResult } from '../types/tarot';
 
@@ -9,12 +9,50 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 2rem;
   color: white;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 const Title = styled.h2`
   text-align: center;
   margin-bottom: 2rem;
-  color: white;
+  color: #ffd700;
+  font-size: 2rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+`;
+
+const ResultGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const ResultCard = styled.div`
@@ -55,16 +93,54 @@ const CardSection = styled.div`
   gap: 2rem;
 `;
 
-const CardImage = styled.img<{ isReversed?: boolean }>`
-  width: 120px;
-  height: auto;
+const CardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  
+  @media (max-width: 480px) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+`;
+
+const Card = styled.div<{ isReversed?: boolean }>`
+  width: 180px;
+  height: 280px;
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    width: 150px;
+    height: 220px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 100px;
+    height: 150px;
+    margin-bottom: 0;
+  }
+`;
+
+const CardImage = styled.img<{ isReversed?: boolean }>`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
 `;
 
 const CardInfo = styled.div`
-  flex: 1;
+  text-align: center;
+  
+  @media (max-width: 480px) {
+    flex: 1;
+    text-align: left;
+  }
 `;
 
 const CardName = styled.h3`
@@ -111,31 +187,55 @@ const SectionTitle = styled.h3`
   }
 `;
 
-const Interpretation = styled.p`
-  color: #e0e0e0;
-  line-height: 1.8;
-  margin-bottom: 1rem;
-  text-indent: 2em;
-  font-size: 1.1rem;
+const Interpretation = styled.div`
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
   margin-top: 2rem;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
 `;
 
-const StyledButton = styled(Button)`
+const StyledButton = styled.button`
   background: linear-gradient(45deg, #6b6bff, #8e8eff);
   border: none;
   color: white;
-  height: 40px;
-  padding: 0 2rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: center;
+    padding: 0.7rem 1rem;
+  }
   
   &:hover {
     opacity: 0.9;
-    color: white;
   }
 `;
 
@@ -238,21 +338,25 @@ ${generateSummary()}
       {cards.map((card, index) => (
         <ResultCard key={index}>
           <CardSection>
-            <CardImage 
-              src={card.image} 
-              alt={card.name}
-              isReversed={card.isReversed}
-            />
-            <CardInfo>
-              <CardName>
-                {card.name} ({card.isReversed ? '逆位' : '正位'})
-              </CardName>
-              <CardDescription>
-                {card.isReversed 
-                  ? (card.reversedMeaning || `${card.name}逆位表示你可能面临一些挑战，需要重新审视自己的处境。`) 
-                  : (card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`)}
-              </CardDescription>
-            </CardInfo>
+            <CardContainer>
+              <Card isReversed={card.isReversed}>
+                <CardImage 
+                  src={card.image} 
+                  alt={card.name}
+                  isReversed={card.isReversed}
+                />
+              </Card>
+              <CardInfo>
+                <CardName>
+                  {card.name} ({card.isReversed ? '逆位' : '正位'})
+                </CardName>
+                <CardDescription>
+                  {card.isReversed 
+                    ? (card.reversedMeaning || `${card.name}逆位表示你可能面临一些挑战，需要重新审视自己的处境。`) 
+                    : (card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`)}
+                </CardDescription>
+              </CardInfo>
+            </CardContainer>
           </CardSection>
         </ResultCard>
       ))}
@@ -279,22 +383,22 @@ ${generateSummary()}
 
       <ButtonContainer>
         <StyledButton 
-          icon={<ArrowLeftOutlined />}
           onClick={onBack}
         >
+          <ArrowLeftOutlined />
           返回首页
         </StyledButton>
         <StyledButton 
-          icon={<CopyOutlined />}
           onClick={copyInterpretation}
         >
+          <CopyOutlined />
           复制解读
         </StyledButton>
         <StyledButton 
-          icon={<ShareAltOutlined />}
           onClick={onShare}
-          type="primary"
+          style={{ background: 'linear-gradient(45deg, #ff6b6b, #ff8e8e)' }}
         >
+          <ShareAltOutlined />
           分享结果
         </StyledButton>
       </ButtonContainer>

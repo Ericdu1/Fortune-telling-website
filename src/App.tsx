@@ -14,6 +14,10 @@ const AppContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   display: flex;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const Sidebar = styled.div`
@@ -25,6 +29,17 @@ const Sidebar = styled.div`
   align-items: center;
   padding: 2rem 0;
   gap: 2rem;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const SidebarItem = styled.div<{ active?: boolean }>`
@@ -61,6 +76,27 @@ const SidebarItem = styled.div<{ active?: boolean }>`
   .anticon {
     font-size: 1.5rem;
   }
+  
+  @media (max-width: 768px) {
+    width: 20%;
+    padding: 0.5rem 0;
+    
+    ${props => props.active && `
+      &:before {
+        left: 50%;
+        top: auto;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
+      }
+    `}
+    
+    .anticon {
+      font-size: 1.2rem;
+    }
+  }
 `;
 
 const MainContent = styled.div`
@@ -69,6 +105,10 @@ const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  @media (max-width: 768px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 type Step = 
