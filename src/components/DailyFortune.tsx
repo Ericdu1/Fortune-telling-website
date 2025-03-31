@@ -5,6 +5,8 @@ import { ArrowLeftOutlined, ShareAltOutlined, CalendarOutlined, StarOutlined, No
 import { formatDate } from '../utils/date';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
+import AnimeRecommendation from './AnimeRecommendation';
+import DailyWallpaperComponent from './DailyWallpaper';
 
 const { Title: AntTitle, Text } = Typography;
 
@@ -308,47 +310,47 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
   return (
     <Container>
-      <Title>今日运势</Title>
-
+      <Title>每日运势</Title>
+      
       <FortuneCard>
-        <Date>{fortune.date}</Date>
-        <Content>{fortune.content}</Content>
-
+        <Date>
+          <CalendarOutlined /> {formatDate()}
+        </Date>
+        
         <LuckMeter>
           <LuckTitle>今日运势指数</LuckTitle>
           <LuckStars>{'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}</LuckStars>
         </LuckMeter>
-
+        
+        <Content>{fortune.content}</Content>
+        
         <TagsContainer>
           {fortune.tags.map((tag, index) => (
-            <Tag 
-              key={index}
-              color="gold"
-              style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}
-            >
-              {tag}
-            </Tag>
+            <Tag key={index} color="gold">{tag}</Tag>
           ))}
         </TagsContainer>
       </FortuneCard>
+      
+      <div>
+        {Object.entries(fortune.categories).map(([key, category]) => (
+          <CategoryCard 
+            key={key}
+            title={
+              <div>
+                {category.name}
+                <LevelTag level={category.level}>{category.level}</LevelTag>
+              </div>
+            }
+          >
+            {category.description}
+          </CategoryCard>
+        ))}
+      </div>
 
-      {fortune.categories && Object.entries(fortune.categories).map(([key, category]) => (
-        <CategoryCard
-          key={key}
-          title={
-            <span>
-              {category.name}
-              <LevelTag level={category.level}>{category.level}</LevelTag>
-            </span>
-          }
-        >
-          <div>{category.description}</div>
-          <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
-            {category.advice}
-          </Text>
-        </CategoryCard>
-      ))}
-
+      <DailyWallpaperComponent />
+      
+      <AnimeRecommendation />
+      
       <RecommendSection>
         <RecommendTitle>今日推荐</RecommendTitle>
         {fortune.dailyRecommend?.anime && (

@@ -33,9 +33,26 @@ export interface MusicRecommend {
 }
 
 export interface DailyRecommend {
-  anime?: AnimeRecommend;
-  game?: GameRecommend;
-  music?: MusicRecommend;
+  anime?: {
+    title: string;
+    episode: string;
+    reason: string;
+    link?: string;
+    image?: string;
+  };
+  game?: {
+    title: string;
+    type: string;
+    reason: string;
+    link?: string;
+    image?: string;
+  };
+  music?: {
+    title: string;
+    artist: string;
+    link?: string;
+    image?: string;
+  };
 }
 
 export interface AnimeUpdate {
@@ -64,31 +81,46 @@ export interface Release {
 }
 
 export interface DailyEvents {
-  animeUpdates: AnimeUpdate[];
-  gameEvents: GameEvent[];
-  birthdays: Birthday[];
-  releases: Release[];
+  list: Array<{
+    title: string;
+    description: string;
+    time?: string;
+  }>;
 }
 
 export interface FortuneCategory {
   name: string;
   level: 'SSR' | 'SR' | 'R' | 'N';
   description: string;
-  advice: string;
+  advice?: string;
 }
 
 export interface DailyFortune {
   date: string;
   content: string;
-  luck: number;
+  luck: number; // 1-5
   tags: string[];
   categories: {
     game: FortuneCategory;
     anime: FortuneCategory;
     create: FortuneCategory;
     social: FortuneCategory;
+    [key: string]: FortuneCategory;
   };
   dailyRecommend: DailyRecommend;
-  dailyEvents: DailyEvents;
-  dailyArtwork: PixivArtwork;
+  events?: DailyEvents;
+}
+
+export interface TarotCardResult {
+  cards: Array<{
+    name: string;
+    position: string;
+    isReversed: boolean;
+    image: string;
+    meaning: {
+      upright: string;
+      reversed: string;
+    };
+  }>;
+  interpretation: string;
 } 
