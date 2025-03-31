@@ -31,22 +31,10 @@ const ShareCard = styled.div`
 `;
 
 const ShareContent = styled.div`
-  background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
-  border-radius: 15px;
   padding: 2rem;
-  position: relative;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('/tarot-bg.jpg') center/cover;
-    opacity: 0.1;
-    z-index: -1;
-  }
+  background: #1a1a2e;
+  color: #ffffff;
+  min-height: 100vh;
 `;
 
 const Header = styled.div`
@@ -154,24 +142,24 @@ const GuidanceText = styled.p`
 `;
 
 const Footer = styled.div`
+  margin-top: 2rem;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 2rem;
+  align-items: center;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 215, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
 const QRCodeContainer = styled.div`
   background: white;
-  padding: 0.5rem;
-  border-radius: 8px;
+  padding: 4px;
+  border-radius: 4px;
 `;
 
 const Watermark = styled.div`
-  color: #ffd700;
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
   text-align: right;
+  font-size: 0.9rem;
 `;
 
 const ButtonContainer = styled.div`
@@ -194,127 +182,42 @@ const StyledButton = styled(Button)`
 `;
 
 const DailyFortuneHeader = styled.div`
-  text-align: center;
   margin-bottom: 2rem;
+  text-align: center;
 `;
 
 const Date = styled.div`
   color: #ffd700;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
 `;
 
 const LuckMeter = styled.div`
-  margin: 1.5rem 0;
+  margin: 1rem 0;
 `;
 
 const LuckTitle = styled.div`
   color: #ffd700;
-  font-size: 1.2rem;
   margin-bottom: 0.5rem;
 `;
 
 const LuckStars = styled.div`
   color: #ffd700;
-  font-size: 2rem;
-  letter-spacing: 0.5rem;
+  font-size: 1.5rem;
 `;
 
 const Content = styled.div`
-  color: #e0e0e0;
   font-size: 1.1rem;
-  line-height: 1.8;
+  line-height: 1.6;
+  margin: 1.5rem 0;
   white-space: pre-wrap;
-  margin-bottom: 2rem;
-  text-align: left;
-  padding: 0 1rem;
 `;
 
 const TagsContainer = styled.div`
+  margin: 1rem 0;
   display: flex;
-  gap: 0.8rem;
   flex-wrap: wrap;
-  justify-content: center;
-  margin: 2rem 0;
-`;
-
-const StandSection = styled.div`
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: rgba(255, 215, 0, 0.1);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-`;
-
-const StandTitle = styled.h4`
-  color: #ffd700;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  text-align: center;
-`;
-
-const StandInfo = styled.div`
-  margin-bottom: 1.5rem;
-  text-align: center;
-`;
-
-const StandName = styled.div`
-  color: #ffd700;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-`;
-
-const StandAbility = styled.div`
-  color: #e0e0e0;
-  margin-bottom: 1rem;
-`;
-
-const StandDescription = styled.div`
-  color: #e0e0e0;
-  line-height: 1.8;
-  text-indent: 2em;
-  text-align: left;
-`;
-
-const StandStats = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
-  margin-top: 1rem;
-  text-align: center;
-`;
-
-const StatItem = styled.div`
-  color: #e0e0e0;
-`;
-
-const StatValue = styled.span`
-  color: #ffd700;
-  margin-left: 0.5rem;
-`;
-
-const ArtworkSection = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-`;
-
-const ArtworkTitle = styled.h4`
-  color: #ffd700;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-`;
-
-const ArtworkImage = styled.img`
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-`;
-
-const ArtworkInfo = styled.div`
-  color: #e0e0e0;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
 `;
 
 const CategoryCard = styled.div`

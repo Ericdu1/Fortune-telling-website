@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { Button, Tag, Card, List, Typography } from 'antd';
 import { ArrowLeftOutlined, ShareAltOutlined, CalendarOutlined, StarOutlined, NotificationOutlined } from '@ant-design/icons';
 import { formatDate } from '../utils/date';
-import { getRandomPopularArtwork } from '../utils/pixiv';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
 

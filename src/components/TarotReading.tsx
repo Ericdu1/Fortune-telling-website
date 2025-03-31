@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from 'antd';
-import { TarotCard, TarotCardResult } from '../types/tarot';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import { TarotCardResult } from '../types/tarot';
 import { tarotCards } from '../data/tarotCards';
 
 const Container = styled.div`
