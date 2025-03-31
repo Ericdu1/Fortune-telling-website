@@ -447,6 +447,18 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
             <DateTime>{formatDate()} 今日运势</DateTime>
           </Header>
 
+          <div style={{ background: 'red', color: 'white', padding: '10px', margin: '10px' }}>
+            <h3>调试信息</h3>
+            <p>tarotResult存在: {tarotResult ? '是' : '否'}</p>
+            <p>卡片数量: {tarotResult?.cards?.length || 0}</p>
+            <p>卡片数据: {JSON.stringify(tarotResult?.cards?.map(c => ({
+              name: c.name,
+              position: c.position,
+              meaning: c.meaning?.substring(0, 20) + '...',
+              reversedMeaning: c.reversedMeaning?.substring(0, 20) + '...'
+            })))}</p>
+          </div>
+
           {tarotResult && tarotResult.cards && tarotResult.cards.length > 0 && (
             <>
               <CardsContainer>
