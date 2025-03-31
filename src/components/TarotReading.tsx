@@ -64,136 +64,28 @@ const CardWrapper = styled.div`
   perspective: 1000px;
 `;
 
-const cardVariants = {
-  initial: {
-    rotateY: 0,
-  },
-  hover: {
-    scale: 1.05,
-    transition: {
-      duration: 0.2
-    }
-  },
-  tap: {
-    scale: 0.95,
-    transition: {
-      duration: 0.1
-    }
-  },
-  selected: {
-    scale: 1.1,
-    boxShadow: '0 0 25px rgba(255, 107, 107, 0.6)',
-    transition: {
-      duration: 0.3
-    }
-  },
-  flip: {
-    rotateY: 180,
-    transition: {
-      duration: 0.6,
-      type: "spring",
-      stiffness: 100
-    }
-  }
-};
-
-const Card = styled(motion.div)<{ isSelected?: boolean; isRevealed?: boolean; isReversed?: boolean }>`
+const Card = styled.div<{ isSelected?: boolean; isRevealed?: boolean; isReversed?: boolean }>`
   width: 100%;
   height: 280px;
   position: relative;
   cursor: pointer;
   transform-style: preserve-3d;
   border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  transition: transform 0.6s;
-
+  box-shadow: ${props => props.isSelected 
+    ? '0 0 30px rgba(255, 107, 107, 0.7)' 
+    : '0 8px 20px rgba(0, 0, 0, 0.3)'};
+  transition: transform 0.6s, box-shadow 0.3s;
+  transform: ${props => props.isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)'};
+  
   &:hover {
     box-shadow: ${props => props.isSelected 
       ? '0 0 30px rgba(255, 107, 107, 0.7)' 
       : '0 12px 25px rgba(0, 0, 0, 0.4)'};
   }
-`;
-
-const CardFace = styled.div<{ isRevealed?: boolean }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
-  transform: ${props => props.isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)'};
-`;
-
-const CardBack = styled.img`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 15px;
-  object-fit: cover;
-`;
-
-const CardFront = styled.div<{ isReversed?: boolean }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 15px;
-  transform: rotateY(180deg) ${props => props.isReversed ? 'rotate(180deg)' : ''};
-`;
-
-const CardName = styled.div`
-  margin-top: 10px;
-  font-weight: 500;
-  color: white;
-  text-align: center;
-`;
-
-const CardImage = styled.img<{ isReversed?: boolean }>`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 15px;
-  transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
-`;
-
-const CardContent = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  text-align: center;
-  color: white;
-  font-weight: 500;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  background: rgba(0, 0, 0, 0.5);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  pointer-events: none;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-`;
-
-const StyledButton = styled(Button)`
-  background: linear-gradient(45deg, #6b6bff, #8e8eff);
-  border: none;
-  color: white;
-  padding: 0 2rem;
-  height: 40px;
-  &:hover {
-    opacity: 0.9;
-    color: white;
-  }
-  &:disabled {
-    background: #4a4a6a;
-    opacity: 0.7;
-    color: #aaa;
-  }
+  
+  ${props => props.isSelected && !props.isRevealed && `
+    transform: scale(1.1);
+  `}
 `;
 
 // 添加位置标签样式
@@ -211,6 +103,23 @@ const PositionLabel = styled.div`
   pointer-events: none;
   border: 1px solid rgba(255, 215, 0, 0.5);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+`;
+
+const CardFace = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  overflow: hidden;
+`;
+
+const CardBack = styled(CardFace)`
+  background-color: #000;
+`;
+
+const CardFront = styled(CardFace)`
+  transform: rotateY(180deg);
 `;
 
 const positions = ['过去', '现在', '未来'];
@@ -291,69 +200,40 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                 isRevealed={isRevealed}
                 isReversed={card.isReversed}
                 onClick={() => handleCardClick(card.id)}
-                variants={cardVariants}
-                initial="initial"
-                animate={
-                  isRevealed
-                    ? "flip"
-                    : isSelected
-                    ? "selected"
-                    : "initial"
-                }
-                whileHover={!isRevealing && !isRevealed ? "hover" : undefined}
-                whileTap={!isRevealing && !isRevealed ? "tap" : undefined}
+                style={{
+                  transform: isSelected && !isRevealed ? 'scale(1.1)' : isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                }}
               >
                 {isSelected && !isRevealed && (
                   <PositionLabel>
                     {positions[positionIndex]}
                   </PositionLabel>
                 )}
-                <div style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  transform: isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 0.6s'
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    backfaceVisibility: 'hidden',
-                    borderRadius: '15px'
-                  }}>
-                    <img 
-                      src={`./images/tarot/Tarot_Card_Back.png`} 
-                      alt="Card Back" 
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: '15px'
-                      }}
-                    />
-                  </div>
-                  <div style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    backfaceVisibility: 'hidden',
-                    borderRadius: '15px',
-                    transform: `rotateY(180deg) ${card.isReversed ? 'rotate(180deg)' : ''}`
-                  }}>
-                    <img
-                      src={card.image}
-                      alt={card.name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: '15px'
-                      }}
-                    />
-                  </div>
-                </div>
+                <CardBack>
+                  <img 
+                    src={`./images/tarot/Tarot_Card_Back.png`} 
+                    alt="Card Back" 
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '15px'
+                    }}
+                  />
+                </CardBack>
+                <CardFront>
+                  <img
+                    src={card.image}
+                    alt={card.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '15px',
+                      transform: card.isReversed ? 'rotate(180deg)' : 'none'
+                    }}
+                  />
+                </CardFront>
               </Card>
               {isCardRevealed[index] && (
                 <div style={{
@@ -383,5 +263,29 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
     </Container>
   );
 };
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+`;
+
+const StyledButton = styled(Button)`
+  background: linear-gradient(45deg, #6b6bff, #8e8eff);
+  border: none;
+  color: white;
+  padding: 0 2rem;
+  height: 40px;
+  &:hover {
+    opacity: 0.9;
+    color: white;
+  }
+  &:disabled {
+    background: #4a4a6a;
+    opacity: 0.7;
+    color: #aaa;
+  }
+`;
 
 export default TarotReading; 
