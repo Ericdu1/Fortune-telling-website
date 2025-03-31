@@ -139,15 +139,15 @@ export function generateDailyRecommend(): DailyRecommend {
   return {
     anime: {
       title: '葬送的芙莉莲',
-      episode: '第8话',
-      reason: '今天的剧情发展会让你惊喜',
-      imageUrl: '/Fortune-telling-website/images/anime/frieren.jpg'
+      episode: '第23集',
+      reason: '精彩的故事和角色成长，契合今日的主题',
+      imageUrl: '/images/anime/frieren.jpg'
     },
     game: {
-      title: 'FF7 REBIRTH',
-      type: 'JRPG',
-      reason: '今天适合开启新的冒险',
-      imageUrl: '/Fortune-telling-website/images/games/ff7r.jpg'
+      title: '最终幻想7：重制版',
+      type: 'RPG',
+      reason: '庞大的世界观和引人入胜的剧情',
+      imageUrl: '/images/games/ff7r.jpg'
     },
     music: {
       title: 'PHOENIX',

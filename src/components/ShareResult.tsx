@@ -31,20 +31,33 @@ const ShareCard = styled.div`
 `;
 
 const ShareContent = styled.div`
-  padding: 2rem;
+  padding: 1.5rem;
   background: #1a1a2e;
   color: #ffffff;
-  min-height: 100vh;
+  min-height: auto;
+  height: auto;
+  max-height: none;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
+  position: relative;
+  overflow: visible;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 0;
+  
+  @media (max-width: 600px) {
+    padding: 1rem;
+    gap: 0.8rem;
+  }
 `;
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-  padding-bottom: 1rem;
+  padding-bottom: 0.8rem;
 `;
 
 const HeaderTitle = styled.h3`
@@ -61,51 +74,46 @@ const DateTime = styled.div`
 const CardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin: 2rem 0;
-  padding: 0 1rem;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 0;
 `;
 
 const CardItem = styled.div`
   text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  min-width: 200px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
 `;
 
 const CardImageWrapper = styled.div<{ isReversed?: boolean }>`
   width: 100%;
-  max-width: 200px;
   margin: 0 auto;
   transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
-  transition: transform 0.3s ease;
 `;
 
 const CardImage = styled.img`
   width: 100%;
   height: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 `;
 
 const CardName = styled.div`
   color: #ffd700;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   margin-top: 0.5rem;
-  text-align: center;
+  font-weight: bold;
 `;
 
 const CardPosition = styled.div`
   color: #e0e0e0;
-  font-size: 0.9rem;
-  margin-top: 0.3rem;
-  text-align: center;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
 `;
 
 const CardDescription = styled.div`
@@ -116,70 +124,72 @@ const CardDescription = styled.div`
 `;
 
 const InterpretationSection = styled.div`
-  margin: 2rem 0;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
+  margin: 1.5rem 0;
+  padding: 0;
 `;
 
-const InterpretationTitle = styled.h4`
+const CategorySection = styled.div`
+  margin: 1rem 0;
+`;
+
+const CategoryTitle = styled.h4`
   color: #ffd700;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  text-align: center;
+  position: relative;
   
   &:before, &:after {
     content: '';
-    flex: 1;
+    position: absolute;
+    top: 50%;
     height: 1px;
+    width: 30%;
     background: rgba(255, 215, 0, 0.3);
-    margin: 0 1rem;
+  }
+  
+  &:before {
+    left: 0;
+  }
+  
+  &:after {
+    right: 0;
   }
 `;
 
-const InterpretationText = styled.div`
+const CategoryContent = styled.p`
   color: #e0e0e0;
-  line-height: 1.8;
-  margin: 1.5rem 0;
-
-  p {
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 8px;
-  }
-
-  strong {
-    color: #ffd700;
-    margin-right: 1rem;
-    display: inline-block;
-  }
+  line-height: 1.6;
+  text-indent: 0;
+  margin: 0;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  font-size: 0.9rem;
 `;
 
 const GuidanceSection = styled.div`
-  margin: 2rem 0;
-  padding: 2rem;
-  background: rgba(255, 215, 0, 0.1);
-  border-radius: 15px;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
   border: 1px solid rgba(255, 215, 0, 0.3);
 `;
 
 const GuidanceTitle = styled.h4`
   color: #ffd700;
   margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   text-align: center;
 `;
 
 const GuidanceText = styled.p`
   color: #e0e0e0;
-  line-height: 1.8;
+  line-height: 1.6;
   text-indent: 2em;
   margin: 0;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  padding: 0;
+  font-size: 0.9rem;
 `;
 
 const Footer = styled.div`
@@ -404,23 +414,36 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
   const contentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
 
-  console.log('ShareResult render:', {
-    dailyFortune,
-    tarotResult,
-    cards: tarotResult?.cards
-  });
+  // 提取卡片意义的辅助函数
+  const extractCardMeaning = (position: string) => {
+    const card = tarotResult?.cards?.find(c => c.position === position);
+    return card?.isReversed ? card.reversedMeaning : card?.meaning;
+  };
 
   const handleSaveImage = async () => {
     if (!contentRef.current) return;
     
     setLoading(true);
     try {
+      // 计算内容的实际高度
+      const contentHeight = contentRef.current.scrollHeight;
+      
       const canvas = await html2canvas(contentRef.current, {
-        background: 'transparent',
+        background: '#1a1a2e',
         scale: 2,
+        height: contentHeight,
+        windowHeight: contentHeight,
         logging: false,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        onclone: (documentClone: Document) => {
+          // 确保克隆的文档有正确的尺寸
+          const clonedContent = documentClone.querySelector('.share-content');
+          if (clonedContent) {
+            (clonedContent as HTMLElement).style.height = `${contentHeight}px`;
+            (clonedContent as HTMLElement).style.overflow = 'visible';
+          }
+        }
       } as any);
 
       const link = document.createElement('a');
@@ -441,10 +464,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
       <Title>分享今日运势</Title>
 
       <ShareCard>
-        <ShareContent ref={contentRef}>
+        <ShareContent ref={contentRef} className="share-content">
           <Header>
             <HeaderTitle>二次元占卜屋</HeaderTitle>
-            <DateTime>{formatDate()} 今日运势</DateTime>
+            <DateTime>{formatDate()} 塔罗牌占卜</DateTime>
           </Header>
 
           {tarotResult && tarotResult.cards && tarotResult.cards.length > 0 && (
@@ -457,12 +480,13 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         src={card.image} 
                         alt={card.name}
                         onError={(e) => {
-                          console.error('Image load error:', e);
-                          e.currentTarget.src = '/Fortune-telling-website/card-back.jpg';
+                          e.currentTarget.src = '/card-back.jpg';
                         }}
                       />
                     </CardImageWrapper>
-                    <CardName>{card.name}</CardName>
+                    <CardName>
+                      {card.name} {card.isReversed ? '(逆位)' : '(正位)'}
+                    </CardName>
                     <CardPosition>
                       {card.position}
                     </CardPosition>
@@ -471,65 +495,32 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               </CardsContainer>
 
               <InterpretationSection>
-                <InterpretationTitle>塔罗解读</InterpretationTitle>
-                <div style={{border: '1px solid #ffd700', padding: '20px', backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: '8px'}}>
-                  {/* 显示调试信息 */}
-                  <p style={{color: '#aaa', fontSize: '12px', marginBottom: '10px'}}>卡片数量: {tarotResult?.cards?.length}</p>
-                  
-                  {/* 过去 */}
-                  <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#222', border: '2px solid #ffd700', borderRadius: '8px'}}>
-                    <h3 style={{color: '#ffd700', marginBottom: '10px'}}>过去: {tarotResult.cards.find(c => c.position === '过去')?.name || '星星'}</h3>
-                    <p style={{color: 'white', lineHeight: '1.6'}}>
-                      {tarotResult.cards.find(c => c.position === '过去')?.isReversed 
-                        ? (tarotResult.cards.find(c => c.position === '过去')?.reversedMeaning || '星星牌（逆位）表示你可能失去了一些希望和信念。在过去，你曾经经历过迷茫和失落，但这些挑战也是成长的一部分。') 
-                        : (tarotResult.cards.find(c => c.position === '过去')?.meaning || '星星牌代表希望和信念。在过去，你曾拥有明确的目标和希望，指引着你前进的方向。')}
-                    </p>
-                  </div>
-                  
-                  {/* 现在 */}
-                  <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#222', border: '2px solid #ffd700', borderRadius: '8px'}}>
-                    <h3 style={{color: '#ffd700', marginBottom: '10px'}}>现在: {tarotResult.cards.find(c => c.position === '现在')?.name || '命运之轮'}</h3>
-                    <p style={{color: 'white', lineHeight: '1.6'}}>
-                      {tarotResult.cards.find(c => c.position === '现在')?.isReversed 
-                        ? (tarotResult.cards.find(c => c.position === '现在')?.reversedMeaning || '命运之轮（逆位）表示你可能正在抵抗变化。现在，你需要接受生活中的不确定性，学会放手，让事情自然发展。') 
-                        : (tarotResult.cards.find(c => c.position === '现在')?.meaning || '命运之轮表示情况正在变化。现在，你正处于转变的阶段，生活中正在发生一些非你所能控制的变化。')}
-                    </p>
-                  </div>
-                  
-                  {/* 未来 */}
-                  <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#222', border: '2px solid #ffd700', borderRadius: '8px'}}>
-                    <h3 style={{color: '#ffd700', marginBottom: '10px'}}>未来: {tarotResult.cards.find(c => c.position === '未来')?.name || '恶魔'}</h3>
-                    <p style={{color: 'white', lineHeight: '1.6'}}>
-                      {tarotResult.cards.find(c => c.position === '未来')?.isReversed 
-                        ? (tarotResult.cards.find(c => c.position === '未来')?.reversedMeaning || '恶魔牌（逆位）暗示着你将能够挣脱某种束缚。在未来，你会认识到自己内心的恐惧和执着，并找到超越它们的方法。') 
-                        : (tarotResult.cards.find(c => c.position === '未来')?.meaning || '恶魔牌提醒你关注内心的束缚。在未来，你需要审视自己的执着和欲望，寻找真正的自由。')}
-                    </p>
-                  </div>
-                </div>
+                <CategorySection>
+                  <CategoryTitle>事业发展</CategoryTitle>
+                  <CategoryContent>
+                    目前{extractCardMeaning('现在') || '改变，机遇，命运'}的状态，未来将会{extractCardMeaning('未来') || '创造力受阻，依赖性，过度保护'}。
+                  </CategoryContent>
+                </CategorySection>
+
+                <CategorySection>
+                  <CategoryTitle>感情状况</CategoryTitle>
+                  <CategoryContent>
+                    在感情中{extractCardMeaning('现在') || '改变，机遇，命运'}，将会遇到{extractCardMeaning('未来') || '创造力受阻，依赖性，过度保护'}的情况。
+                  </CategoryContent>
+                </CategorySection>
+
+                <CategorySection>
+                  <CategoryTitle>心理指引</CategoryTitle>
+                  <CategoryContent>
+                    过去的{extractCardMeaning('过去') || '富裕，不负责任，过度冒险'}经历，这将帮助你{extractCardMeaning('未来') || '创造力受阻，依赖性，过度保护'}。
+                  </CategoryContent>
+                </CategorySection>
               </InterpretationSection>
 
               <GuidanceSection>
-                <GuidanceTitle>整体指引</GuidanceTitle>
+                <GuidanceTitle>塔罗指引</GuidanceTitle>
                 <GuidanceText>
-                  根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，
-                  <span style={{color: '#ffd700', fontWeight: 'bold'}}>
-                    {tarotResult.cards.find(c => c.position === '过去')?.isReversed 
-                      ? (tarotResult.cards.find(c => c.position === '过去')?.reversedMeaning || '星星牌（逆位）表示你可能失去了一些希望和信念') 
-                      : (tarotResult.cards.find(c => c.position === '过去')?.meaning || '星星牌代表希望和信念')}
-                  </span>
-                  的状态影响着您的决策和行动。目前，您正处于
-                  <span style={{color: '#ffd700', fontWeight: 'bold'}}>
-                    {tarotResult.cards.find(c => c.position === '现在')?.isReversed 
-                      ? (tarotResult.cards.find(c => c.position === '现在')?.reversedMeaning || '命运之轮（逆位）表示你可能正在抵抗变化') 
-                      : (tarotResult.cards.find(c => c.position === '现在')?.meaning || '命运之轮表示情况正在变化')}
-                  </span>
-                  的阶段。展望未来，
-                  <span style={{color: '#ffd700', fontWeight: 'bold'}}>
-                    {tarotResult.cards.find(c => c.position === '未来')?.isReversed 
-                      ? (tarotResult.cards.find(c => c.position === '未来')?.reversedMeaning || '恶魔牌（逆位）暗示着你将能够挣脱某种束缚') 
-                      : (tarotResult.cards.find(c => c.position === '未来')?.meaning || '恶魔牌提醒你关注内心的束缚')}
-                  </span>
-                  的征兆预示着即将到来的变化和机遇。保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
+                  根据塔罗牌的指引，你过去的{extractCardMeaning('过去') || '富裕，不负责任，过度冒险'}经历塑造了现在的你。目前你正处于{extractCardMeaning('现在') || '改变，机遇，命运'}的状态，这为你带来了新的机遇和挑战。在未来，你将{extractCardMeaning('未来') || '创造力受阻，依赖性，过度保护'}，这预示着一段重要的转变期。建议你保持开放和善良的心态，相信自己的直觉，勇敢地面对即将到来的改变。每一个挑战都是成长的机会，保持耐心和乐观的心态，相信自己的目标和理想。
                 </GuidanceText>
               </GuidanceSection>
             </>

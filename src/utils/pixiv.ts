@@ -1,27 +1,36 @@
 import { PixivArtwork } from '../types/fortune';
 
 // 本地图片备选列表
-const LOCAL_ARTWORKS: PixivArtwork[] = [
+export const LOCAL_ARTWORKS: PixivArtwork[] = [
   {
-    id: "local-1",
-    title: "星空下的少女",
+    id: "127455493",
+    title: "观星少女",
+    description: "星空下的女孩，描绘了宁静与梦想",
+    date: "2023-05-12",
+    tags: ["星空", "少女", "梦幻"],
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/Fortune-telling-website/images/artworks/121423493.jpg"
+    imageUrl: "/images/artworks/127455493_p0.png"
   },
   {
-    id: "local-2",
-    title: "樱花季节",
+    id: "127839312",
+    title: "命运之轮",
+    description: "命运的转折，机遇与挑战并存",
+    date: "2023-07-23",
+    tags: ["命运", "转折", "神秘"],
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/Fortune-telling-website/images/artworks/121839312.jpg"
+    imageUrl: "/images/artworks/127839312_p0.png"
   },
   {
-    id: "local-3",
-    title: "魔法少女",
+    id: "128707970",
+    title: "魔法森林",
+    description: "充满魔力的神秘森林，孕育奇迹的地方",
+    date: "2023-10-15",
+    tags: ["森林", "魔法", "奇幻"],
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/Fortune-telling-website/images/artworks/122107970.jpg"
+    imageUrl: "/images/artworks/128707970_p0.png"
   }
 ];
 
