@@ -35,6 +35,9 @@ const ShareContent = styled.div`
   background: #1a1a2e;
   color: #ffffff;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 `;
 
 const Header = styled.div`
@@ -58,25 +61,29 @@ const DateTime = styled.div`
 const CardsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 2rem;
+  margin: 2rem 0;
+  padding: 0 1rem;
 `;
 
 const CardItem = styled.div`
   text-align: center;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 15px;
-  padding: 1rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
+  min-width: 200px;
 `;
 
 const CardImageWrapper = styled.div<{ isReversed?: boolean }>`
   width: 100%;
-  max-width: 150px;
-  margin-bottom: 1rem;
+  max-width: 200px;
+  margin: 0 auto;
   transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
+  transition: transform 0.3s ease;
 `;
 
 const CardImage = styled.img`
@@ -84,6 +91,7 @@ const CardImage = styled.img`
   height: auto;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  object-fit: contain;
 `;
 
 const CardName = styled.div`
@@ -108,9 +116,10 @@ const CardDescription = styled.div`
 `;
 
 const InterpretationSection = styled.div`
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 215, 0, 0.3);
+  margin: 2rem 0;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
 `;
 
 const InterpretationTitle = styled.h4`
@@ -132,24 +141,27 @@ const InterpretationTitle = styled.h4`
 const InterpretationText = styled.div`
   color: #e0e0e0;
   line-height: 1.8;
-  margin-bottom: 1rem;
+  margin: 1.5rem 0;
 
   p {
-    margin-bottom: 1rem;
-    text-indent: 0;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
   }
 
   strong {
     color: #ffd700;
     margin-right: 1rem;
+    display: inline-block;
   }
 `;
 
 const GuidanceSection = styled.div`
-  margin-top: 2rem;
-  padding: 1.5rem;
+  margin: 2rem 0;
+  padding: 2rem;
   background: rgba(255, 215, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 15px;
   border: 1px solid rgba(255, 215, 0, 0.3);
 `;
 
@@ -165,6 +177,9 @@ const GuidanceText = styled.p`
   line-height: 1.8;
   text-indent: 2em;
   margin: 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
 `;
 
 const Footer = styled.div`
@@ -389,6 +404,12 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
   const contentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
 
+  console.log('Component Props:', {
+    hasDailyFortune: !!dailyFortune,
+    hasTarotResult: !!tarotResult,
+    tarotCards: tarotResult?.cards
+  });
+
   const handleSaveImage = async () => {
     if (!contentRef.current) return;
     
@@ -415,80 +436,77 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
-  const generateInterpretation = () => {
-    if (!tarotResult?.cards) return null;
-
-    const interpretations = {
-      past: '',
-      present: '',
-      future: '',
-      guidance: ''
-    };
-
-    tarotResult.cards.forEach((card) => {
-      const cardEffect = card.isReversed ? card.reversedMeaning : card.meaning;
-      
-      switch (card.position) {
-        case 'past':
-          interpretations.past = cardEffect;
-          break;
-        case 'present':
-          interpretations.present = cardEffect;
-          break;
-        case 'future':
-          interpretations.future = cardEffect;
-          break;
-      }
-    });
-
-    const pastEffect = interpretations.past;
-    const presentEffect = interpretations.present;
-    const futureEffect = interpretations.future;
-
-    interpretations.guidance = `根据塔罗牌的指引，你过去的${pastEffect}经历塑造了现在的你。目前你正处于${presentEffect}的状态，这为你带来了新的机遇和挑战。在未来，你将${futureEffect}，这预示着一段重要的转变期。建议你保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。每一个挑战都是成长的机会，保持耐心和乐观的心态，相信自己的目标和理想。`;
-
-    return interpretations;
-  };
-
   const renderTarotContent = () => {
-    if (!tarotResult?.cards) return null;
+    console.log('Entering renderTarotContent');
+    if (!tarotResult?.cards) {
+      console.log('No tarot cards found');
+      return null;
+    }
+
+    console.log('Tarot cards:', tarotResult.cards);
+
+    const positionMap = {
+      past: '过去',
+      present: '现在',
+      future: '未来'
+    } as const;
+
+    const cards = tarotResult.cards.reduce((acc, card) => {
+      console.log('Processing card:', card);
+      if (card.position === 'past' || card.position === 'present' || card.position === 'future') {
+        acc[card.position] = {
+          ...card,
+          meaning: card.isReversed ? card.reversedMeaning : card.meaning
+        };
+      }
+      return acc;
+    }, {} as Record<string, TarotCardResult & { meaning: string }>);
+
+    console.log('Processed cards:', cards);
 
     return (
       <>
         <CardsContainer>
-          {tarotResult.cards.map((card, index) => (
-            <CardItem key={index}>
-              <CardImageWrapper isReversed={card.isReversed}>
-                <CardImage 
-                  src={card.image} 
-                  alt={card.name}
-                />
-              </CardImageWrapper>
-              <CardName>{card.name}</CardName>
-              <CardPosition>{card.position}</CardPosition>
-              <CardDescription>
-                {card.isReversed ? card.reversedMeaning : card.meaning}
-              </CardDescription>
-            </CardItem>
-          ))}
+          {tarotResult.cards.map((card, index) => {
+            console.log('Rendering card:', card);
+            return (
+              <CardItem key={index}>
+                <CardImageWrapper isReversed={card.isReversed}>
+                  <CardImage 
+                    src={card.image} 
+                    alt={card.name}
+                  />
+                </CardImageWrapper>
+                <CardName>{card.name}</CardName>
+                <CardPosition>{positionMap[card.position as keyof typeof positionMap]}</CardPosition>
+              </CardItem>
+            );
+          })}
         </CardsContainer>
 
         <InterpretationSection>
           <InterpretationTitle>塔罗解读</InterpretationTitle>
           <InterpretationText>
-            {tarotResult.cards.map((card, index) => (
-              <p key={index}>
-                <strong>{card.position}：</strong>
-                {card.isReversed ? card.reversedMeaning : card.meaning}
-              </p>
-            ))}
+            {Object.entries(cards).map(([position, card]) => {
+              console.log('Rendering interpretation for position:', position, card);
+              return (
+                <p key={position}>
+                  <strong>{positionMap[position as keyof typeof positionMap]}：</strong>
+                  {card.meaning}
+                </p>
+              );
+            })}
           </InterpretationText>
         </InterpretationSection>
 
         <GuidanceSection>
           <GuidanceTitle>整体指引</GuidanceTitle>
           <GuidanceText>
-            根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，{tarotResult.cards[0]?.isReversed ? tarotResult.cards[0].reversedMeaning : tarotResult.cards[0].meaning}的状态影响着您的决策和行动。目前，您正处于{tarotResult.cards[1]?.isReversed ? tarotResult.cards[1].reversedMeaning : tarotResult.cards[1].meaning}的阶段。展望未来，{tarotResult.cards[2]?.isReversed ? tarotResult.cards[2].reversedMeaning : tarotResult.cards[2].meaning}的征兆预示着即将到来的变化和机遇。保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
+            根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，
+            {cards.past?.meaning}的状态影响着您的决策和行动。目前，您正处于
+            {cards.present?.meaning}的阶段。展望未来，
+            {cards.future?.meaning}的征兆预示着即将到来的变化和机遇。
+            保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
           </GuidanceText>
         </GuidanceSection>
       </>
