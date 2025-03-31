@@ -274,7 +274,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       title: '加载中...',
       artistId: '',
       artistName: '加载中...',
-      imageUrl: '/placeholder.jpg'
+      imageUrl: './images/artworks/127455493_p0.png'
     }
   });
 

@@ -10,7 +10,7 @@ export const LOCAL_ARTWORKS: PixivArtwork[] = [
     tags: ["星空", "少女", "梦幻"],
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/images/artworks/127455493_p0.png"
+    imageUrl: "./images/artworks/127455493_p0.png"
   },
   {
     id: "127839312",
@@ -20,7 +20,7 @@ export const LOCAL_ARTWORKS: PixivArtwork[] = [
     tags: ["命运", "转折", "神秘"],
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/images/artworks/127839312_p0.png"
+    imageUrl: "./images/artworks/127839312_p0.png"
   },
   {
     id: "128707970",
@@ -30,7 +30,7 @@ export const LOCAL_ARTWORKS: PixivArtwork[] = [
     tags: ["森林", "魔法", "奇幻"],
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/images/artworks/128707970_p0.png"
+    imageUrl: "./images/artworks/128707970_p0.png"
   }
 ];
 

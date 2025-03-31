@@ -7,6 +7,8 @@ export interface PixivArtwork {
   tags?: string[];
   series?: string;
   relatedWorks?: string[];
+  description?: string;
+  date?: string;
 }
 
 export interface AnimeRecommend {

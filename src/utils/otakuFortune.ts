@@ -141,13 +141,13 @@ export function generateDailyRecommend(): DailyRecommend {
       title: '葬送的芙莉莲',
       episode: '第23集',
       reason: '精彩的故事和角色成长，契合今日的主题',
-      imageUrl: '/images/anime/frieren.jpg'
+      imageUrl: './images/anime/frieren.jpg'
     },
     game: {
       title: '最终幻想7：重制版',
       type: 'RPG',
       reason: '庞大的世界观和引人入胜的剧情',
-      imageUrl: '/images/games/ff7r.jpg'
+      imageUrl: './images/games/ff7r.jpg'
     },
     music: {
       title: 'PHOENIX',

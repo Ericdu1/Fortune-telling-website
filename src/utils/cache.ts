@@ -86,7 +86,7 @@ export async function getDailyFortune(): Promise<DailyFortune> {
         title: '暂无图片',
         artistId: '0',
         artistName: '系统',
-        imageUrl: '/placeholder.jpg'
+        imageUrl: './images/artworks/127455493_p0.png'
       }
     };
   }
