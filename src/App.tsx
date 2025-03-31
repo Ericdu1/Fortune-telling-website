@@ -121,23 +121,23 @@ const App: React.FC = () => {
   });
 
   const handleCardSelect = (cards: TarotCardResult[]) => {
+    // 为每张卡片设置正确的位置
+    const cardsWithPositions = cards.map((card, index) => ({
+      ...card,
+      position: positions[index]
+    }));
+
     setState(prev => ({
       ...prev,
       currentStep: 'tarot-result',
-      selectedCards: cards.map((card, index) => ({
-        ...card,
-        position: positions[index]
-      })),
+      selectedCards: cardsWithPositions,
       tarotResult: {
-        cards: cards.map((card, index) => ({
-          ...card,
-          position: positions[index]
-        })),
+        cards: cardsWithPositions,
         interpretations: {
-          past: cards[0]?.isReversed ? cards[0].reversedMeaning : cards[0].meaning,
-          present: cards[1]?.isReversed ? cards[1].reversedMeaning : cards[1].meaning,
-          future: cards[2]?.isReversed ? cards[2].reversedMeaning : cards[2].meaning,
-          guidance: `根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，${cards[0]?.isReversed ? cards[0].reversedMeaning : cards[0].meaning}的状态影响着您的决策和行动。目前，您正处于${cards[1]?.isReversed ? cards[1].reversedMeaning : cards[1].meaning}的阶段。展望未来，${cards[2]?.isReversed ? cards[2].reversedMeaning : cards[2].meaning}的征兆预示着即将到来的变化和机遇。保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。`
+          past: cardsWithPositions[0]?.isReversed ? cardsWithPositions[0].reversedMeaning : cardsWithPositions[0].meaning,
+          present: cardsWithPositions[1]?.isReversed ? cardsWithPositions[1].reversedMeaning : cardsWithPositions[1].meaning,
+          future: cardsWithPositions[2]?.isReversed ? cardsWithPositions[2].reversedMeaning : cardsWithPositions[2].meaning,
+          guidance: `根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，${cardsWithPositions[0]?.isReversed ? cardsWithPositions[0].reversedMeaning : cardsWithPositions[0].meaning}的状态影响着您的决策和行动。目前，您正处于${cardsWithPositions[1]?.isReversed ? cardsWithPositions[1].reversedMeaning : cardsWithPositions[1].meaning}的阶段。展望未来，${cardsWithPositions[2]?.isReversed ? cardsWithPositions[2].reversedMeaning : cardsWithPositions[2].meaning}的征兆预示着即将到来的变化和机遇。保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。`
         }
       }
     }));
