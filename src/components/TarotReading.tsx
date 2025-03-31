@@ -91,26 +91,9 @@ const cardVariants = {
   }
 };
 
-const CardFace = styled(motion.div)<{ isBack?: boolean; isReversed?: boolean }>`
-  position: absolute;
+const Card = styled(motion.div)<{ isSelected?: boolean; isRevealed?: boolean; isReversed?: boolean }>`
   width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 15px;
-  background: ${props => props.isBack
-    ? 'url(/Fortune-telling-website/images/tarot/Tarot_Card_Back.png) center/cover no-repeat'
-    : 'transparent'};
-  transform: ${props => props.isBack ? 'rotateY(0deg)' : 'rotateY(180deg)'};
-  transform: ${props => props.isReversed ? 'rotateY(180deg) rotate(180deg)' : props.isBack ? 'rotateY(0deg)' : 'rotateY(180deg)'};
-`;
-
-const Card = styled(motion.div)<{ 
-  isSelected: boolean; 
-  isRevealed: boolean;
-  isReversed?: boolean;
-}>`
-  width: 100%;
-  aspect-ratio: 3/5;
+  height: 280px;
   position: relative;
   cursor: pointer;
   transform-style: preserve-3d;
@@ -123,6 +106,19 @@ const Card = styled(motion.div)<{
       ? '0 0 30px rgba(255, 107, 107, 0.7)' 
       : '0 12px 25px rgba(0, 0, 0, 0.4)'};
   }
+`;
+
+const CardFace = styled.div<{ isBack?: boolean; isReversed?: boolean }>`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  background: ${props => props.isBack 
+    ? 'url(/Fortune-telling-website/images/tarot/Tarot_Card_Back.png) center/cover no-repeat' 
+    : 'transparent'};
+  transform: ${props => props.isBack ? 'rotateY(0deg)' : 'rotateY(180deg)'};
+  transform: ${props => props.isReversed ? 'rotateY(180deg) rotate(180deg)' : props.isBack ? 'rotateY(0deg)' : 'rotateY(180deg)'};
 `;
 
 const CardImage = styled.img<{ isReversed?: boolean }>`

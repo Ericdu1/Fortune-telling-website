@@ -64,16 +64,26 @@ const CardsContainer = styled.div`
 
 const CardItem = styled.div`
   text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const CardImage = styled.img<{ isReversed?: boolean }>`
+const CardImageWrapper = styled.div<{ isReversed?: boolean }>`
   width: 100%;
   max-width: 150px;
+  margin-bottom: 1rem;
+  transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
+`;
+
+const CardImage = styled.img`
+  width: 100%;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
-  margin-bottom: 1rem;
 `;
 
 const CardName = styled.div`
@@ -448,11 +458,12 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         <CardsContainer>
           {tarotResult.cards.map((card, index) => (
             <CardItem key={index}>
-              <CardImage 
-                src={card.image} 
-                alt={card.name}
-                style={{ transform: card.isReversed ? 'rotate(180deg)' : 'none' }}
-              />
+              <CardImageWrapper isReversed={card.isReversed}>
+                <CardImage 
+                  src={card.image} 
+                  alt={card.name}
+                />
+              </CardImageWrapper>
               <CardName>{card.name}</CardName>
               <CardPosition>{card.position}</CardPosition>
               <CardDescription>
