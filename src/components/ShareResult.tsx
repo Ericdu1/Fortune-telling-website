@@ -123,7 +123,16 @@ const InterpretationText = styled.div`
   color: #e0e0e0;
   line-height: 1.8;
   margin-bottom: 1rem;
-  text-indent: 2em;
+
+  p {
+    margin-bottom: 1rem;
+    text-indent: 0;
+  }
+
+  strong {
+    color: #ffd700;
+    margin-right: 1rem;
+  }
 `;
 
 const GuidanceSection = styled.div`
@@ -456,9 +465,12 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         <InterpretationSection>
           <InterpretationTitle>塔罗解读</InterpretationTitle>
           <InterpretationText>
-            <p><strong>过去：</strong>{tarotResult.cards[0]?.isReversed ? tarotResult.cards[0].reversedMeaning : tarotResult.cards[0].meaning}</p>
-            <p><strong>现在：</strong>{tarotResult.cards[1]?.isReversed ? tarotResult.cards[1].reversedMeaning : tarotResult.cards[1].meaning}</p>
-            <p><strong>未来：</strong>{tarotResult.cards[2]?.isReversed ? tarotResult.cards[2].reversedMeaning : tarotResult.cards[2].meaning}</p>
+            {tarotResult.cards.map((card, index) => (
+              <p key={index}>
+                <strong>{card.position}：</strong>
+                {card.isReversed ? card.reversedMeaning : card.meaning}
+              </p>
+            ))}
           </InterpretationText>
         </InterpretationSection>
 
