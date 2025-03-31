@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { PixivArtwork } from '../types/fortune';
 
 // 本地图片备选列表

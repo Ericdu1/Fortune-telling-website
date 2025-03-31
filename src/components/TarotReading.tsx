@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { TarotCardResult } from '../types/tarot';
-import { tarotCards } from '../data/tarotCards';
 
 const Container = styled.div`
   width: 100%;
