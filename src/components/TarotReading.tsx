@@ -264,8 +264,8 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
               <Card
                 isSelected={isSelected}
                 isRevealed={isRevealed}
-                isReversed={isSelected && card.isReversed}
-                onClick={() => handleCardClick(card.id)}
+                isReversed={card.isReversed}
+                onClick={() => !isRevealing && selectedCards.length < 3 && !selectedCards.includes(card.id) ? handleCardClick(card.id) : undefined}
                 variants={cardVariants}
                 initial="initial"
                 animate={
@@ -278,20 +278,61 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                 whileHover={!isRevealing && !isRevealed ? "hover" : undefined}
                 whileTap={!isRevealing && !isRevealed ? "tap" : undefined}
               >
-                <CardFace isRevealed={isRevealed}>
-                  <CardBack src={`${process.env.PUBLIC_URL}/card-back.jpg`} alt="Card Back" />
-                  <CardFront isReversed={card.isReversed}>
-                    <CardImage
+                <div style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  transform: isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                  transformStyle: 'preserve-3d',
+                  transition: 'transform 0.6s'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    backfaceVisibility: 'hidden',
+                    borderRadius: '15px'
+                  }}>
+                    <img 
+                      src={`${process.env.PUBLIC_URL}/card-back.jpg`} 
+                      alt="Card Back" 
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: '15px'
+                      }}
+                    />
+                  </div>
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    backfaceVisibility: 'hidden',
+                    borderRadius: '15px',
+                    transform: `rotateY(180deg) ${card.isReversed ? 'rotate(180deg)' : ''}`
+                  }}>
+                    <img
                       src={card.image}
                       alt={card.name}
-                      isReversed={card.isReversed}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: '15px'
+                      }}
                     />
-                  </CardFront>
-                </CardFace>
+                  </div>
+                </div>
               </Card>
-              <CardName>
-                {card.name} ({isSelected ? positions[selectedCards.indexOf(card.id)] : '点击选择'})
-              </CardName>
+              <div style={{
+                marginTop: '10px',
+                fontWeight: 500,
+                color: 'white',
+                textAlign: 'center'
+              }}>
+                {card.name} {isSelected ? `(${positions[selectedCards.indexOf(card.id)]})` : '(点击选择)'}
+              </div>
               {isCardRevealed[index] && (
                 <div style={{
                   marginTop: '10px',
@@ -308,48 +349,15 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
           );
         })}
       </CardsContainer>
-
+      
       <ButtonContainer>
-        <StyledButton
+        <StyledButton 
           onClick={handleRevealCards}
           disabled={selectedCards.length !== 3 || isRevealing}
         >
           揭示结果
         </StyledButton>
       </ButtonContainer>
-
-      {/* 显示选中的卡牌 */}
-      <div>
-        {selectedCards.map((card, index) => (
-          <Card key={index} isRevealed={isCardRevealed[index] || false}>
-            <CardFace isRevealed={isCardRevealed[index] || false}>
-              <CardBack src={`${process.env.PUBLIC_URL}/card-back.jpg`} alt="Card Back" />
-              <CardFront isReversed={card.isReversed}>
-                <CardImage
-                  src={card.image}
-                  alt={card.name}
-                  isReversed={card.isReversed}
-                />
-              </CardFront>
-            </CardFace>
-            <CardName>
-              {card.name} ({card.position === 'past' ? '过去' : card.position === 'present' ? '现在' : '未来'})
-            </CardName>
-            {isCardRevealed[index] && (
-              <div style={{
-                marginTop: '10px',
-                padding: '10px',
-                background: 'rgba(255, 215, 0, 0.1)',
-                borderRadius: '5px',
-                border: '1px solid rgba(255, 215, 0, 0.3)',
-                color: 'white'
-              }}>
-                <p><strong>解读：</strong>{card.isReversed ? card.reversedMeaning : card.meaning}</p>
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
     </Container>
   );
 };
