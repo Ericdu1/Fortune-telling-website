@@ -90,6 +90,13 @@ const CardPosition = styled.div`
   text-align: center;
 `;
 
+const CardDescription = styled.div`
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  text-align: center;
+`;
+
 const InterpretationSection = styled.div`
   margin-top: 2rem;
   padding-top: 2rem;
@@ -427,9 +434,6 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
   const renderTarotContent = () => {
     if (!tarotResult?.cards) return null;
 
-    const interpretations = generateInterpretation();
-    if (!interpretations) return null;
-
     return (
       <>
         <CardsContainer>
@@ -438,10 +442,13 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <CardImage 
                 src={card.image} 
                 alt={card.name}
-                style={{ transform: card.isReversed ? 'rotate(180deg)' : 'none' }}
+                isReversed={card.isReversed}
               />
               <CardName>{card.name}</CardName>
               <CardPosition>{card.position}</CardPosition>
+              <CardDescription>
+                {card.isReversed ? card.reversedMeaning : card.meaning}
+              </CardDescription>
             </CardItem>
           ))}
         </CardsContainer>
@@ -449,15 +456,17 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         <InterpretationSection>
           <InterpretationTitle>塔罗解读</InterpretationTitle>
           <InterpretationText>
-            <p><strong>过去：</strong>{interpretations.past}</p>
-            <p><strong>现在：</strong>{interpretations.present}</p>
-            <p><strong>未来：</strong>{interpretations.future}</p>
+            <p><strong>过去：</strong>{tarotResult.cards[0]?.isReversed ? tarotResult.cards[0].reversedMeaning : tarotResult.cards[0].meaning}</p>
+            <p><strong>现在：</strong>{tarotResult.cards[1]?.isReversed ? tarotResult.cards[1].reversedMeaning : tarotResult.cards[1].meaning}</p>
+            <p><strong>未来：</strong>{tarotResult.cards[2]?.isReversed ? tarotResult.cards[2].reversedMeaning : tarotResult.cards[2].meaning}</p>
           </InterpretationText>
         </InterpretationSection>
 
         <GuidanceSection>
           <GuidanceTitle>整体指引</GuidanceTitle>
-          <GuidanceText>{interpretations.guidance}</GuidanceText>
+          <GuidanceText>
+            根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，{tarotResult.cards[0]?.isReversed ? tarotResult.cards[0].reversedMeaning : tarotResult.cards[0].meaning}的状态影响着您的决策和行动。目前，您正处于{tarotResult.cards[1]?.isReversed ? tarotResult.cards[1].reversedMeaning : tarotResult.cards[1].meaning}的阶段。展望未来，{tarotResult.cards[2]?.isReversed ? tarotResult.cards[2].reversedMeaning : tarotResult.cards[2].meaning}的征兆预示着即将到来的变化和机遇。保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
+          </GuidanceText>
         </GuidanceSection>
       </>
     );

@@ -110,15 +110,17 @@ const initialState: AppState = {
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>(initialState);
 
-  // 在组件初始化时随机抽取8张牌
-  const [displayCards] = useState(() => {
+  // 每次进入塔罗牌阅读页面时重新随机抽取牌
+  const getRandomCards = () => {
     const shuffled = [...tarotCards].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 8).map(card => ({
       ...card,
       isReversed: Math.random() < 0.5,
       position: ''
     }));
-  });
+  };
+
+  const [displayCards, setDisplayCards] = useState(getRandomCards());
 
   const handleCardSelect = (cards: TarotCardResult[]) => {
     // 为每张卡片设置正确的位置
@@ -143,12 +145,21 @@ const App: React.FC = () => {
     }));
   };
 
+  // 每次返回塔罗牌阅读页面时重新随机抽取牌
+  const handleReturnToReading = () => {
+    setDisplayCards(getRandomCards());
+    setState(prev => ({ ...prev, currentStep: 'tarot-reading' }));
+  };
+
   const renderStep = () => {
     switch (state.currentStep) {
       case 'home':
         return (
           <Home 
-            onStartTarot={() => setState(prev => ({ ...prev, currentStep: 'tarot-reading' }))}
+            onStartTarot={() => {
+              setDisplayCards(getRandomCards());
+              setState(prev => ({ ...prev, currentStep: 'tarot-reading' }));
+            }}
             onStartDaily={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
           />
         );
@@ -165,7 +176,7 @@ const App: React.FC = () => {
         return state.tarotResult ? (
           <TarotResult 
             cards={state.tarotResult.cards}
-            onBack={() => setState(prev => ({ ...prev, currentStep: 'tarot-reading' }))}
+            onBack={handleReturnToReading}
             onShare={() => setState(prev => ({ ...prev, currentStep: 'tarot-share' }))}
           />
         ) : null;
