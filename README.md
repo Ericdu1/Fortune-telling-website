@@ -1,46 +1,40 @@
-# Getting Started with Create React App
+# Fortune-telling-website
+
+一个基于 React 的在线占卜网站，提供每日运势、塔罗牌占卜等功能。
+
+## 功能特点
+
+- 每日运势：包含多个方面的运势预测
+- 塔罗牌占卜：提供专业的塔罗牌解读
+- 动漫和游戏元素：融入二次元文化的占卜体验
+- 分享功能：支持将占卜结果分享给好友
+
+## 开发相关
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### 可用脚本
 
-In the project directory, you can run:
+在项目目录中，你可以运行：
 
-### `npm start`
+#### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+在开发模式下运行应用。\
+打开 [http://localhost:3000](http://localhost:3000) 在浏览器中查看。
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+当你修改代码时，页面会自动重新加载。\
+你还可以在控制台中看到任何 lint 错误。
 
-### `npm test`
+#### `npm run build`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+将应用构建到 `build` 文件夹中用于生产环境。\
+它会在生产模式下正确打包 React 并优化构建以获得最佳性能。
 
-### `npm run build`
+构建后的文件会被压缩，文件名包含哈希值。\
+你的应用已经准备好部署了！
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 了解更多
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+你可以在 [Create React App 文档](https://facebook.github.io/create-react-app/docs/getting-started) 中了解更多信息。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+要学习 React，请查看 [React 文档](https://reactjs.org/)。
