@@ -404,10 +404,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
   const contentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
 
-  console.log('Component Props:', {
-    hasDailyFortune: !!dailyFortune,
-    hasTarotResult: !!tarotResult,
-    tarotCards: tarotResult?.cards
+  console.log('ShareResult render:', {
+    dailyFortune,
+    tarotResult,
+    cards: tarotResult?.cards
   });
 
   const handleSaveImage = async () => {
@@ -436,218 +436,6 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
-  const renderTarotContent = () => {
-    console.log('Entering renderTarotContent');
-    if (!tarotResult?.cards) {
-      console.log('No tarot cards found');
-      return null;
-    }
-
-    console.log('Tarot cards:', tarotResult.cards);
-
-    const positionMap = {
-      past: '过去',
-      present: '现在',
-      future: '未来'
-    } as const;
-
-    const cards = tarotResult.cards.reduce((acc, card) => {
-      console.log('Processing card:', card);
-      if (card.position === 'past' || card.position === 'present' || card.position === 'future') {
-        acc[card.position] = {
-          ...card,
-          meaning: card.isReversed ? card.reversedMeaning : card.meaning
-        };
-      }
-      return acc;
-    }, {} as Record<string, TarotCardResult & { meaning: string }>);
-
-    console.log('Processed cards:', cards);
-
-    return (
-      <>
-        <CardsContainer>
-          {tarotResult.cards.map((card, index) => {
-            console.log('Rendering card:', card);
-            return (
-              <CardItem key={index}>
-                <CardImageWrapper isReversed={card.isReversed}>
-                  <CardImage 
-                    src={card.image} 
-                    alt={card.name}
-                  />
-                </CardImageWrapper>
-                <CardName>{card.name}</CardName>
-                <CardPosition>{positionMap[card.position as keyof typeof positionMap]}</CardPosition>
-              </CardItem>
-            );
-          })}
-        </CardsContainer>
-
-        <InterpretationSection>
-          <InterpretationTitle>塔罗解读</InterpretationTitle>
-          <InterpretationText>
-            {Object.entries(cards).map(([position, card]) => {
-              console.log('Rendering interpretation for position:', position, card);
-              return (
-                <p key={position}>
-                  <strong>{positionMap[position as keyof typeof positionMap]}：</strong>
-                  {card.meaning}
-                </p>
-              );
-            })}
-          </InterpretationText>
-        </InterpretationSection>
-
-        <GuidanceSection>
-          <GuidanceTitle>整体指引</GuidanceTitle>
-          <GuidanceText>
-            根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，
-            {cards.past?.meaning}的状态影响着您的决策和行动。目前，您正处于
-            {cards.present?.meaning}的阶段。展望未来，
-            {cards.future?.meaning}的征兆预示着即将到来的变化和机遇。
-            保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
-          </GuidanceText>
-        </GuidanceSection>
-      </>
-    );
-  };
-
-  const renderDailyFortuneContent = () => {
-    if (!dailyFortune) return null;
-
-    return (
-      <ShareContent>
-        <DailyFortuneHeader>
-          <Date>{dailyFortune.date}</Date>
-          <LuckMeter>
-            <LuckTitle>今日运势指数</LuckTitle>
-            <LuckStars>{'★'.repeat(dailyFortune.luck)}{'☆'.repeat(5 - dailyFortune.luck)}</LuckStars>
-          </LuckMeter>
-        </DailyFortuneHeader>
-
-        <Content>{dailyFortune.content}</Content>
-
-        <TagsContainer>
-          {dailyFortune.tags.map((tag, index) => (
-            <Tag 
-              key={index}
-              color="gold"
-              style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}
-            >
-              {tag}
-            </Tag>
-          ))}
-        </TagsContainer>
-
-        {Object.entries(dailyFortune.categories).map(([key, category]) => (
-          <CategoryCard key={key}>
-            <CategoryHeader>
-              <CategoryName>{category.name}</CategoryName>
-              <CategoryLevel level={category.level}>{category.level}</CategoryLevel>
-            </CategoryHeader>
-            <CategoryDescription>{category.description}</CategoryDescription>
-            <CategoryAdvice>{category.advice}</CategoryAdvice>
-          </CategoryCard>
-        ))}
-
-        <RecommendSection>
-          <RecommendTitle>今日推荐</RecommendTitle>
-          {dailyFortune.dailyRecommend.anime && (
-            <RecommendCard>
-              <RecommendHeader>动画推荐</RecommendHeader>
-              <RecommendContent>
-                <div>{dailyFortune.dailyRecommend.anime.title}</div>
-                <div>{dailyFortune.dailyRecommend.anime.episode}</div>
-                <div style={{ color: '#a0a0a0', marginTop: '0.5rem' }}>
-                  {dailyFortune.dailyRecommend.anime.reason}
-                </div>
-              </RecommendContent>
-            </RecommendCard>
-          )}
-          
-          {dailyFortune.dailyRecommend.game && (
-            <RecommendCard>
-              <RecommendHeader>游戏推荐</RecommendHeader>
-              <RecommendContent>
-                <div>{dailyFortune.dailyRecommend.game.title}</div>
-                <div>{dailyFortune.dailyRecommend.game.type}</div>
-                <div style={{ color: '#a0a0a0', marginTop: '0.5rem' }}>
-                  {dailyFortune.dailyRecommend.game.reason}
-                </div>
-              </RecommendContent>
-            </RecommendCard>
-          )}
-          
-          {dailyFortune.dailyRecommend.music && (
-            <RecommendCard>
-              <RecommendHeader>音乐推荐</RecommendHeader>
-              <RecommendContent>
-                <div>{dailyFortune.dailyRecommend.music.title}</div>
-                <div>{dailyFortune.dailyRecommend.music.artist}</div>
-              </RecommendContent>
-            </RecommendCard>
-          )}
-        </RecommendSection>
-
-        <EventsSection>
-          <EventsTitle>今日动态</EventsTitle>
-          
-          {dailyFortune.dailyEvents.animeUpdates.length > 0 && (
-            <EventList>
-              <RecommendHeader>今日更新</RecommendHeader>
-              {dailyFortune.dailyEvents.animeUpdates.map((item, index) => (
-                <EventItem key={index}>
-                  <EventTitle>{item.title}</EventTitle>
-                  <EventDescription>第{item.episode}话 - {item.time}</EventDescription>
-                </EventItem>
-              ))}
-            </EventList>
-          )}
-          
-          {dailyFortune.dailyEvents.gameEvents.length > 0 && (
-            <EventList>
-              <RecommendHeader>游戏活动</RecommendHeader>
-              {dailyFortune.dailyEvents.gameEvents.map((item, index) => (
-                <EventItem key={index}>
-                  <EventTitle>{item.game}</EventTitle>
-                  <EventDescription>{item.event} (截止: {item.endTime})</EventDescription>
-                </EventItem>
-              ))}
-            </EventList>
-          )}
-          
-          {dailyFortune.dailyEvents.birthdays.length > 0 && (
-            <EventList>
-              <RecommendHeader>角色生日</RecommendHeader>
-              {dailyFortune.dailyEvents.birthdays.map((item, index) => (
-                <EventItem key={index}>
-                  <EventTitle>{item.character}</EventTitle>
-                  <EventDescription>来自: {item.from}</EventDescription>
-                </EventItem>
-              ))}
-            </EventList>
-          )}
-        </EventsSection>
-
-        <Footer>
-          <QRCodeContainer>
-            <QRCodeSVG
-              value={window.location.origin}
-              size={64}
-              level="L"
-            />
-          </QRCodeContainer>
-          <Watermark>
-            AI 二次元运势
-            <br />
-            {formatDate()}
-          </Watermark>
-        </Footer>
-      </ShareContent>
-    );
-  };
-
   return (
     <Container>
       <Title>分享今日运势</Title>
@@ -659,8 +447,181 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
             <DateTime>{formatDate()} 今日运势</DateTime>
           </Header>
 
-          {renderTarotContent()}
-          {renderDailyFortuneContent()}
+          {tarotResult && tarotResult.cards && tarotResult.cards.length > 0 && (
+            <>
+              <CardsContainer>
+                {tarotResult.cards.map((card, index) => (
+                  <CardItem key={index}>
+                    <CardImageWrapper isReversed={card.isReversed}>
+                      <CardImage 
+                        src={card.image} 
+                        alt={card.name}
+                        onError={(e) => {
+                          console.error('Image load error:', e);
+                          e.currentTarget.src = '/Fortune-telling-website/card-back.jpg';
+                        }}
+                      />
+                    </CardImageWrapper>
+                    <CardName>{card.name}</CardName>
+                    <CardPosition>
+                      {card.position === 'past' ? '过去' :
+                       card.position === 'present' ? '现在' :
+                       card.position === 'future' ? '未来' : ''}
+                    </CardPosition>
+                  </CardItem>
+                ))}
+              </CardsContainer>
+
+              <InterpretationSection>
+                <InterpretationTitle>塔罗解读</InterpretationTitle>
+                <InterpretationText>
+                  {tarotResult.cards.map((card, index) => (
+                    <p key={index}>
+                      <strong>
+                        {card.position === 'past' ? '过去' :
+                         card.position === 'present' ? '现在' :
+                         card.position === 'future' ? '未来' : ''}：
+                      </strong>
+                      {card.isReversed ? card.reversedMeaning : card.meaning}
+                    </p>
+                  ))}
+                </InterpretationText>
+              </InterpretationSection>
+
+              <GuidanceSection>
+                <GuidanceTitle>整体指引</GuidanceTitle>
+                <GuidanceText>
+                  根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，
+                  {tarotResult.cards.find(c => c.position === 'past')?.isReversed 
+                    ? tarotResult.cards.find(c => c.position === 'past')?.reversedMeaning 
+                    : tarotResult.cards.find(c => c.position === 'past')?.meaning}的状态影响着您的决策和行动。目前，您正处于
+                  {tarotResult.cards.find(c => c.position === 'present')?.isReversed 
+                    ? tarotResult.cards.find(c => c.position === 'present')?.reversedMeaning 
+                    : tarotResult.cards.find(c => c.position === 'present')?.meaning}的阶段。展望未来，
+                  {tarotResult.cards.find(c => c.position === 'future')?.isReversed 
+                    ? tarotResult.cards.find(c => c.position === 'future')?.reversedMeaning 
+                    : tarotResult.cards.find(c => c.position === 'future')?.meaning}的征兆预示着即将到来的变化和机遇。
+                  保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
+                </GuidanceText>
+              </GuidanceSection>
+            </>
+          )}
+
+          {dailyFortune && (
+            <>
+              <DailyFortuneHeader>
+                <Date>{dailyFortune.date}</Date>
+                <LuckMeter>
+                  <LuckTitle>今日运势指数</LuckTitle>
+                  <LuckStars>{'★'.repeat(dailyFortune.luck)}{'☆'.repeat(5 - dailyFortune.luck)}</LuckStars>
+                </LuckMeter>
+              </DailyFortuneHeader>
+
+              <Content>{dailyFortune.content}</Content>
+
+              <TagsContainer>
+                {dailyFortune.tags.map((tag, index) => (
+                  <Tag 
+                    key={index}
+                    color="gold"
+                    style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}
+                  >
+                    {tag}
+                  </Tag>
+                ))}
+              </TagsContainer>
+
+              {Object.entries(dailyFortune.categories).map(([key, category]) => (
+                <CategoryCard key={key}>
+                  <CategoryHeader>
+                    <CategoryName>{category.name}</CategoryName>
+                    <CategoryLevel level={category.level}>{category.level}</CategoryLevel>
+                  </CategoryHeader>
+                  <CategoryDescription>{category.description}</CategoryDescription>
+                  <CategoryAdvice>{category.advice}</CategoryAdvice>
+                </CategoryCard>
+              ))}
+
+              <RecommendSection>
+                <RecommendTitle>今日推荐</RecommendTitle>
+                {dailyFortune.dailyRecommend.anime && (
+                  <RecommendCard>
+                    <RecommendHeader>动画推荐</RecommendHeader>
+                    <RecommendContent>
+                      <div>{dailyFortune.dailyRecommend.anime.title}</div>
+                      <div>{dailyFortune.dailyRecommend.anime.episode}</div>
+                      <div style={{ color: '#a0a0a0', marginTop: '0.5rem' }}>
+                        {dailyFortune.dailyRecommend.anime.reason}
+                      </div>
+                    </RecommendContent>
+                  </RecommendCard>
+                )}
+                
+                {dailyFortune.dailyRecommend.game && (
+                  <RecommendCard>
+                    <RecommendHeader>游戏推荐</RecommendHeader>
+                    <RecommendContent>
+                      <div>{dailyFortune.dailyRecommend.game.title}</div>
+                      <div>{dailyFortune.dailyRecommend.game.type}</div>
+                      <div style={{ color: '#a0a0a0', marginTop: '0.5rem' }}>
+                        {dailyFortune.dailyRecommend.game.reason}
+                      </div>
+                    </RecommendContent>
+                  </RecommendCard>
+                )}
+                
+                {dailyFortune.dailyRecommend.music && (
+                  <RecommendCard>
+                    <RecommendHeader>音乐推荐</RecommendHeader>
+                    <RecommendContent>
+                      <div>{dailyFortune.dailyRecommend.music.title}</div>
+                      <div>{dailyFortune.dailyRecommend.music.artist}</div>
+                    </RecommendContent>
+                  </RecommendCard>
+                )}
+              </RecommendSection>
+
+              <EventsSection>
+                <EventsTitle>今日动态</EventsTitle>
+                
+                {dailyFortune.dailyEvents.animeUpdates.length > 0 && (
+                  <EventList>
+                    <RecommendHeader>今日更新</RecommendHeader>
+                    {dailyFortune.dailyEvents.animeUpdates.map((item, index) => (
+                      <EventItem key={index}>
+                        <EventTitle>{item.title}</EventTitle>
+                        <EventDescription>第{item.episode}话 - {item.time}</EventDescription>
+                      </EventItem>
+                    ))}
+                  </EventList>
+                )}
+                
+                {dailyFortune.dailyEvents.gameEvents.length > 0 && (
+                  <EventList>
+                    <RecommendHeader>游戏活动</RecommendHeader>
+                    {dailyFortune.dailyEvents.gameEvents.map((item, index) => (
+                      <EventItem key={index}>
+                        <EventTitle>{item.game}</EventTitle>
+                        <EventDescription>{item.event} (截止: {item.endTime})</EventDescription>
+                      </EventItem>
+                    ))}
+                  </EventList>
+                )}
+                
+                {dailyFortune.dailyEvents.birthdays.length > 0 && (
+                  <EventList>
+                    <RecommendHeader>角色生日</RecommendHeader>
+                    {dailyFortune.dailyEvents.birthdays.map((item, index) => (
+                      <EventItem key={index}>
+                        <EventTitle>{item.character}</EventTitle>
+                        <EventDescription>来自: {item.from}</EventDescription>
+                      </EventItem>
+                    ))}
+                  </EventList>
+                )}
+              </EventsSection>
+            </>
+          )}
 
           <Footer>
             <QRCodeContainer>
