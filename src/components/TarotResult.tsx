@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Button } from 'antd';
-import { ArrowLeftOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { Button, message } from 'antd';
+import { ArrowLeftOutlined, ShareAltOutlined, CopyOutlined } from '@ant-design/icons';
 import { TarotCardResult } from '../types/tarot';
 
 const Container = styled.div`
@@ -122,6 +122,7 @@ const Interpretation = styled.p`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
   margin-top: 2rem;
 `;
 
@@ -195,6 +196,41 @@ const TarotResult: React.FC<TarotResultProps> = ({ cards, onBack, onShare }) => 
 
   const interpretations = generateDetailedInterpretation();
 
+  const copyInterpretation = () => {
+    const pastCard = cards.find(card => card.position === '过去');
+    const presentCard = cards.find(card => card.position === '现在');
+    const futureCard = cards.find(card => card.position === '未来');
+
+    if (!pastCard || !presentCard || !futureCard) {
+      message.error('无法复制解读文本，卡片数据不完整');
+      return;
+    }
+
+    const textToCopy = `
+二次元占卜屋·JOJO塔罗牌占卜结果
+
+过去：${pastCard.name}${pastCard.isReversed ? '（逆位）' : ''}
+${pastCard.isReversed ? pastCard.reversedMeaning : pastCard.meaning}
+
+现在：${presentCard.name}${presentCard.isReversed ? '（逆位）' : ''}
+${presentCard.isReversed ? presentCard.reversedMeaning : presentCard.meaning}
+
+未来：${futureCard.name}${futureCard.isReversed ? '（逆位）' : ''}
+${futureCard.isReversed ? futureCard.reversedMeaning : futureCard.meaning}
+
+塔罗指引：
+${generateSummary()}
+    `;
+
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        message.success('解读文本已复制到剪贴板');
+      })
+      .catch(() => {
+        message.error('复制失败，请手动复制');
+      });
+  };
+
   return (
     <Container>
       <Title>塔罗牌解读</Title>
@@ -247,8 +283,15 @@ const TarotResult: React.FC<TarotResultProps> = ({ cards, onBack, onShare }) => 
           返回首页
         </StyledButton>
         <StyledButton 
+          icon={<CopyOutlined />}
+          onClick={copyInterpretation}
+        >
+          复制解读
+        </StyledButton>
+        <StyledButton 
           icon={<ShareAltOutlined />}
           onClick={onShare}
+          type="primary"
         >
           分享结果
         </StyledButton>
