@@ -7,21 +7,21 @@ const LOCAL_ARTWORKS: PixivArtwork[] = [
     title: "星空下的少女",
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/images/artworks/121423493.jpg"
+    imageUrl: "/Fortune-telling-website/images/artworks/121423493.jpg"
   },
   {
     id: "local-2",
     title: "樱花季节",
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/images/artworks/121839312.jpg"
+    imageUrl: "/Fortune-telling-website/images/artworks/121839312.jpg"
   },
   {
     id: "local-3",
     title: "魔法少女",
     artistId: "local-artist",
     artistName: "二次元占卜屋",
-    imageUrl: "/images/artworks/122107970.jpg"
+    imageUrl: "/Fortune-telling-website/images/artworks/122107970.jpg"
   }
 ];
 

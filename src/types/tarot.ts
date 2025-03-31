@@ -1,6 +1,8 @@
 export interface TarotCard {
   id: string;
   name: string;
+  nameEn: string;
+  description: string;
   image: string;
   meaning: string;
   interpretation: string;

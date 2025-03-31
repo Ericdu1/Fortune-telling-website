@@ -97,8 +97,8 @@ const CardFace = styled(motion.div)<{ isBack?: boolean; isReversed?: boolean }>`
   height: 100%;
   backface-visibility: hidden;
   border-radius: 15px;
-  background: ${props => props.isBack 
-    ? 'url(/images/tarot/Tarot_Card_Back.png) center/cover no-repeat' 
+  background: ${props => props.isBack
+    ? 'url(/Fortune-telling-website/images/tarot/Tarot_Card_Back.png) center/cover no-repeat'
     : 'transparent'};
   transform: ${props => props.isBack ? 'rotateY(0deg)' : 'rotateY(180deg)'};
   transform: ${props => props.isReversed ? 'rotateY(180deg) rotate(180deg)' : props.isBack ? 'rotateY(0deg)' : 'rotateY(180deg)'};
