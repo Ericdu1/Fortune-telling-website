@@ -451,7 +451,6 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <CardImage 
                 src={card.image} 
                 alt={card.name}
-                isReversed={card.isReversed}
                 style={{ transform: card.isReversed ? 'rotate(180deg)' : 'none' }}
               />
               <CardName>{card.name}</CardName>
