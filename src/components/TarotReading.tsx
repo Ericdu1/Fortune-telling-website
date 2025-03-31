@@ -196,6 +196,23 @@ const StyledButton = styled(Button)`
   }
 `;
 
+// 添加位置标签样式
+const PositionLabel = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffd700;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  z-index: 10;
+  pointer-events: none;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+`;
+
 const positions = ['过去', '现在', '未来'];
 
 interface TarotReadingProps {
@@ -210,7 +227,13 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
   const [isCardRevealed, setIsCardRevealed] = useState<boolean[]>([]);
 
   const handleCardClick = (cardId: string) => {
-    if (!isRevealing && selectedCards.length < 3 && !selectedCards.includes(cardId)) {
+    if (isRevealing) return;
+    
+    if (selectedCards.includes(cardId)) {
+      // 如果卡片已选中，则取消选择
+      setSelectedCards(prev => prev.filter(id => id !== cardId));
+    } else if (selectedCards.length < 3) {
+      // 如果卡片未选中且选中的卡片少于3张，则选择卡片
       setSelectedCards(prev => [...prev, cardId]);
     }
   };
@@ -252,12 +275,14 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
       <Description>
         请选择三张塔罗牌。每张牌将分别代表你的过去、现在和未来。
         选择完成后，点击"揭示结果"按钮查看解读。
+        点击已选中的卡片可以取消选择。
       </Description>
       
       <CardsContainer className="cards-container">
         {displayCards.map((card, index) => {
           const isSelected = selectedCards.includes(card.id);
           const isRevealed = revealedCards.includes(card.id);
+          const positionIndex = selectedCards.indexOf(card.id);
           
           return (
             <CardWrapper key={card.id}>
@@ -265,7 +290,7 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                 isSelected={isSelected}
                 isRevealed={isRevealed}
                 isReversed={card.isReversed}
-                onClick={() => !isRevealing && selectedCards.length < 3 && !selectedCards.includes(card.id) ? handleCardClick(card.id) : undefined}
+                onClick={() => handleCardClick(card.id)}
                 variants={cardVariants}
                 initial="initial"
                 animate={
@@ -278,6 +303,11 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                 whileHover={!isRevealing && !isRevealed ? "hover" : undefined}
                 whileTap={!isRevealing && !isRevealed ? "tap" : undefined}
               >
+                {isSelected && !isRevealed && (
+                  <PositionLabel>
+                    {positions[positionIndex]}
+                  </PositionLabel>
+                )}
                 <div style={{
                   position: 'absolute',
                   width: '100%',
@@ -325,15 +355,6 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                   </div>
                 </div>
               </Card>
-              <div style={{
-                marginTop: '10px',
-                fontWeight: 500,
-                color: 'white',
-                textAlign: 'center',
-                display: isSelected ? 'block' : 'none'
-              }}>
-                {isSelected ? `${positions[selectedCards.indexOf(card.id)]}` : ''}
-              </div>
               {isCardRevealed[index] && (
                 <div style={{
                   marginTop: '10px',
