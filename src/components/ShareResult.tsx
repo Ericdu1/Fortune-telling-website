@@ -475,16 +475,27 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <InterpretationSection>
                 <InterpretationTitle>塔罗解读</InterpretationTitle>
                 <InterpretationText>
-                  {tarotResult.cards.map((card, index) => (
-                    <p key={index}>
-                      <strong>
-                        {card.position === 'past' ? '过去' :
-                         card.position === 'present' ? '现在' :
-                         card.position === 'future' ? '未来' : ''}：
-                      </strong>
-                      {card.isReversed ? card.reversedMeaning : card.meaning}
-                    </p>
-                  ))}
+                  {(() => {
+                    console.log('Cards for interpretation:', tarotResult.cards);
+                    return tarotResult.cards.map((card, index) => {
+                      console.log('Card for interpretation:', card);
+                      console.log('Card meaning:', card.isReversed ? card.reversedMeaning : card.meaning);
+                      return (
+                        <p key={index} style={{ color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '5px', marginBottom: '10px', border: '1px solid #ffd700' }}>
+                          <strong style={{ color: '#ffd700', marginRight: '10px', fontSize: '16px' }}>
+                            {card.position === 'past' ? '过去' :
+                             card.position === 'present' ? '现在' :
+                             card.position === 'future' ? '未来' : ''}：
+                          </strong>
+                          <span style={{ color: '#e0e0e0', display: 'inline-block' }}>
+                            {card.isReversed 
+                              ? (card.reversedMeaning || '无逆位解读') 
+                              : (card.meaning || '无正位解读')}
+                          </span>
+                        </p>
+                      );
+                    });
+                  })()}
                 </InterpretationText>
               </InterpretationSection>
 
