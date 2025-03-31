@@ -123,11 +123,22 @@ const App: React.FC = () => {
   const [displayCards, setDisplayCards] = useState(getRandomCards());
 
   const handleCardSelect = (cards: TarotCardResult[]) => {
+    console.log('选择的原始卡片:', cards);
+    
     // 为每张卡片设置正确的位置
-    const cardsWithPositions = cards.map((card, index) => ({
-      ...card,
-      position: positions[index]
-    }));
+    const cardsWithPositions = cards.map((card, index) => {
+      console.log(`设置卡片 ${card.name} 的位置为 ${positions[index]}`);
+      
+      // 确保每张卡片都有完整的解读信息
+      return {
+        ...card,
+        position: positions[index],
+        meaning: card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`,
+        reversedMeaning: card.reversedMeaning || `${card.name}牌逆位表示你可能面临一些挑战，需要重新审视自己的处境。`
+      };
+    });
+    
+    console.log('处理后的卡片:', cardsWithPositions);
 
     setState(prev => ({
       ...prev,

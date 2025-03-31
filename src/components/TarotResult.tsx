@@ -248,7 +248,9 @@ ${generateSummary()}
                 {card.name} ({card.isReversed ? '逆位' : '正位'})
               </CardName>
               <CardDescription>
-                {card.isReversed ? card.reversedMeaning : card.meaning}
+                {card.isReversed 
+                  ? (card.reversedMeaning || `${card.name}逆位表示你可能面临一些挑战，需要重新审视自己的处境。`) 
+                  : (card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`)}
               </CardDescription>
             </CardInfo>
           </CardSection>
@@ -258,19 +260,19 @@ ${generateSummary()}
       <InterpretationSection>
         <DetailSection>
           <SectionTitle>事业发展</SectionTitle>
-          <Interpretation>{interpretations.career}</Interpretation>
+          <Interpretation>{interpretations.career || '根据塔罗牌的指引，你的事业正在经历一个转变期。保持开放的心态，寻找新的机会和可能性。'}</Interpretation>
 
           <SectionTitle>感情状况</SectionTitle>
-          <Interpretation>{interpretations.love}</Interpretation>
+          <Interpretation>{interpretations.love || '在感情方面，塔罗牌显示你需要更多的自我认知和沟通。无论是否有伴侣，关键是保持真实和坦诚。'}</Interpretation>
 
           <SectionTitle>心理指引</SectionTitle>
-          <Interpretation>{interpretations.mental}</Interpretation>
+          <Interpretation>{interpretations.mental || '在心理层面，塔罗牌建议你寻找内心的平静和平衡。通过冥想、反思或艺术创作来探索你的情感世界。'}</Interpretation>
         </DetailSection>
 
         <SummarySection>
           <SectionTitle>塔罗指引</SectionTitle>
           <Interpretation>
-            {generateSummary()}
+            {generateSummary() || '塔罗牌的整体指引是关注当下，接受变化，并相信自己内心的指引。每张牌都代表你生命旅程中的一个阶段或面向，通过理解它们，你可以更好地掌握自己的命运。'}
           </Interpretation>
         </SummarySection>
       </InterpretationSection>

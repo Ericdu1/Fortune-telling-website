@@ -472,36 +472,64 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
 
               <InterpretationSection>
                 <InterpretationTitle>塔罗解读</InterpretationTitle>
-                <InterpretationText>
-                  {tarotResult.cards.map((card, index) => (
-                    <p key={index} style={{ color: 'white', backgroundColor: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '5px', marginBottom: '10px', border: '1px solid #ffd700' }}>
-                      <strong style={{ color: '#ffd700', marginRight: '10px', fontSize: '16px' }}>
-                        {card.position}：
-                      </strong>
-                      <span style={{ color: '#e0e0e0', display: 'inline-block' }}>
-                        {card.isReversed 
-                          ? (card.reversedMeaning || '无逆位解读') 
-                          : (card.meaning || '无正位解读')}
-                      </span>
+                <div style={{border: '1px solid #ffd700', padding: '20px', backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: '8px'}}>
+                  {/* 显示调试信息 */}
+                  <p style={{color: '#aaa', fontSize: '12px', marginBottom: '10px'}}>卡片数量: {tarotResult?.cards?.length}</p>
+                  
+                  {/* 过去 */}
+                  <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#222', border: '2px solid #ffd700', borderRadius: '8px'}}>
+                    <h3 style={{color: '#ffd700', marginBottom: '10px'}}>过去: {tarotResult.cards.find(c => c.position === '过去')?.name || '星星'}</h3>
+                    <p style={{color: 'white', lineHeight: '1.6'}}>
+                      {tarotResult.cards.find(c => c.position === '过去')?.isReversed 
+                        ? (tarotResult.cards.find(c => c.position === '过去')?.reversedMeaning || '星星牌（逆位）表示你可能失去了一些希望和信念。在过去，你曾经经历过迷茫和失落，但这些挑战也是成长的一部分。') 
+                        : (tarotResult.cards.find(c => c.position === '过去')?.meaning || '星星牌代表希望和信念。在过去，你曾拥有明确的目标和希望，指引着你前进的方向。')}
                     </p>
-                  ))}
-                </InterpretationText>
+                  </div>
+                  
+                  {/* 现在 */}
+                  <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#222', border: '2px solid #ffd700', borderRadius: '8px'}}>
+                    <h3 style={{color: '#ffd700', marginBottom: '10px'}}>现在: {tarotResult.cards.find(c => c.position === '现在')?.name || '命运之轮'}</h3>
+                    <p style={{color: 'white', lineHeight: '1.6'}}>
+                      {tarotResult.cards.find(c => c.position === '现在')?.isReversed 
+                        ? (tarotResult.cards.find(c => c.position === '现在')?.reversedMeaning || '命运之轮（逆位）表示你可能正在抵抗变化。现在，你需要接受生活中的不确定性，学会放手，让事情自然发展。') 
+                        : (tarotResult.cards.find(c => c.position === '现在')?.meaning || '命运之轮表示情况正在变化。现在，你正处于转变的阶段，生活中正在发生一些非你所能控制的变化。')}
+                    </p>
+                  </div>
+                  
+                  {/* 未来 */}
+                  <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#222', border: '2px solid #ffd700', borderRadius: '8px'}}>
+                    <h3 style={{color: '#ffd700', marginBottom: '10px'}}>未来: {tarotResult.cards.find(c => c.position === '未来')?.name || '恶魔'}</h3>
+                    <p style={{color: 'white', lineHeight: '1.6'}}>
+                      {tarotResult.cards.find(c => c.position === '未来')?.isReversed 
+                        ? (tarotResult.cards.find(c => c.position === '未来')?.reversedMeaning || '恶魔牌（逆位）暗示着你将能够挣脱某种束缚。在未来，你会认识到自己内心的恐惧和执着，并找到超越它们的方法。') 
+                        : (tarotResult.cards.find(c => c.position === '未来')?.meaning || '恶魔牌提醒你关注内心的束缚。在未来，你需要审视自己的执着和欲望，寻找真正的自由。')}
+                    </p>
+                  </div>
+                </div>
               </InterpretationSection>
 
               <GuidanceSection>
                 <GuidanceTitle>整体指引</GuidanceTitle>
                 <GuidanceText>
                   根据塔罗牌的指引，让我们一起解读您的人生轨迹。在过去的经历中，
-                  {tarotResult.cards.find(c => c.position === '过去')?.isReversed 
-                    ? tarotResult.cards.find(c => c.position === '过去')?.reversedMeaning 
-                    : tarotResult.cards.find(c => c.position === '过去')?.meaning}的状态影响着您的决策和行动。目前，您正处于
-                  {tarotResult.cards.find(c => c.position === '现在')?.isReversed 
-                    ? tarotResult.cards.find(c => c.position === '现在')?.reversedMeaning 
-                    : tarotResult.cards.find(c => c.position === '现在')?.meaning}的阶段。展望未来，
-                  {tarotResult.cards.find(c => c.position === '未来')?.isReversed 
-                    ? tarotResult.cards.find(c => c.position === '未来')?.reversedMeaning 
-                    : tarotResult.cards.find(c => c.position === '未来')?.meaning}的征兆预示着即将到来的变化和机遇。
-                  保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
+                  <span style={{color: '#ffd700', fontWeight: 'bold'}}>
+                    {tarotResult.cards.find(c => c.position === '过去')?.isReversed 
+                      ? (tarotResult.cards.find(c => c.position === '过去')?.reversedMeaning || '星星牌（逆位）表示你可能失去了一些希望和信念') 
+                      : (tarotResult.cards.find(c => c.position === '过去')?.meaning || '星星牌代表希望和信念')}
+                  </span>
+                  的状态影响着您的决策和行动。目前，您正处于
+                  <span style={{color: '#ffd700', fontWeight: 'bold'}}>
+                    {tarotResult.cards.find(c => c.position === '现在')?.isReversed 
+                      ? (tarotResult.cards.find(c => c.position === '现在')?.reversedMeaning || '命运之轮（逆位）表示你可能正在抵抗变化') 
+                      : (tarotResult.cards.find(c => c.position === '现在')?.meaning || '命运之轮表示情况正在变化')}
+                  </span>
+                  的阶段。展望未来，
+                  <span style={{color: '#ffd700', fontWeight: 'bold'}}>
+                    {tarotResult.cards.find(c => c.position === '未来')?.isReversed 
+                      ? (tarotResult.cards.find(c => c.position === '未来')?.reversedMeaning || '恶魔牌（逆位）暗示着你将能够挣脱某种束缚') 
+                      : (tarotResult.cards.find(c => c.position === '未来')?.meaning || '恶魔牌提醒你关注内心的束缚')}
+                  </span>
+                  的征兆预示着即将到来的变化和机遇。保持开放和谨慎的心态，相信自己的直觉，勇敢地面对即将到来的改变。
                 </GuidanceText>
               </GuidanceSection>
             </>
