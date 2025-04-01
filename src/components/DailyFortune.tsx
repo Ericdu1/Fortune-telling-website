@@ -1,12 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Button, Tag, Card, List, Typography } from 'antd';
-import { ArrowLeftOutlined, ShareAltOutlined, CalendarOutlined, StarOutlined, NotificationOutlined } from '@ant-design/icons';
+import { 
+  ArrowLeftOutlined, 
+  ShareAltOutlined, 
+  CalendarOutlined, 
+  StarOutlined, 
+  NotificationOutlined,
+  GamepadOutlined,
+  HeartOutlined,
+  FireOutlined
+} from '@ant-design/icons';
 import { formatDate } from '../utils/date';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
 import AnimeRecommendation from './AnimeRecommendation';
 import DailyWallpaperComponent from './DailyWallpaper';
+import InteractiveFortuneCard from './InteractiveFortuneCard';
+import FortuneCharacter from './FortuneCharacter';
+import StreakCounter from './StreakCounter';
+import FortuneCardCollection from './FortuneCardCollection';
+import FortuneGame from './FortuneGame';
 
 const { Title: AntTitle, Text } = Typography;
 
@@ -226,6 +240,34 @@ const LevelTag = styled(Tag)<{ level: 'SSR' | 'SR' | 'R' | 'N' }>`
   margin-left: 8px;
 `;
 
+const ActionsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+`;
+
+const ActionButton = styled(Button)`
+  background: linear-gradient(45deg, #6941C6, #3730A3);
+  border: none;
+  color: white;
+  height: 40px;
+  padding: 0 15px;
+  
+  &:hover {
+    opacity: 0.9;
+    color: white;
+  }
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+`;
+
 interface AnimeUpdate {
   title: string;
   episode: number;
@@ -247,6 +289,58 @@ interface DailyFortuneProps {
   onBack: () => void;
   onShare: (result: DailyFortuneType) => void;
 }
+
+const characters = [
+  {
+    id: 'energetic',
+    name: '元气少女',
+    avatar: '/images/characters/energetic.jpg',
+    personality: 'energetic',
+    style: {
+      primaryColor: '#FF6B6B',
+      secondaryColor: '#FFFFFF',
+      accent: '#FFD93D'
+    }
+  },
+  {
+    id: 'mysterious',
+    name: '神秘法师',
+    avatar: '/images/characters/mysterious.jpg',
+    personality: 'mysterious',
+    style: {
+      primaryColor: '#6A67CE',
+      secondaryColor: '#FFFFFF',
+      accent: '#9681EB'
+    }
+  },
+  {
+    id: 'shy',
+    name: '害羞书生',
+    avatar: '/images/characters/shy.jpg',
+    personality: 'shy',
+    style: {
+      primaryColor: '#98DDCA',
+      secondaryColor: '#FFFFFF',
+      accent: '#D5ECC2'
+    }
+  },
+  {
+    id: 'arrogant',
+    name: '高傲贵族',
+    avatar: '/images/characters/arrogant.jpg',
+    personality: 'arrogant',
+    style: {
+      primaryColor: '#884A39',
+      secondaryColor: '#FFFFFF',
+      accent: '#C38154'
+    }
+  }
+];
+
+const getRandomCharacter = () => {
+  const randomIndex = Math.floor(Math.random() * characters.length);
+  return characters[randomIndex];
+};
 
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [fortune, setFortune] = useState<DailyFortuneType>({
@@ -281,12 +375,21 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [showCollection, setShowCollection] = useState(false);
+  const [showGame, setShowGame] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState(getRandomCharacter());
+  const [flippedCards, setFlippedCards] = useState<{ [key: string]: boolean }>({});
+  const [streakDays, setStreakDays] = useState(0);
+  const [lastCheckedDate, setLastCheckedDate] = useState('');
+  const [coinsBalance, setCoinsBalance] = useState(0);
 
   useEffect(() => {
     const fetchFortune = async () => {
       try {
         const dailyFortune = await getDailyFortune();
         setFortune(dailyFortune);
+        
+        saveToHistory(dailyFortune);
       } catch (error) {
         console.error('获取运势失败：', error);
       } finally {
@@ -294,8 +397,113 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       }
     };
 
+    loadUserData();
+    
     fetchFortune();
   }, []);
+
+  const saveToHistory = (fortune: DailyFortuneType) => {
+    try {
+      const historyString = localStorage.getItem('fortune-history');
+      let history: DailyFortuneType[] = [];
+      
+      if (historyString) {
+        history = JSON.parse(historyString);
+      }
+      
+      const existingIndex = history.findIndex(item => item.date === fortune.date);
+      
+      if (existingIndex === -1) {
+        history.push(fortune);
+        if (history.length > 30) {
+          history = history.slice(history.length - 30);
+        }
+        localStorage.setItem('fortune-history', JSON.stringify(history));
+      }
+    } catch (error) {
+      console.error('保存历史记录失败：', error);
+    }
+  };
+
+  const loadUserData = () => {
+    try {
+      const lastChecked = localStorage.getItem('last-checkin-date') || '';
+      setLastCheckedDate(lastChecked);
+      
+      const streak = parseInt(localStorage.getItem('checkin-streak') || '0');
+      setStreakDays(streak);
+      
+      const coins = parseInt(localStorage.getItem('fortune-coins') || '0');
+      setCoinsBalance(coins);
+    } catch (error) {
+      console.error('加载用户数据失败：', error);
+    }
+  };
+
+  const handleCheckin = () => {
+    const today = formatDate();
+    
+    localStorage.setItem('last-checkin-date', today);
+    
+    if (isConsecutiveDay(lastCheckedDate, today)) {
+      const newStreak = streakDays + 1;
+      setStreakDays(newStreak);
+      localStorage.setItem('checkin-streak', newStreak.toString());
+    } else {
+      setStreakDays(1);
+      localStorage.setItem('checkin-streak', '1');
+    }
+    
+    setLastCheckedDate(today);
+    
+    const newBalance = coinsBalance + 5;
+    setCoinsBalance(newBalance);
+    localStorage.setItem('fortune-coins', newBalance.toString());
+  };
+
+  const isConsecutiveDay = (lastDate: string, currentDate: string) => {
+    if (!lastDate) return false;
+    
+    const lastDateObj = new Date(lastDate);
+    const currentDateObj = new Date(currentDate);
+    
+    lastDateObj.setHours(0, 0, 0, 0);
+    currentDateObj.setHours(0, 0, 0, 0);
+    
+    const diffTime = currentDateObj.getTime() - lastDateObj.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    
+    return diffDays === 1;
+  };
+
+  const handleCardFlip = (key: string) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const handleFavorite = () => {
+    try {
+      const favoritesString = localStorage.getItem('fortune-favorites');
+      let favorites: DailyFortuneType[] = [];
+      
+      if (favoritesString) {
+        favorites = JSON.parse(favoritesString);
+      }
+      
+      const existingIndex = favorites.findIndex(item => item.date === fortune.date);
+      
+      if (existingIndex === -1) {
+        favorites.push(fortune);
+        localStorage.setItem('fortune-favorites', JSON.stringify(favorites));
+      }
+      
+      setShowCollection(true);
+    } catch (error) {
+      console.error('收藏运势失败：', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -310,26 +518,117 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
   return (
     <Container>
+      <StreakCounter 
+        streakDays={streakDays} 
+        lastCheckedDate={lastCheckedDate}
+        onCheckin={handleCheckin}
+      />
+      
       <Title>每日运势</Title>
       
-      <FortuneCard>
-        <Date>
-          <CalendarOutlined /> {formatDate()}
-        </Date>
+      <CardContainer>
+        <InteractiveFortuneCard
+          isFlipped={flippedCards['fortune'] || false}
+          onFlip={() => handleCardFlip('fortune')}
+          frontContent={
+            <div>
+              <h3 style={{ marginBottom: '10px' }}>今日运势</h3>
+              <div style={{ fontSize: '18px', color: '#FFD700' }}>
+                {formatDate()}
+              </div>
+              <div style={{ marginTop: '30px' }}>
+                点击翻开查看
+              </div>
+            </div>
+          }
+          backContent={
+            <div>
+              <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>今日运势指数</h3>
+              <div style={{ marginBottom: '10px', fontSize: '24px' }}>
+                {'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}
+              </div>
+              <p style={{ marginBottom: '15px', whiteSpace: 'pre-wrap' }}>{fortune.content}</p>
+              <div>
+                {fortune.tags.map((tag, idx) => (
+                  <span key={idx} style={{ 
+                    background: 'rgba(255,215,0,0.2)', 
+                    padding: '2px 8px', 
+                    borderRadius: '12px',
+                    margin: '0 4px 4px 0',
+                    display: 'inline-block',
+                    fontSize: '12px'
+                  }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          }
+        />
         
-        <LuckMeter>
-          <LuckTitle>今日运势指数</LuckTitle>
-          <LuckStars>{'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}</LuckStars>
-        </LuckMeter>
-        
-        <Content>{fortune.content}</Content>
-        
-        <TagsContainer>
-          {fortune.tags.map((tag, index) => (
-            <Tag key={index} color="gold">{tag}</Tag>
-          ))}
-        </TagsContainer>
-      </FortuneCard>
+        {Object.entries(fortune.categories).slice(0, 2).map(([key, category]) => (
+          <InteractiveFortuneCard
+            key={key}
+            isFlipped={flippedCards[key] || false}
+            onFlip={() => handleCardFlip(key)}
+            frontContent={
+              <div>
+                <h3 style={{ marginBottom: '10px' }}>{category.name}</h3>
+                <div style={{ 
+                  background: 'rgba(255,215,0,0.2)', 
+                  padding: '3px 10px', 
+                  borderRadius: '12px',
+                  margin: '10px auto',
+                  display: 'inline-block'
+                }}>
+                  {category.level}
+                </div>
+                <div style={{ marginTop: '30px' }}>
+                  点击翻开查看
+                </div>
+              </div>
+            }
+            backContent={
+              <div>
+                <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>{category.name}</h3>
+                <div style={{ 
+                  background: 'rgba(255,215,0,0.2)', 
+                  padding: '3px 10px', 
+                  borderRadius: '12px',
+                  margin: '0 auto 15px',
+                  display: 'inline-block'
+                }}>
+                  {category.level}
+                </div>
+                <p style={{ marginBottom: '15px' }}>{category.description}</p>
+                {category.advice && (
+                  <div>
+                    <h4 style={{ color: '#ffd700', marginBottom: '5px' }}>建议</h4>
+                    <p>{category.advice}</p>
+                  </div>
+                )}
+              </div>
+            }
+          />
+        ))}
+      </CardContainer>
+      
+      <FortuneCharacter 
+        character={selectedCharacter} 
+        fortune={fortune.content} 
+      />
+      
+      <ActionsContainer>
+        <ActionButton icon={<HeartOutlined />} onClick={handleFavorite}>
+          收藏运势
+        </ActionButton>
+        <ActionButton icon={<GamepadOutlined />} onClick={() => setShowGame(true)}>
+          运势游戏
+        </ActionButton>
+        <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
+          分享运势
+        </ActionButton>
+      </ActionsContainer>
       
       <div>
         {Object.entries(fortune.categories).map(([key, category]) => (
@@ -462,19 +761,21 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       </ArtworkSection>
 
       <ButtonContainer>
-        <StyledButton 
-          icon={<ArrowLeftOutlined />}
-          onClick={onBack}
-        >
-          返回首页
-        </StyledButton>
-        <StyledButton 
-          icon={<ShareAltOutlined />}
-          onClick={() => onShare(fortune)}
-        >
-          分享运势
+        <StyledButton onClick={onBack}>
+          <ArrowLeftOutlined /> 返回
         </StyledButton>
       </ButtonContainer>
+
+      <FortuneCardCollection 
+        visible={showCollection}
+        onClose={() => setShowCollection(false)}
+      />
+      
+      <FortuneGame
+        visible={showGame}
+        onClose={() => setShowGame(false)}
+        dailyFortune={fortune}
+      />
     </Container>
   );
 };

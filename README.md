@@ -1,69 +1,63 @@
-# 动漫占卜网站
+# 动漫运势占卜网站
 
-这是一个基于React和Node.js构建的动漫主题占卜网站，用户可以获取每日运势和动漫推荐。
-
-## 特点
-
-- 每日动漫壁纸
-- 多种风格的动漫图片
-- 多API源配置，确保服务稳定性
-- 缓存系统减少API调用
-- 移动设备友好的用户界面
-
-## 环境变量
-
-在Vercel部署时，需要设置以下环境变量：
-
-- `PORT`: 后端服务器端口
-- `NODE_ENV`: 环境设置
-
-## 本地开发
-
-```bash
-# 安装依赖
-npm install
-
-# 运行开发服务器
-npm run dev
-```
-
-## 生产部署
-
-该项目已配置为在Vercel上自动部署。
+一个结合了动漫元素的运势占卜网站，提供每日运势、塔罗牌占卜等功能。
 
 ## 功能特点
 
-- 每日运势：包含多个方面的运势预测
-- 塔罗牌占卜：提供专业的塔罗牌解读
-- 动漫和游戏元素：融入二次元文化的占卜体验
-- 分享功能：支持将占卜结果分享给好友
+- 每日运势预测
+- 塔罗牌占卜
+- 动漫角色运势解读
+- 运势小游戏
+- 金豆奖励系统
+- 运势收藏与历史记录
+- 每日动漫壁纸推荐
 
-## 开发相关
+## 技术栈
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- React
+- TypeScript
+- Ant Design
+- Framer Motion
+- Emotion (Styled Components)
 
-### 可用脚本
+## 本地开发
 
-在项目目录中，你可以运行：
+1. 克隆项目
+```bash
+git clone [项目地址]
+cd ai-fortune-telling
+```
 
-#### `npm start`
+2. 安装依赖
+```bash
+npm install
+```
 
-在开发模式下运行应用。\
-打开 [http://localhost:3000](http://localhost:3000) 在浏览器中查看。
+3. 创建环境变量文件
+```bash
+cp .env.example .env
+```
 
-当你修改代码时，页面会自动重新加载。\
-你还可以在控制台中看到任何 lint 错误。
+4. 启动开发服务器
+```bash
+npm run dev
+```
 
-#### `npm run build`
+## 部署
 
-将应用构建到 `build` 文件夹中用于生产环境。\
-它会在生产模式下正确打包 React 并优化构建以获得最佳性能。
+项目使用Vercel进行部署，每次推送到main分支都会自动部署。
 
-构建后的文件会被压缩，文件名包含哈希值。\
-你的应用已经准备好部署了！
+## 环境变量
 
-## 了解更多
+在Vercel中需要配置以下环境变量：
 
-你可以在 [Create React App 文档](https://facebook.github.io/create-react-app/docs/getting-started) 中了解更多信息。
+- `PORT`: 服务器端口
+- `NODE_ENV`: 环境变量(production/development)
 
-要学习 React，请查看 [React 文档](https://reactjs.org/)。
+## 贡献
+
+欢迎提交Issue和Pull Request！
+
+## 许可证
+
+MIT
