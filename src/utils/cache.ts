@@ -75,7 +75,7 @@ export async function getDailyFortune(): Promise<DailyFortune> {
         game: undefined,
         music: undefined
       },
-      dailyEvents: {
+      events: {
         animeUpdates: [],
         gameEvents: [],
         birthdays: [],

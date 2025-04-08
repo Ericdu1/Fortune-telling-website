@@ -141,19 +141,18 @@ export function generateDailyRecommend(): DailyRecommend {
       title: '葬送的芙莉莲',
       episode: '第23集',
       reason: '精彩的故事和角色成长，契合今日的主题',
-      imageUrl: './images/anime/frieren.jpg'
+      image: './images/anime/frieren.jpg'
     },
     game: {
       title: '最终幻想7：重制版',
       type: 'RPG',
       reason: '庞大的世界观和引人入胜的剧情',
-      imageUrl: './images/games/ff7r.jpg'
+      image: './images/games/ff7r.jpg'
     },
     music: {
       title: 'PHOENIX',
       artist: '陈致逸 / HOYO-MiX',
-      type: 'GAME_BGM',
-      url: 'https://music.163.com/song?id=2222222'
+      link: 'https://music.163.com/song?id=2222222'
     }
   };
 }

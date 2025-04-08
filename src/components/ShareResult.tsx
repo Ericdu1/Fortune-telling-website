@@ -812,10 +812,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <EventsSection>
                 <EventsTitle>今日动态</EventsTitle>
                 
-                {dailyFortune.dailyEvents.animeUpdates.length > 0 && (
+                {dailyFortune.events.animeUpdates.length > 0 && (
                   <EventList>
                     <RecommendHeader>今日更新</RecommendHeader>
-                    {dailyFortune.dailyEvents.animeUpdates.map((item, index) => (
+                    {dailyFortune.events.animeUpdates.map((item, index) => (
                       <EventItem key={index}>
                         <EventTitle>{item.title}</EventTitle>
                         <EventDescription>第{item.episode}话 - {item.time}</EventDescription>
@@ -824,10 +824,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                   </EventList>
                 )}
                 
-                {dailyFortune.dailyEvents.gameEvents.length > 0 && (
+                {dailyFortune.events.gameEvents.length > 0 && (
                   <EventList>
                     <RecommendHeader>游戏活动</RecommendHeader>
-                    {dailyFortune.dailyEvents.gameEvents.map((item, index) => (
+                    {dailyFortune.events.gameEvents.map((item, index) => (
                       <EventItem key={index}>
                         <EventTitle>{item.game}</EventTitle>
                         <EventDescription>{item.event} (截止: {item.endTime})</EventDescription>
@@ -836,10 +836,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                   </EventList>
                 )}
                 
-                {dailyFortune.dailyEvents.birthdays.length > 0 && (
+                {dailyFortune.events.birthdays.length > 0 && (
                   <EventList>
                     <RecommendHeader>角色生日</RecommendHeader>
-                    {dailyFortune.dailyEvents.birthdays.map((item, index) => (
+                    {dailyFortune.events.birthdays.map((item, index) => (
                       <EventItem key={index}>
                         <EventTitle>{item.character}</EventTitle>
                         <EventDescription>来自: {item.from}</EventDescription>

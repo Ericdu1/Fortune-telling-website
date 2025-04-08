@@ -65,7 +65,7 @@ export async function generateDailyFortune(): Promise<DailyFortune> {
     tags: generateFortuneTags(categories),
     categories,
     dailyRecommend: generateDailyRecommend(),
-    dailyEvents: generateDailyEvents(),
+    events: generateDailyEvents(),
     dailyArtwork: await getRandomPopularArtwork()
   };
 } 

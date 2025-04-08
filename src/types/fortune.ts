@@ -81,7 +81,11 @@ export interface Release {
 }
 
 export interface DailyEvents {
-  list: Array<{
+  animeUpdates: AnimeUpdate[];
+  gameEvents: GameEvent[];
+  birthdays: Birthday[];
+  releases: Release[];
+  list?: Array<{
     title: string;
     description: string;
     time?: string;

@@ -360,6 +360,10 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       music: undefined
     },
     events: {
+      animeUpdates: [],
+      gameEvents: [],
+      birthdays: [],
+      releases: [],
       list: []
     },
     dailyArtwork: {
