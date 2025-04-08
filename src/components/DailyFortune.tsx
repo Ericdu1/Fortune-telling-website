@@ -696,7 +696,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             <List
               className="event-list"
               header={<AntTitle level={4} style={{ color: '#ffd700' }}>今日事件</AntTitle>}
-              dataSource={fortune.events.list}
+              dataSource={fortune.events?.list || []}
               renderItem={(item) => (
                 <List.Item>
                   <List.Item.Meta
@@ -713,13 +713,13 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
       <ArtworkSection>
         <ArtworkTitle>今日美图</ArtworkTitle>
-        <ArtworkImage src={fortune.dailyArtwork.imageUrl} alt={fortune.dailyArtwork.title} />
+        <ArtworkImage src={fortune.dailyArtwork?.imageUrl} alt={fortune.dailyArtwork?.title} />
         <ArtworkInfo>
-          {fortune.dailyArtwork.title}
+          {fortune.dailyArtwork?.title}
           <br />
-          画师：{fortune.dailyArtwork.artistName}
+          画师：{fortune.dailyArtwork?.artistName}
           <br />
-          Pixiv ID: {fortune.dailyArtwork.id}
+          Pixiv ID: {fortune.dailyArtwork?.id}
         </ArtworkInfo>
       </ArtworkSection>
 
