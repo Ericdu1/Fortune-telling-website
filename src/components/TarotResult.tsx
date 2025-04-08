@@ -5,63 +5,67 @@ import { ArrowLeftOutlined, ShareAltOutlined, CopyOutlined } from '@ant-design/i
 import { TarotCardResult } from '../types/tarot';
 
 const Container = styled.div`
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem;
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
   @media (max-width: 768px) {
-    padding: 1.5rem 1rem;
+    padding: 1rem 0.8rem;
   }
   
   @media (max-width: 480px) {
-    padding: 1rem 0.5rem;
+    padding: 0.8rem 0.5rem;
   }
 `;
 
 const Title = styled.h2`
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: #ffd700;
-  font-size: 2rem;
+  font-size: 1.8rem;
   
   @media (max-width: 768px) {
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.6rem;
   }
   
   @media (max-width: 480px) {
     margin-bottom: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 `;
 
 const ResultGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-bottom: 3rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
   
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
   }
 `;
 
 const ResultCard = styled.div`
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
+  max-width: 900px;
+  width: 100%;
   
   &:before {
     content: '';
@@ -87,43 +91,47 @@ const ResultCard = styled.div`
 `;
 
 const CardSection = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   display: flex;
-  align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 `;
 
 const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 180px;
   transition: all 0.3s ease;
   
+  @media (max-width: 768px) {
+    max-width: 150px;
+  }
+  
   @media (max-width: 480px) {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 1rem;
+    max-width: 120px;
   }
 `;
 
 const Card = styled.div<{ isReversed?: boolean }>`
-  width: 180px;
-  height: 280px;
-  border-radius: 10px;
+  width: 140px;
+  height: 220px;
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  margin-bottom: 1rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.8rem;
   
   @media (max-width: 768px) {
-    width: 150px;
-    height: 220px;
+    width: 120px;
+    height: 180px;
   }
   
   @media (max-width: 480px) {
-    width: 100px;
-    height: 150px;
-    margin-bottom: 0;
+    width: 90px;
+    height: 140px;
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -145,14 +153,32 @@ const CardInfo = styled.div`
 
 const CardName = styled.h3`
   color: #ffd700;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.2rem;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
 `;
 
 const CardDescription = styled.p`
   color: #e0e0e0;
   margin-bottom: 0.5rem;
-  line-height: 1.6;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  text-align: center;
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
 `;
 
 const InterpretationSection = styled.div`
@@ -335,29 +361,33 @@ ${generateSummary()}
     <Container>
       <Title>塔罗牌解读</Title>
 
+      <ResultGrid>
+        {cards.map((card, index) => (
+          <CardContainer key={index}>
+            <Card isReversed={card.isReversed}>
+              <CardImage 
+                src={card.image} 
+                alt={card.name}
+                isReversed={card.isReversed}
+              />
+            </Card>
+            <CardName>
+              {card.name} ({card.position})
+              <br />
+              {card.isReversed ? '(逆位)' : '(正位)'}
+            </CardName>
+          </CardContainer>
+        ))}
+      </ResultGrid>
+
       {cards.map((card, index) => (
         <ResultCard key={index}>
-          <CardSection>
-            <CardContainer>
-              <Card isReversed={card.isReversed}>
-                <CardImage 
-                  src={card.image} 
-                  alt={card.name}
-                  isReversed={card.isReversed}
-                />
-              </Card>
-              <CardInfo>
-                <CardName>
-                  {card.name} ({card.isReversed ? '逆位' : '正位'})
-                </CardName>
-                <CardDescription>
-                  {card.isReversed 
-                    ? (card.reversedMeaning || `${card.name}逆位表示你可能面临一些挑战，需要重新审视自己的处境。`) 
-                    : (card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`)}
-                </CardDescription>
-              </CardInfo>
-            </CardContainer>
-          </CardSection>
+          <SectionTitle>{card.position}: {card.name} {card.isReversed ? '(逆位)' : '(正位)'}</SectionTitle>
+          <CardDescription>
+            {card.isReversed 
+              ? (card.reversedMeaning || `${card.name}逆位表示你可能面临一些挑战，需要重新审视自己的处境。`) 
+              : (card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`)}
+          </CardDescription>
         </ResultCard>
       ))}
 
