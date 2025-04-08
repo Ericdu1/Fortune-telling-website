@@ -3,7 +3,7 @@ export interface PixivArtwork {
   title: string;
   artistId: string;
   artistName: string;
-  imageUrl: string;
+  image: string;
   tags?: string[];
   series?: string;
   relatedWorks?: string[];
@@ -81,7 +81,7 @@ export interface DailyEvents {
   animeUpdates: AnimeUpdate[];
   gameEvents: GameEvent[];
   birthdays: Birthday[];
-  releases: string[];
+  releases: Release[];
 }
 
 export interface DailyFortune {
@@ -95,7 +95,11 @@ export interface DailyFortune {
     create: Category;
     social: Category;
   };
-  dailyRecommend: DailyRecommend;
+  dailyRecommend: {
+    anime?: AnimeRecommend;
+    game?: GameRecommend;
+    music?: MusicRecommend;
+  };
   dailyEvents: DailyEvents;
   dailyArtwork: Artwork;
 }

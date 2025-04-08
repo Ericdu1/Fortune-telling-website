@@ -370,7 +370,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       title: '加载中...',
       artistId: '',
       artistName: '加载中...',
-      imageUrl: './images/artworks/127455493_p0.png'
+      image: './images/artworks/127455493_p0.png'
     }
   });
 
@@ -654,8 +654,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <RecommendTitle>今日推荐</RecommendTitle>
         {fortune.dailyRecommend?.anime && (
           <RecommendCard title="动画推荐">
-            {fortune.dailyRecommend.anime.imageUrl && (
-              <img src={fortune.dailyRecommend.anime.imageUrl} alt={fortune.dailyRecommend.anime.title} />
+            {fortune.dailyRecommend.anime.image && (
+              <img src={fortune.dailyRecommend.anime.image} alt={fortune.dailyRecommend.anime.title} />
             )}
             <AntTitle level={4}>{fortune.dailyRecommend.anime.title}</AntTitle>
             <Text>{fortune.dailyRecommend.anime.episode}</Text>
@@ -667,8 +667,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         
         {fortune.dailyRecommend?.game && (
           <RecommendCard title="游戏推荐">
-            {fortune.dailyRecommend.game.imageUrl && (
-              <img src={fortune.dailyRecommend.game.imageUrl} alt={fortune.dailyRecommend.game.title} />
+            {fortune.dailyRecommend.game.image && (
+              <img src={fortune.dailyRecommend.game.image} alt={fortune.dailyRecommend.game.title} />
             )}
             <AntTitle level={4}>{fortune.dailyRecommend.game.title}</AntTitle>
             <Text>{fortune.dailyRecommend.game.type}</Text>
@@ -682,8 +682,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           <RecommendCard title="音乐推荐">
             <AntTitle level={4}>{fortune.dailyRecommend.music.title}</AntTitle>
             <Text>{fortune.dailyRecommend.music.artist}</Text>
-            {fortune.dailyRecommend.music.url && (
-              <Button type="link" href={fortune.dailyRecommend.music.url} target="_blank">
+            {fortune.dailyRecommend.music.link && (
+              <Button type="link" href={fortune.dailyRecommend.music.link} target="_blank">
                 在网易云音乐中收听
               </Button>
             )}
@@ -750,7 +750,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
       <ArtworkSection>
         <ArtworkTitle>今日美图</ArtworkTitle>
-        <ArtworkImage src={fortune.dailyArtwork.imageUrl} alt={fortune.dailyArtwork.title} />
+        <ArtworkImage src={fortune.dailyArtwork.image} alt={fortune.dailyArtwork.title} />
         <ArtworkInfo>
           {fortune.dailyArtwork.title}
           <br />
