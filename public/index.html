@@ -77,8 +77,48 @@
       }
     </style>
     <script>
+      // 检测自定义域名相关的资源加载问题
+      window.resourceFallback = function() {
+        // 检查是否在自定义域名下
+        const isCustomDomain = window.location.hostname === 'www.mira-note.com' || 
+                              window.location.hostname === 'mira-note.com';
+        
+        // 保存Vercel默认域名
+        window.vercelDomain = 'fortune-telling-website-one.vercel.app';
+        
+        // 路径修复函数
+        window.fixResourcePath = function(path) {
+          if (isCustomDomain && path && path.startsWith('/')) {
+            // 对于自定义域名，使用相对路径而不是绝对路径
+            return '.' + path;
+          }
+          return path;
+        };
+      };
+      
+      // 初始化资源修复
+      window.resourceFallback();
+      
       window.onerror = function(message, source, lineno, colno, error) {
         console.error('全局错误:', { message, source, lineno, colno, error });
+        
+        // 检查是否是资源加载失败
+        if (source && source.includes('/static/js/main')) {
+          console.log('主JS文件加载失败，尝试从Vercel域名加载');
+          
+          // 尝试从Vercel域名加载脚本
+          const script = document.createElement('script');
+          
+          // 构建Vercel域名下的脚本URL
+          let scriptUrl = source.replace(window.location.origin, 'https://' + window.vercelDomain);
+          script.src = scriptUrl;
+          script.onerror = function() {
+            console.error('备用脚本加载也失败:', scriptUrl);
+          };
+          
+          document.body.appendChild(script);
+          return true; // 防止显示默认错误
+        }
         
         if (document.getElementById('root') && document.getElementById('root').innerHTML === '') {
           var errorContainer = document.createElement('div');
@@ -99,10 +139,15 @@
           var infoText = document.createElement('p');
           infoText.textContent = '请尝试刷新页面或检查控制台获取更多信息。';
           
+          // 添加备用链接
+          var fallbackText = document.createElement('p');
+          fallbackText.innerHTML = '或者您可以 <a href="https://fortune-telling-website-one.vercel.app" style="color:#ffd700;">点击这里</a> 访问备用站点。';
+          
           errorContainer.appendChild(errorTitle);
           errorContainer.appendChild(errorMessage);
           errorContainer.appendChild(debugInfo);
           errorContainer.appendChild(infoText);
+          errorContainer.appendChild(fallbackText);
           
           document.getElementById('root').appendChild(errorContainer);
         }
@@ -114,31 +159,30 @@
         if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
           console.error('资源加载失败:', event.target.src || event.target.href);
           
-          // 如果是主要JS文件加载失败，显示错误
-          if ((event.target.src && event.target.src.includes('/static/js/main')) || 
-              (event.target.href && event.target.href.includes('/static/css/main'))) {
-            var rootElement = document.getElementById('root');
-            if (rootElement && rootElement.innerHTML === '') {
-              var errorContainer = document.createElement('div');
-              errorContainer.className = 'error-container';
-              
-              var errorTitle = document.createElement('div');
-              errorTitle.className = 'error-title';
-              errorTitle.textContent = '资源加载失败';
-              
-              var errorMessage = document.createElement('div');
-              errorMessage.className = 'error-message';
-              errorMessage.textContent = '无法加载必要的应用资源: ' + (event.target.src || event.target.href);
-              
-              var infoText = document.createElement('p');
-              infoText.textContent = '请检查您的网络连接或刷新页面重试。';
-              
-              errorContainer.appendChild(errorTitle);
-              errorContainer.appendChild(errorMessage);
-              errorContainer.appendChild(infoText);
-              
-              rootElement.appendChild(errorContainer);
+          // 尝试修复资源路径
+          if (event.target.src && event.target.src.includes('/static/')) {
+            // 构建备用URL
+            let originalSrc = event.target.src;
+            let fallbackSrc = originalSrc.replace(window.location.origin, 'https://' + window.vercelDomain);
+            
+            console.log('尝试加载备用资源:', fallbackSrc);
+            
+            // 创建新的脚本元素
+            let newElement;
+            if (event.target.tagName === 'SCRIPT') {
+              newElement = document.createElement('script');
+              newElement.src = fallbackSrc;
+              newElement.async = true;
+            } else {
+              newElement = document.createElement('link');
+              newElement.href = fallbackSrc;
+              newElement.rel = 'stylesheet';
             }
+            
+            // 替换或添加到文档
+            document.head.appendChild(newElement);
+            
+            return true;
           }
         }
       }, true);
