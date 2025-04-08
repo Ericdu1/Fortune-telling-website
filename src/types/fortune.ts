@@ -3,7 +3,7 @@ export interface PixivArtwork {
   title: string;
   artistId: string;
   artistName: string;
-  image: string;
+  imageUrl: string;
   tags?: string[];
   series?: string;
   relatedWorks?: string[];
@@ -11,45 +11,48 @@ export interface PixivArtwork {
   date?: string;
 }
 
-export interface Category {
-  name: string;
-  level: 'SSR' | 'SR' | 'R' | 'N';
-  description: string;
-  advice: string;
-}
-
 export interface AnimeRecommend {
   title: string;
   episode: string;
   reason: string;
-  image?: string;
+  imageUrl?: string;
 }
 
 export interface GameRecommend {
   title: string;
   type: string;
   reason: string;
-  image?: string;
+  imageUrl?: string;
 }
 
 export interface MusicRecommend {
   title: string;
   artist: string;
-  link?: string;
+  type: 'ANIME_OP' | 'ANIME_ED' | 'GAME_BGM' | 'VOCALOID';
+  url?: string;
 }
 
 export interface DailyRecommend {
-  anime?: AnimeRecommend;
-  game?: GameRecommend;
-  music?: MusicRecommend;
-}
-
-export interface Artwork {
-  id: string;
-  title: string;
-  artistId: string;
-  artistName: string;
-  image: string;
+  anime?: {
+    title: string;
+    episode: string;
+    reason: string;
+    link?: string;
+    image?: string;
+  };
+  game?: {
+    title: string;
+    type: string;
+    reason: string;
+    link?: string;
+    image?: string;
+  };
+  music?: {
+    title: string;
+    artist: string;
+    link?: string;
+    image?: string;
+  };
 }
 
 export interface AnimeUpdate {
@@ -78,30 +81,35 @@ export interface Release {
 }
 
 export interface DailyEvents {
-  animeUpdates: AnimeUpdate[];
-  gameEvents: GameEvent[];
-  birthdays: Birthday[];
-  releases: Release[];
+  list: Array<{
+    title: string;
+    description: string;
+    time?: string;
+  }>;
+}
+
+export interface FortuneCategory {
+  name: string;
+  level: 'SSR' | 'SR' | 'R' | 'N';
+  description: string;
+  advice?: string;
 }
 
 export interface DailyFortune {
   date: string;
   content: string;
-  luck: number;
+  luck: number; // 1-5
   tags: string[];
   categories: {
-    game: Category;
-    anime: Category;
-    create: Category;
-    social: Category;
+    game: FortuneCategory;
+    anime: FortuneCategory;
+    create: FortuneCategory;
+    social: FortuneCategory;
+    [key: string]: FortuneCategory;
   };
-  dailyRecommend: {
-    anime?: AnimeRecommend;
-    game?: GameRecommend;
-    music?: MusicRecommend;
-  };
-  dailyEvents: DailyEvents;
-  dailyArtwork: Artwork;
+  dailyRecommend: DailyRecommend;
+  events?: DailyEvents;
+  dailyArtwork?: PixivArtwork;
 }
 
 export interface TarotCardResult {
