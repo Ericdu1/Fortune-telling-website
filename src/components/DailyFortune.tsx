@@ -12,7 +12,13 @@ import {
   FireOutlined
 } from '@ant-design/icons';
 import { formatDate } from '../utils/date';
-import { DailyFortune as DailyFortuneType } from '../types/fortune';
+import { 
+  DailyFortune as DailyFortuneType,
+  AnimeUpdate,
+  GameEvent,
+  Birthday,
+  Release
+} from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
 import AnimeRecommendation from './AnimeRecommendation';
 import DailyWallpaperComponent from './DailyWallpaper';
@@ -227,7 +233,11 @@ const EventListWrapper = styled.div`
   }
 `;
 
-const LevelTag = styled(Tag)<{ level: 'SSR' | 'SR' | 'R' | 'N' }>`
+interface LevelTagProps {
+  level: 'SSR' | 'SR' | 'R' | 'N';
+}
+
+const LevelTag = styled(Tag)<LevelTagProps>`
   background: ${props => {
     switch (props.level) {
       case 'SSR': return 'linear-gradient(45deg, #FFD700, #FFA500)';
@@ -267,23 +277,6 @@ const CardContainer = styled.div`
   margin: 30px 0;
   flex-wrap: wrap;
 `;
-
-interface AnimeUpdate {
-  title: string;
-  episode: number;
-  time: string;
-}
-
-interface GameEvent {
-  game: string;
-  event: string;
-  endTime: string;
-}
-
-interface Birthday {
-  character: string;
-  from: string;
-}
 
 interface DailyFortuneProps {
   onBack: () => void;
