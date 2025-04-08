@@ -359,11 +359,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       game: undefined,
       music: undefined
     },
-    dailyEvents: {
-      animeUpdates: [],
-      gameEvents: [],
-      birthdays: [],
-      releases: []
+    events: {
+      list: []
     },
     dailyArtwork: {
       id: '',
@@ -654,8 +651,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <RecommendTitle>今日推荐</RecommendTitle>
         {fortune.dailyRecommend?.anime && (
           <RecommendCard title="动画推荐">
-            {fortune.dailyRecommend.anime.imageUrl && (
-              <img src={fortune.dailyRecommend.anime.imageUrl} alt={fortune.dailyRecommend.anime.title} />
+            {fortune.dailyRecommend.anime.image && (
+              <img src={fortune.dailyRecommend.anime.image} alt={fortune.dailyRecommend.anime.title} />
             )}
             <AntTitle level={4}>{fortune.dailyRecommend.anime.title}</AntTitle>
             <Text>{fortune.dailyRecommend.anime.episode}</Text>
@@ -667,8 +664,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         
         {fortune.dailyRecommend?.game && (
           <RecommendCard title="游戏推荐">
-            {fortune.dailyRecommend.game.imageUrl && (
-              <img src={fortune.dailyRecommend.game.imageUrl} alt={fortune.dailyRecommend.game.title} />
+            {fortune.dailyRecommend.game.image && (
+              <img src={fortune.dailyRecommend.game.image} alt={fortune.dailyRecommend.game.title} />
             )}
             <AntTitle level={4}>{fortune.dailyRecommend.game.title}</AntTitle>
             <Text>{fortune.dailyRecommend.game.type}</Text>
@@ -682,8 +679,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           <RecommendCard title="音乐推荐">
             <AntTitle level={4}>{fortune.dailyRecommend.music.title}</AntTitle>
             <Text>{fortune.dailyRecommend.music.artist}</Text>
-            {fortune.dailyRecommend.music.url && (
-              <Button type="link" href={fortune.dailyRecommend.music.url} target="_blank">
+            {fortune.dailyRecommend.music.link && (
+              <Button type="link" href={fortune.dailyRecommend.music.link} target="_blank">
                 在网易云音乐中收听
               </Button>
             )}
@@ -695,51 +692,17 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <EventsTitle>今日动态</EventsTitle>
         
         <EventListWrapper>
-          {fortune.dailyEvents?.animeUpdates?.length > 0 && (
-            <List<AnimeUpdate>
+          {fortune.events?.list?.length > 0 && (
+            <List
               className="event-list"
-              header={<AntTitle level={4} style={{ color: '#ffd700' }}>今日更新</AntTitle>}
-              dataSource={fortune.dailyEvents.animeUpdates}
-              renderItem={(item: AnimeUpdate) => (
+              header={<AntTitle level={4} style={{ color: '#ffd700' }}>今日事件</AntTitle>}
+              dataSource={fortune.events.list}
+              renderItem={(item) => (
                 <List.Item>
                   <List.Item.Meta
                     avatar={<CalendarOutlined style={{ color: '#ffd700' }} />}
                     title={item.title}
-                    description={`第${item.episode}话 - ${item.time}`}
-                  />
-                </List.Item>
-              )}
-            />
-          )}
-          
-          {fortune.dailyEvents?.gameEvents?.length > 0 && (
-            <List<GameEvent>
-              className="event-list"
-              header={<AntTitle level={4} style={{ color: '#ffd700' }}>游戏活动</AntTitle>}
-              dataSource={fortune.dailyEvents.gameEvents}
-              renderItem={(item: GameEvent) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<NotificationOutlined style={{ color: '#ffd700' }} />}
-                    title={item.game}
-                    description={`${item.event} (截止: ${item.endTime})`}
-                  />
-                </List.Item>
-              )}
-            />
-          )}
-          
-          {fortune.dailyEvents?.birthdays?.length > 0 && (
-            <List<Birthday>
-              className="event-list"
-              header={<AntTitle level={4} style={{ color: '#ffd700' }}>角色生日</AntTitle>}
-              dataSource={fortune.dailyEvents.birthdays}
-              renderItem={(item: Birthday) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<StarOutlined style={{ color: '#ffd700' }} />}
-                    title={item.character}
-                    description={`来自: ${item.from}`}
+                    description={`${item.description}${item.time ? ` - ${item.time}` : ''}`}
                   />
                 </List.Item>
               )}
