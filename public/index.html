@@ -59,9 +59,27 @@
         background: rgba(0, 0, 0, 0.2);
         border-radius: 4px;
       }
+      .debug-info {
+        font-family: monospace;
+        padding: 0.5rem;
+        margin-top: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+      }
+      .loading-message {
+        text-align: center;
+        padding: 2rem;
+        color: #ffd700;
+        font-size: 1.5rem;
+      }
     </style>
     <script>
       window.onerror = function(message, source, lineno, colno, error) {
+        console.error('全局错误:', { message, source, lineno, colno, error });
+        
         if (document.getElementById('root') && document.getElementById('root').innerHTML === '') {
           var errorContainer = document.createElement('div');
           errorContainer.className = 'error-container';
@@ -74,18 +92,74 @@
           errorMessage.className = 'error-message';
           errorMessage.textContent = message;
           
+          var debugInfo = document.createElement('div');
+          debugInfo.className = 'debug-info';
+          debugInfo.textContent = '资源: ' + source + '\n行号: ' + lineno + '\n列号: ' + colno;
+          
           var infoText = document.createElement('p');
           infoText.textContent = '请尝试刷新页面或检查控制台获取更多信息。';
           
           errorContainer.appendChild(errorTitle);
           errorContainer.appendChild(errorMessage);
+          errorContainer.appendChild(debugInfo);
           errorContainer.appendChild(infoText);
           
           document.getElementById('root').appendChild(errorContainer);
         }
-        console.error(message, source, lineno, colno, error);
         return false;
       };
+      
+      // 添加资源加载错误处理
+      window.addEventListener('error', function(event) {
+        if (event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK') {
+          console.error('资源加载失败:', event.target.src || event.target.href);
+          
+          // 如果是主要JS文件加载失败，显示错误
+          if ((event.target.src && event.target.src.includes('/static/js/main')) || 
+              (event.target.href && event.target.href.includes('/static/css/main'))) {
+            var rootElement = document.getElementById('root');
+            if (rootElement && rootElement.innerHTML === '') {
+              var errorContainer = document.createElement('div');
+              errorContainer.className = 'error-container';
+              
+              var errorTitle = document.createElement('div');
+              errorTitle.className = 'error-title';
+              errorTitle.textContent = '资源加载失败';
+              
+              var errorMessage = document.createElement('div');
+              errorMessage.className = 'error-message';
+              errorMessage.textContent = '无法加载必要的应用资源: ' + (event.target.src || event.target.href);
+              
+              var infoText = document.createElement('p');
+              infoText.textContent = '请检查您的网络连接或刷新页面重试。';
+              
+              errorContainer.appendChild(errorTitle);
+              errorContainer.appendChild(errorMessage);
+              errorContainer.appendChild(infoText);
+              
+              rootElement.appendChild(errorContainer);
+            }
+          }
+        }
+      }, true);
+      
+      // 显示加载消息
+      document.addEventListener('DOMContentLoaded', function() {
+        var rootElement = document.getElementById('root');
+        if (rootElement && rootElement.innerHTML === '') {
+          var loadingMessage = document.createElement('div');
+          loadingMessage.className = 'loading-message';
+          loadingMessage.textContent = '二次元占卜屋加载中...';
+          rootElement.appendChild(loadingMessage);
+          
+          // 5秒后如果仍未加载则显示提示
+          setTimeout(function() {
+            if (rootElement.innerHTML.includes('加载中')) {
+              loadingMessage.textContent = '加载时间较长，请耐心等待...';
+            }
+          }, 5000);
+        }
+      });
     </script>
   </head>
   <body>
