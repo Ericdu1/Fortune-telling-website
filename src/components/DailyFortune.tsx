@@ -17,7 +17,12 @@ import {
   AnimeUpdate,
   GameEvent,
   Birthday,
-  Release
+  Release,
+  Category,
+  AnimeRecommend,
+  GameRecommend,
+  MusicRecommend,
+  Artwork
 } from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
 import AnimeRecommendation from './AnimeRecommendation';
@@ -278,9 +283,22 @@ const CardContainer = styled.div`
   flex-wrap: wrap;
 `;
 
+interface Character {
+  id: string;
+  name: string;
+  avatar: string;
+  personality: string;
+  style: {
+    primaryColor: string;
+    secondaryColor: string;
+    accent: string;
+  };
+}
+
 interface DailyFortuneProps {
-  onBack: () => void;
-  onShare: (result: DailyFortuneType) => void;
+  onBack?: () => void;
+  onShare?: () => void;
+  onFavorite?: () => void;
 }
 
 const characters = [
@@ -335,64 +353,52 @@ const getRandomCharacter = () => {
   return characters[randomIndex];
 };
 
-const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
-  const [fortune, setFortune] = useState<DailyFortuneType>({
-    date: formatDate(),
-    content: '正在加载今日运势...',
-    luck: 0,
-    tags: [],
-    categories: {
-      game: { name: '游戏运势', level: 'N', description: '加载中...', advice: '请稍候' },
-      anime: { name: '动画运势', level: 'N', description: '加载中...', advice: '请稍候' },
-      create: { name: '创作运势', level: 'N', description: '加载中...', advice: '请稍候' },
-      social: { name: '社交运势', level: 'N', description: '加载中...', advice: '请稍候' }
-    },
-    dailyRecommend: {
-      anime: undefined,
-      game: undefined,
-      music: undefined
-    },
-    dailyEvents: {
-      animeUpdates: [],
-      gameEvents: [],
-      birthdays: [],
-      releases: []
-    },
-    dailyArtwork: {
-      id: '',
-      title: '加载中...',
-      artistId: '',
-      artistName: '加载中...',
-      image: './images/artworks/127455493_p0.png'
-    }
-  });
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #ffd700;
+  font-size: 1.2rem;
+`;
 
+const ErrorWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #ff6b6b;
+  font-size: 1.2rem;
+`;
+
+const DailyFortune: React.FC<DailyFortuneProps> = ({
+  onBack,
+  onShare,
+  onFavorite
+}) => {
+  const [fortune, setFortune] = useState<DailyFortuneType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showCollection, setShowCollection] = useState(false);
   const [showGame, setShowGame] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState(getRandomCharacter());
+  const [character, setCharacter] = useState<Character | null>(null);
   const [flippedCards, setFlippedCards] = useState<{ [key: string]: boolean }>({});
   const [streakDays, setStreakDays] = useState(0);
   const [lastCheckedDate, setLastCheckedDate] = useState('');
   const [coinsBalance, setCoinsBalance] = useState(0);
 
   useEffect(() => {
-    const fetchFortune = async () => {
+    const loadFortune = async () => {
       try {
-        const dailyFortune = await getDailyFortune();
-        setFortune(dailyFortune);
-        
-        saveToHistory(dailyFortune);
-      } catch (error) {
-        console.error('获取运势失败：', error);
-      } finally {
+        const data = await getDailyFortune();
+        setFortune(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '加载运势失败');
         setLoading(false);
       }
     };
-
-    loadUserData();
-    
-    fetchFortune();
+    loadFortune();
   }, []);
 
   const saveToHistory = (fortune: DailyFortuneType) => {
@@ -485,10 +491,10 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         favorites = JSON.parse(favoritesString);
       }
       
-      const existingIndex = favorites.findIndex(item => item.date === fortune.date);
+      const existingIndex = favorites.findIndex(item => item.date === fortune?.date);
       
       if (existingIndex === -1) {
-        favorites.push(fortune);
+        favorites.push(fortune as DailyFortuneType);
         localStorage.setItem('fortune-favorites', JSON.stringify(favorites));
       }
       
@@ -499,14 +505,11 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   };
 
   if (loading) {
-    return (
-      <Container>
-        <Title>今日运势</Title>
-        <div style={{ textAlign: 'center', color: '#ffd700', marginTop: '2rem' }}>
-          正在为您抽取今日运势...
-        </div>
-      </Container>
-    );
+    return <LoadingWrapper>加载中...</LoadingWrapper>;
+  }
+
+  if (error || !fortune) {
+    return <ErrorWrapper>加载失败: {error}</ErrorWrapper>;
   }
 
   return (
@@ -538,11 +541,11 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             <div>
               <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>今日运势指数</h3>
               <div style={{ marginBottom: '10px', fontSize: '24px' }}>
-                {'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}
+                {'★'.repeat(fortune?.luck || 0)}{'☆'.repeat(5 - (fortune?.luck || 0))}
               </div>
-              <p style={{ marginBottom: '15px', whiteSpace: 'pre-wrap' }}>{fortune.content}</p>
+              <p style={{ marginBottom: '15px', whiteSpace: 'pre-wrap' }}>{fortune?.content || ''}</p>
               <div>
-                {fortune.tags.map((tag, idx) => (
+                {fortune?.tags.map((tag, idx) => (
                   <span key={idx} style={{ 
                     background: 'rgba(255,215,0,0.2)', 
                     padding: '2px 8px', 
@@ -559,7 +562,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           }
         />
         
-        {Object.entries(fortune.categories).slice(0, 2).map(([key, category]) => (
+        {Object.entries(fortune?.categories || {}).slice(0, 2).map(([key, category]) => (
           <InteractiveFortuneCard
             key={key}
             isFlipped={flippedCards[key] || false}
@@ -607,8 +610,18 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       </CardContainer>
       
       <FortuneCharacter 
-        character={selectedCharacter} 
-        fortune={fortune.content} 
+        character={character || {
+          id: 'default',
+          name: '神秘角色',
+          avatar: '/images/characters/default.png',
+          personality: '神秘',
+          style: {
+            primaryColor: '#ffd700',
+            secondaryColor: '#ff6b6b',
+            accent: '#4a90e2'
+          }
+        }}
+        fortune={fortune.content}
       />
       
       <ActionsContainer>
@@ -618,13 +631,13 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <ActionButton icon={<PlayCircleOutlined />} onClick={() => setShowGame(true)}>
           小游戏
         </ActionButton>
-        <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
+        <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare?.()}>
           分享运势
         </ActionButton>
       </ActionsContainer>
       
       <div>
-        {Object.entries(fortune.categories).map(([key, category]) => (
+        {Object.entries(fortune?.categories || {}).map(([key, category]) => (
           <CategoryCard 
             key={key}
             title={
@@ -645,7 +658,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       
       <RecommendSection>
         <RecommendTitle>今日推荐</RecommendTitle>
-        {fortune.dailyRecommend?.anime && (
+        {fortune?.dailyRecommend?.anime && (
           <RecommendCard title="动画推荐">
             {fortune.dailyRecommend.anime.image && (
               <img src={fortune.dailyRecommend.anime.image} alt={fortune.dailyRecommend.anime.title} />
@@ -658,7 +671,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </RecommendCard>
         )}
         
-        {fortune.dailyRecommend?.game && (
+        {fortune?.dailyRecommend?.game && (
           <RecommendCard title="游戏推荐">
             {fortune.dailyRecommend.game.image && (
               <img src={fortune.dailyRecommend.game.image} alt={fortune.dailyRecommend.game.title} />
@@ -671,7 +684,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </RecommendCard>
         )}
         
-        {fortune.dailyRecommend?.music && (
+        {fortune?.dailyRecommend?.music && (
           <RecommendCard title="音乐推荐">
             <AntTitle level={4}>{fortune.dailyRecommend.music.title}</AntTitle>
             <Text>{fortune.dailyRecommend.music.artist}</Text>
@@ -688,7 +701,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <EventsTitle>今日动态</EventsTitle>
         
         <EventListWrapper>
-          {fortune.dailyEvents?.animeUpdates?.length > 0 && (
+          {fortune.dailyEvents?.animeUpdates && fortune.dailyEvents.animeUpdates.length > 0 && (
             <List<AnimeUpdate>
               className="event-list"
               header={<AntTitle level={4} style={{ color: '#ffd700' }}>今日更新</AntTitle>}
@@ -705,7 +718,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             />
           )}
           
-          {fortune.dailyEvents?.gameEvents?.length > 0 && (
+          {fortune.dailyEvents?.gameEvents && fortune.dailyEvents.gameEvents.length > 0 && (
             <List<GameEvent>
               className="event-list"
               header={<AntTitle level={4} style={{ color: '#ffd700' }}>游戏活动</AntTitle>}
@@ -722,7 +735,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             />
           )}
           
-          {fortune.dailyEvents?.birthdays?.length > 0 && (
+          {fortune.dailyEvents?.birthdays && fortune.dailyEvents.birthdays.length > 0 && (
             <List<Birthday>
               className="event-list"
               header={<AntTitle level={4} style={{ color: '#ffd700' }}>角色生日</AntTitle>}
@@ -743,13 +756,13 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
       <ArtworkSection>
         <ArtworkTitle>今日美图</ArtworkTitle>
-        <ArtworkImage src={fortune.dailyArtwork.image} alt={fortune.dailyArtwork.title} />
+        <ArtworkImage src={fortune?.dailyArtwork?.image || ''} alt={fortune?.dailyArtwork?.title || ''} />
         <ArtworkInfo>
-          {fortune.dailyArtwork.title}
+          {fortune?.dailyArtwork?.title || ''}
           <br />
-          画师：{fortune.dailyArtwork.artistName}
+          画师：{fortune?.dailyArtwork?.artistName || ''}
           <br />
-          Pixiv ID: {fortune.dailyArtwork.id}
+          Pixiv ID: {fortune?.dailyArtwork?.id || ''}
         </ArtworkInfo>
       </ArtworkSection>
 
@@ -767,7 +780,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       <FortuneGame
         visible={showGame}
         onClose={() => setShowGame(false)}
-        dailyFortune={fortune}
+        dailyFortune={fortune as DailyFortuneType}
       />
     </Container>
   );
