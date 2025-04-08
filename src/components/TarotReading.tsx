@@ -15,6 +15,9 @@ const Container = styled.div`
   color: #ffffff;
   min-height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
   @media (max-width: 768px) {
     padding: 1rem 0.5rem;
@@ -37,6 +40,7 @@ const Description = styled.p`
   text-align: center;
   margin-bottom: 2rem;
   font-size: 1.1rem;
+  max-width: 800px;
   
   @media (max-width: 768px) {
     font-size: 0.9rem;
@@ -46,28 +50,26 @@ const Description = styled.p`
 `;
 
 const CardsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2rem;
   padding: 2rem;
   margin: 2rem 0;
-  justify-items: center;
   
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     padding: 1.5rem;
   }
   
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
     margin: 1rem 0;
   }
   
   @media (max-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
     padding: 0.5rem;
   }
@@ -93,17 +95,16 @@ const CardWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  width: 100%;
-  max-width: 200px;
+  width: 180px;
   perspective: 1000px;
   
   @media (max-width: 768px) {
-    max-width: 150px;
+    width: 150px;
     gap: 0.5rem;
   }
   
   @media (max-width: 480px) {
-    max-width: 130px;
+    width: 100px;
   }
 `;
 
