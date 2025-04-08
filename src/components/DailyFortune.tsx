@@ -45,7 +45,7 @@ const FortuneCard = styled.div`
   border: 1px solid rgba(255, 215, 0, 0.3);
 `;
 
-const Date = styled.div`
+const DateDisplay = styled.div`
   color: #ffd700;
   font-size: 1.2rem;
   margin-bottom: 1rem;
@@ -458,7 +458,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     localStorage.setItem('fortune-coins', newBalance.toString());
   };
 
-  const isConsecutiveDay = (lastDate: string, currentDate: string) => {
+  const isConsecutiveDay = (lastDate: string, currentDate: string): boolean => {
     if (!lastDate) return false;
     
     const lastDateObj = new Date(lastDate);
