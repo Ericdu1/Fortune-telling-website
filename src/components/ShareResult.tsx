@@ -53,8 +53,9 @@ const ShareCard = styled.div`
   }
   
   @media (max-width: 480px) {
-    padding: 1rem 0.5rem;
+    padding: 1rem;
     border-radius: 10px;
+    margin-bottom: 1.5rem;
   }
 `;
 
@@ -73,11 +74,18 @@ const ShareContent = styled.div`
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  border-radius: 0;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   
   @media (max-width: 600px) {
-    padding: 1rem;
+    padding: 1rem 0.8rem;
     gap: 0.8rem;
+    max-width: 100%;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.8rem 0.6rem;
+    border-radius: 8px;
   }
 `;
 
@@ -120,6 +128,9 @@ const CardsContainer = styled.div`
   
   @media (max-width: 480px) {
     gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `;
 
@@ -134,8 +145,11 @@ const CardItem = styled.div`
   border: 1px solid rgba(255, 215, 0, 0.3);
   
   @media (max-width: 480px) {
-    padding: 0.3rem;
+    padding: 0.5rem;
     border-radius: 8px;
+    width: 90%;
+    max-width: 200px;
+    margin-bottom: 1rem;
   }
 `;
 
@@ -143,6 +157,10 @@ const CardImageWrapper = styled.div<{ isReversed?: boolean }>`
   width: 100%;
   margin: 0 auto;
   transform: ${props => props.isReversed ? 'rotate(180deg)' : 'none'};
+  
+  @media (max-width: 480px) {
+    max-width: 150px;
+  }
 `;
 
 const CardImage = styled.img`
@@ -185,10 +203,24 @@ const CardDescription = styled.div`
 const InterpretationSection = styled.div`
   margin: 1.5rem 0;
   padding: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  
+  @media (max-width: 480px) {
+    margin: 1rem 0;
+    padding: 0.8rem;
+    border-radius: 8px;
+  }
 `;
 
 const CategorySection = styled.div`
   margin: 1rem 0;
+  
+  @media (max-width: 480px) {
+    margin: 0.8rem 0;
+    padding: 0 0.3rem;
+  }
 `;
 
 const CategoryTitle = styled.h4`
@@ -198,104 +230,128 @@ const CategoryTitle = styled.h4`
   text-align: center;
   position: relative;
   
-  @media (max-width: 480px) {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
-  }
-  
   &:before, &:after {
     content: '';
     position: absolute;
     top: 50%;
     height: 1px;
-    width: 30%;
+    width: 20%;
     background: rgba(255, 215, 0, 0.3);
   }
   
   &:before {
-    left: 0;
+    left: 10%;
   }
   
   &:after {
-    right: 0;
+    right: 10%;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+    
+    &:before, &:after {
+      width: 15%;
+    }
+    
+    &:before {
+      left: 15%;
+    }
+    
+    &:after {
+      right: 15%;
+    }
   }
 `;
 
-const CategoryContent = styled.p`
+const CategoryContent = styled.div`
   color: #e0e0e0;
-  line-height: 1.6;
-  text-indent: 0;
-  margin: 0;
-  padding: 0.8rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 6px;
   font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
   
   @media (max-width: 480px) {
-    font-size: 0.8rem;
-    padding: 0.6rem;
+    font-size: 0.85rem;
     line-height: 1.4;
   }
 `;
 
 const GuidanceSection = styled.div`
-  margin: 1.5rem 0;
-  padding: 1.5rem;
-  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(to bottom, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+  border: 1px solid rgba(255, 215, 0, 0.2);
   border-radius: 10px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 1rem;
+  margin-top: 1.5rem;
+  
+  @media (max-width: 480px) {
+    padding: 0.8rem;
+    margin-top: 1rem;
+    border-radius: 8px;
+  }
 `;
 
 const GuidanceTitle = styled.h4`
   color: #ffd700;
+  text-align: center;
   margin-bottom: 1rem;
   font-size: 1.1rem;
-  text-align: center;
+  
+  @media (max-width: 480px) {
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
 `;
 
 const GuidanceText = styled.p`
   color: #e0e0e0;
-  line-height: 1.6;
-  text-indent: 2em;
-  margin: 0;
-  padding: 0;
   font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: justify;
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: left;
+  }
 `;
 
 const Footer = styled.div`
-  margin-top: 2rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
   
   @media (max-width: 480px) {
+    flex-direction: column;
     margin-top: 1.5rem;
     padding-top: 0.8rem;
-    flex-direction: column;
-    gap: 1rem;
   }
 `;
 
 const QRCodeContainer = styled.div`
+  margin-right: 1rem;
   background: white;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   
   @media (max-width: 480px) {
-    margin: 0 auto;
+    margin-right: 0;
+    margin-bottom: 0.8rem;
+    padding: 4px;
   }
 `;
 
 const Watermark = styled.div`
-  color: rgba(255, 255, 255, 0.5);
-  text-align: right;
-  font-size: 0.9rem;
+  color: #a0a0a0;
+  font-size: 0.8rem;
+  text-align: left;
   
   @media (max-width: 480px) {
     text-align: center;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 `;
 
@@ -307,6 +363,11 @@ const ButtonContainer = styled.div`
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 1rem;
+    position: sticky;
+    bottom: 1rem;
+    z-index: 10;
+    margin-top: 1rem;
+    padding: 0 0.5rem;
   }
 `;
 
@@ -316,11 +377,22 @@ const StyledButton = styled(Button)`
   color: white;
   height: 40px;
   padding: 0 2rem;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+  }
   
   @media (max-width: 480px) {
     width: 100%;
-    height: 38px;
+    height: 44px;
     padding: 0 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   &:hover {
