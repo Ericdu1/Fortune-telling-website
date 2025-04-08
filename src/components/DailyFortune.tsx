@@ -7,7 +7,7 @@ import {
   CalendarOutlined, 
   StarOutlined, 
   NotificationOutlined,
-  GamepadOutlined,
+  PlayCircleOutlined,
   HeartOutlined,
   FireOutlined
 } from '@ant-design/icons';
@@ -622,8 +622,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <ActionButton icon={<HeartOutlined />} onClick={handleFavorite}>
           收藏运势
         </ActionButton>
-        <ActionButton icon={<GamepadOutlined />} onClick={() => setShowGame(true)}>
-          运势游戏
+        <ActionButton icon={<PlayCircleOutlined />} onClick={() => setShowGame(true)}>
+          小游戏
         </ActionButton>
         <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
           分享运势
