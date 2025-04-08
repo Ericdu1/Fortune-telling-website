@@ -11,48 +11,45 @@ export interface PixivArtwork {
   date?: string;
 }
 
+export interface Category {
+  name: string;
+  level: 'SSR' | 'SR' | 'R' | 'N';
+  description: string;
+  advice: string;
+}
+
 export interface AnimeRecommend {
   title: string;
   episode: string;
   reason: string;
-  imageUrl?: string;
+  image?: string;
 }
 
 export interface GameRecommend {
   title: string;
   type: string;
   reason: string;
-  imageUrl?: string;
+  image?: string;
 }
 
 export interface MusicRecommend {
   title: string;
   artist: string;
-  type: 'ANIME_OP' | 'ANIME_ED' | 'GAME_BGM' | 'VOCALOID';
-  url?: string;
+  link?: string;
 }
 
 export interface DailyRecommend {
-  anime?: {
-    title: string;
-    episode: string;
-    reason: string;
-    link?: string;
-    image?: string;
-  };
-  game?: {
-    title: string;
-    type: string;
-    reason: string;
-    link?: string;
-    image?: string;
-  };
-  music?: {
-    title: string;
-    artist: string;
-    link?: string;
-    image?: string;
-  };
+  anime?: AnimeRecommend;
+  game?: GameRecommend;
+  music?: MusicRecommend;
+}
+
+export interface Artwork {
+  id: string;
+  title: string;
+  artistId: string;
+  artistName: string;
+  image: string;
 }
 
 export interface AnimeUpdate {
@@ -81,34 +78,26 @@ export interface Release {
 }
 
 export interface DailyEvents {
-  list: Array<{
-    title: string;
-    description: string;
-    time?: string;
-  }>;
-}
-
-export interface FortuneCategory {
-  name: string;
-  level: 'SSR' | 'SR' | 'R' | 'N';
-  description: string;
-  advice?: string;
+  animeUpdates: AnimeUpdate[];
+  gameEvents: GameEvent[];
+  birthdays: Birthday[];
+  releases: string[];
 }
 
 export interface DailyFortune {
   date: string;
   content: string;
-  luck: number; // 1-5
+  luck: number;
   tags: string[];
   categories: {
-    game: FortuneCategory;
-    anime: FortuneCategory;
-    create: FortuneCategory;
-    social: FortuneCategory;
-    [key: string]: FortuneCategory;
+    game: Category;
+    anime: Category;
+    create: Category;
+    social: Category;
   };
   dailyRecommend: DailyRecommend;
-  events?: DailyEvents;
+  dailyEvents: DailyEvents;
+  dailyArtwork: Artwork;
 }
 
 export interface TarotCardResult {
