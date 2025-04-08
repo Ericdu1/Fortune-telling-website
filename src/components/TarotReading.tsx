@@ -50,13 +50,12 @@ const Description = styled.p`
 `;
 
 const CardsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   padding: 2rem;
   margin: 2rem 0;
+  justify-items: center;
   
   @media (max-width: 1024px) {
     gap: 1.5rem;
@@ -64,12 +63,14 @@ const CardsContainer = styled.div`
   }
   
   @media (max-width: 768px) {
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
     padding: 1rem;
     margin: 1rem 0;
   }
   
   @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
     padding: 0.5rem;
   }
@@ -95,22 +96,26 @@ const CardWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  width: 180px;
+  width: 200px;
   perspective: 1000px;
   
+  @media (max-width: 1024px) {
+    width: 180px;
+  }
+  
   @media (max-width: 768px) {
-    width: 150px;
+    width: 160px;
     gap: 0.5rem;
   }
   
   @media (max-width: 480px) {
-    width: 100px;
+    width: 130px;
   }
 `;
 
 const Card = styled.div<{ isSelected?: boolean; isRevealed?: boolean; isReversed?: boolean }>`
   width: 100%;
-  height: 280px;
+  height: 300px;
   position: relative;
   cursor: pointer;
   transform-style: preserve-3d;
@@ -121,12 +126,16 @@ const Card = styled.div<{ isSelected?: boolean; isRevealed?: boolean; isReversed
   transition: transform 0.6s, box-shadow 0.3s;
   transform: ${props => props.isRevealed ? 'rotateY(180deg)' : 'rotateY(0deg)'};
   
+  @media (max-width: 1024px) {
+    height: 270px;
+  }
+  
   @media (max-width: 768px) {
-    height: 210px;
+    height: 240px;
   }
   
   @media (max-width: 480px) {
-    height: 180px;
+    height: 200px;
     border-radius: 10px;
   }
   
@@ -332,9 +341,14 @@ const ButtonContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-top: 2rem;
+  width: 100%;
+  padding: 0 1rem;
   
   @media (max-width: 768px) {
     margin-top: 1.5rem;
+    padding: 0 0.5rem;
+    position: sticky;
+    bottom: 1rem;
   }
 `;
 
@@ -342,19 +356,22 @@ const StyledButton = styled(Button)`
   background: linear-gradient(45deg, #6b6bff, #8e8eff);
   border: none;
   color: white;
-  padding: 0 2rem;
-  height: 40px;
-  font-size: 1rem;
+  padding: 0 2.5rem;
+  height: 45px;
+  font-size: 1.1rem;
+  border-radius: 8px;
   
   @media (max-width: 768px) {
-    padding: 0 1.5rem;
-    height: 38px;
+    padding: 0 2rem;
+    height: 42px;
   }
   
   @media (max-width: 480px) {
-    padding: 0 1.2rem;
-    height: 36px;
-    font-size: 0.9rem;
+    padding: 0 1.5rem;
+    height: 40px;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 250px;
   }
   
   &:hover {
