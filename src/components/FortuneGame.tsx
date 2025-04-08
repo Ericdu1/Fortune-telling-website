@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Button, Modal, Typography, Progress, notification } from 'antd';
 import { 
-  RocketOutlined, 
+  PlayCircleOutlined,
   StarOutlined, 
   TrophyOutlined,
   ReloadOutlined 
@@ -400,7 +400,7 @@ const FortuneGame: React.FC<FortuneGameProps> = ({ visible, onClose, dailyFortun
   
   return (
     <GameModal
-      title={<><RocketOutlined /> 今日运势小游戏</>}
+      title={<><PlayCircleOutlined /> 今日运势小游戏</>}
       open={visible}
       onCancel={onClose}
       footer={null}
@@ -467,7 +467,7 @@ const FortuneGame: React.FC<FortuneGameProps> = ({ visible, onClose, dailyFortun
           ) : (
             <GameButton 
               onClick={startGame}
-              icon={<RocketOutlined />}
+              icon={<PlayCircleOutlined />}
             >
               {gameOver ? '再来一次' : '开始游戏'}
             </GameButton>
