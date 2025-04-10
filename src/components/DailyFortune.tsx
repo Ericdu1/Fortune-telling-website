@@ -478,6 +478,18 @@ const getFortuneCharacter = (fortune: string) => {
   };
 };
 
+const generateBasicFortuneContent = (categories: DailyFortuneType['categories']) => {
+  let content = '今日运势：\n';
+
+  Object.entries(categories).forEach(([key, category]) => {
+    content += `${category.name}：${category.level}\n`;
+  });
+
+  content += '\n总结：今天的运势整体较为平稳，适合保持现状，谨慎行事。';
+
+  return content;
+};
+
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
@@ -662,7 +674,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </LuckStars>
         </LuckMeter>
         
-        <Content>{fortune.content}</Content>
+        <Content>{generateBasicFortuneContent(fortune.categories)}</Content>
         
         <TagsContainer>
           {fortune.tags.map((tag, index) => (
