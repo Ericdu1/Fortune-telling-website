@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { Button, Tag, Card, Tabs, Typography, Badge, Row, Col, Divider, Modal } from 'antd';
+import { Button, Tag, Card, Tabs, Typography, Badge, Row, Col, Divider, Modal, Rate } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeftOutlined, 
@@ -14,7 +14,10 @@ import {
   UserOutlined,
   DesktopOutlined,
   BulbOutlined,
-  TeamOutlined
+  TeamOutlined,
+  SyncOutlined,
+  GiftOutlined,
+  AimOutlined
 } from '@ant-design/icons';
 import { formatDate } from '../utils/date';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
@@ -349,6 +352,26 @@ const CharacterName = styled.div`
   font-weight: 500;
 `;
 
+const StatusList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const StatusItem = styled(motion.li)`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+const StatusIcon = styled.span`
+  margin-right: 0.5rem;
+`;
+
+const StatusText = styled.span`
+  font-size: 1rem;
+`;
+
 interface DailyFortuneProps {
   onBack: () => void;
   onShare: (result: DailyFortuneType) => void;
@@ -504,6 +527,24 @@ const generateMysticMessage = (categories: DailyFortuneType['categories']) => {
   const randomIndex = Math.floor(Math.random() * messages.length);
   return messages[randomIndex];
 };
+
+// 添加函数将运势等级转换为文本显示
+const getFortuneLevelText = (level: string): string => {
+  switch(level) {
+    case 'SSR':
+      return '大吉';
+    case 'SR':
+      return '吉';
+    case 'R':
+      return '小凶';
+    case 'N':
+      return '凶';
+    default:
+      return '普通';
+  }
+};
+
+const DiceIcon = SyncOutlined;
 
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [fortune, setFortune] = useState<DailyFortuneType>({
