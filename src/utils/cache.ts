@@ -87,7 +87,8 @@ export async function getDailyFortune(): Promise<DailyFortune> {
         artistId: '0',
         artistName: '系统',
         imageUrl: './images/artworks/127455493_p0.png'
-      }
+      },
+      mysticMessage: '保持平常心，顺其自然。'
     };
   }
 }
