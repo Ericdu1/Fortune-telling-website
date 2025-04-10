@@ -94,4 +94,8 @@ export async function getDailyFortune(): Promise<DailyFortune> {
 
 export function clearFortuneCache(): void {
   localStorage.removeItem(CACHE_KEY);
+}
+
+export async function clearDailyFortuneCache() {
+  localStorage.removeItem(CACHE_KEY);
 } 

@@ -18,7 +18,7 @@ import {
 } from '@ant-design/icons';
 import { formatDate } from '../utils/date';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
-import { getDailyFortune } from '../utils/cache';
+import { getDailyFortune, clearDailyFortuneCache } from '../utils/cache';
 import AnimeRecommendation from './AnimeRecommendation';
 import DailyWallpaperComponent from './DailyWallpaper';
 import StreakCounter from './StreakCounter';
@@ -534,6 +534,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   useEffect(() => {
     const fetchFortune = async () => {
       try {
+        await clearDailyFortuneCache();
         const dailyFortune = await getDailyFortune();
         setFortune(dailyFortune);
         
@@ -903,7 +904,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   if (loading) {
     return (
       <Container>
-        <Title>今日运势</Title>
+        <Title>每日运势</Title>
         <div style={{ textAlign: 'center', color: '#ffd700', marginTop: '2rem' }}>
           正在为您抽取今日运势...
         </div>
