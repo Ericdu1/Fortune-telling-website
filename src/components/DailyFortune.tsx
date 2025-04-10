@@ -482,7 +482,7 @@ const generateBasicFortuneContent = (categories: DailyFortuneType['categories'])
   let content = '今日运势：\n';
 
   Object.entries(categories).forEach(([key, category]) => {
-    content += `${category.name}：${category.level}\n`;
+    content += `• ${category.name}：${category.level}\n`;
   });
 
   content += '\n总结：今天的运势整体较为平稳，适合保持现状，谨慎行事。';
