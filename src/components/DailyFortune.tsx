@@ -535,7 +535,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       artistId: '',
       artistName: '加载中...',
       imageUrl: './images/artworks/127455493_p0.png'
-    }
+    },
+    mysticMessage: '加载中...'
   });
 
   const [loading, setLoading] = useState(true);
@@ -783,7 +784,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     );
   };
 
-  const renderAnimalFortune = () => {
+  const AnimalFortune: React.FC = () => {
     const [showModal, setShowModal] = useState(true);
 
     const handleModalClose = () => {
@@ -883,7 +884,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           key="3"
         >
           <AnimatePresence mode="wait">
-            {activeTabKey === '3' && renderAnimalFortune()}
+            {activeTabKey === '3' && <AnimalFortune />}
           </AnimatePresence>
         </TabPane>
       </StyledTabs>
