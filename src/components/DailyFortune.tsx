@@ -319,27 +319,34 @@ const ArtworkInfo = styled.div`
 
 const CharacterContainer = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 16px;
+  margin: 20px 0;
+  text-align: center;
 `;
 
 const CharacterImageContainer = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  border-radius: 16px;
   overflow: hidden;
-  margin-right: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
 `;
 
 const CharacterImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 `;
 
 const CharacterName = styled.div`
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 8px;
+  font-weight: 500;
 `;
 
 interface DailyFortuneProps {
