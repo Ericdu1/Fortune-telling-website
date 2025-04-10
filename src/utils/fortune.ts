@@ -66,6 +66,7 @@ export async function generateDailyFortune(): Promise<DailyFortune> {
     categories,
     dailyRecommend: generateDailyRecommend(),
     events: generateDailyEvents(),
-    dailyArtwork: await getRandomPopularArtwork()
+    dailyArtwork: await getRandomPopularArtwork(),
+    mysticMessage: '保持平常心，顺其自然。'
   };
 } 
