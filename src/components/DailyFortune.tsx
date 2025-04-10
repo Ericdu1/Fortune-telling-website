@@ -548,6 +548,96 @@ const getFortuneLevelText = (level: string): string => {
 
 const DiceIcon = SyncOutlined;
 
+// 添加LuckyHint组件
+const LuckyHint: React.FC = () => {
+  // 生成随机幸运色
+  const luckyColors = ['红色', '蓝色', '绿色', '黄色', '紫色', '粉色', '橙色', '金色', '银色', '白色'];
+  const luckyColor = luckyColors[Math.floor(Math.random() * luckyColors.length)];
+  
+  // 生成随机幸运数字
+  const luckyNumber = Math.floor(Math.random() * 100) + 1;
+  
+  // 幸运关键词
+  const luckyKeywords = ['创新', '坚持', '冒险', '沉稳', '热情', '专注', '放松', '温暖', '谦虚', '果断'];
+  const luckyKeyword = luckyKeywords[Math.floor(Math.random() * luckyKeywords.length)];
+  
+  // 今日宜忌
+  const goodActivities = ['学习新技能', '户外活动', '社交聚会', '创作', '冥想', '阅读', '旅行', '购物', '运动', '娱乐'];
+  const badActivities = ['熬夜', '冲动消费', '争执', '做重大决定', '复杂操作', '高风险活动', '拖延', '过度劳累', '暴饮暴食'];
+  
+  const goodActivity1 = goodActivities[Math.floor(Math.random() * goodActivities.length)];
+  let goodActivity2 = goodActivities[Math.floor(Math.random() * goodActivities.length)];
+  while (goodActivity2 === goodActivity1) {
+    goodActivity2 = goodActivities[Math.floor(Math.random() * goodActivities.length)];
+  }
+  
+  const badActivity1 = badActivities[Math.floor(Math.random() * badActivities.length)];
+  let badActivity2 = badActivities[Math.floor(Math.random() * badActivities.length)];
+  while (badActivity2 === badActivity1) {
+    badActivity2 = badActivities[Math.floor(Math.random() * badActivities.length)];
+  }
+  
+  // 行为引导
+  const behaviors = [
+    '适度挑战自我，不要给自己过大压力',
+    '多与朋友交流，分享心情可以缓解压力',
+    '尝试新事物，可能会有意外收获',
+    '保持耐心，好事多磨',
+    '今天是反思的好时机，回顾过去的得失',
+    '保持乐观心态，积极面对挑战',
+    '适当放松，不要给自己太大压力',
+    '珍惜当下，感恩生活中的美好',
+    '相信自己的直觉，大胆决策',
+    '保持谦虚，向他人学习'
+  ];
+  const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+  
+  return (
+    <TabContent>
+      <CategoryCard
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <CategoryTitle>今日幸运提示</CategoryTitle>
+        <CategoryContent>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
+              <div style={{ color: '#ffd700', marginBottom: '5px' }}>🎨 幸运色：</div>
+              <div>{luckyColor}</div>
+            </div>
+            
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
+              <div style={{ color: '#ffd700', marginBottom: '5px' }}>🔢 幸运数字：</div>
+              <div>{luckyNumber}</div>
+            </div>
+            
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
+              <div style={{ color: '#ffd700', marginBottom: '5px' }}>🔑 幸运关键词：</div>
+              <div>{luckyKeyword}</div>
+            </div>
+            
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
+              <div style={{ color: '#ffd700', marginBottom: '5px' }}>✅ 今日宜：</div>
+              <div>{goodActivity1}、{goodActivity2}</div>
+            </div>
+            
+            <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
+              <div style={{ color: '#ffd700', marginBottom: '5px' }}>❌ 今日忌：</div>
+              <div>{badActivity1}、{badActivity2}</div>
+            </div>
+            
+            <CategoryAdvice>
+              <strong style={{ color: '#ffd700' }}>行为引导：</strong> {behavior}
+            </CategoryAdvice>
+          </div>
+        </CategoryContent>
+      </CategoryCard>
+    </TabContent>
+  );
+};
+
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
@@ -590,7 +680,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [lastCheckedDate, setLastCheckedDate] = useState('');
   const [coinsBalance, setCoinsBalance] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 3;
+  const totalPages = 4;  // 更新为4个标签页
 
   useEffect(() => {
     const fetchFortune = async () => {
@@ -858,6 +948,22 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     );
   };
 
+  // 处理页面导航
+  const handlePageChange = (direction: 'prev' | 'next') => {
+    // 根据当前标签页计算下一个标签页
+    const currentTab = parseInt(activeTabKey);
+    let newTab: number;
+    
+    if (direction === 'prev') {
+      newTab = currentTab > 1 ? currentTab - 1 : 4;  // 循环到最后一个标签页
+    } else {
+      newTab = currentTab < 4 ? currentTab + 1 : 1;  // 循环到第一个标签页
+    }
+    
+    // 设置新的标签页
+    setActiveTabKey(newTab.toString());
+  };
+
   if (loading) {
     return (
       <Container>
@@ -923,18 +1029,25 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             {activeTabKey === '3' && <AnimalFortune />}
           </AnimatePresence>
         </TabPane>
+        
+        <TabPane 
+          tab={
+            <span>
+              <BulbOutlined /> 幸运提示
+            </span>
+          } 
+          key="4"
+        >
+          <AnimatePresence mode="wait">
+            {activeTabKey === '4' && <LuckyHint />}
+          </AnimatePresence>
+        </TabPane>
       </StyledTabs>
 
       <ButtonContainer>
-        {currentPage === 1 ? (
-          <StyledButton onClick={onBack}>
-            <ArrowLeftOutlined /> 返回
-          </StyledButton>
-        ) : (
-          <StyledButton onClick={() => setCurrentPage(currentPage - 1)}>
-            <ArrowLeftOutlined /> 上一页
-          </StyledButton>
-        )}
+        <StyledButton onClick={() => handlePageChange('prev')}>
+          <ArrowLeftOutlined /> 上一页
+        </StyledButton>
         
         <StyledButton icon={<HeartOutlined />} onClick={handleFavorite}>
           收藏运势
@@ -944,16 +1057,16 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           分享运势
         </StyledButton>
         
-        {currentPage === totalPages ? (
-          <StyledButton onClick={onBack}>
-            返回
-          </StyledButton>
-        ) : (
-          <StyledButton onClick={() => setCurrentPage(currentPage + 1)}>
-            下一页 <ArrowRightOutlined />
-          </StyledButton>
-        )}
+        <StyledButton onClick={() => handlePageChange('next')}>
+          下一页 <ArrowRightOutlined />
+        </StyledButton>
       </ButtonContainer>
+      
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <StyledButton onClick={onBack}>
+          返回主页
+        </StyledButton>
+      </div>
 
       <FortuneCardCollection 
         visible={showCollection}
