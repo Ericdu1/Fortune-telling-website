@@ -337,8 +337,8 @@ const characters = [
   },
   {
     id: 'mysterious',
-    name: '神秘法师',
-    avatar: '/images/characters/mysterious.jpg',
+    name: '少女祈祷中...',
+    avatar: '/images/suika-praying.gif',
     personality: 'mysterious',
     style: {
       primaryColor: '#6A67CE',
@@ -387,6 +387,116 @@ const fadeInVariants = {
     y: -20,
     transition: { duration: 0.3 }
   }
+};
+
+const getFortuneText = (fortune: string) => {
+  const fortuneTexts: Record<string, string> = {
+    '大吉': '今天是个超级幸运日！✨ 好运就像春天的樱花一样绽放，所有事情都会顺风顺水。记得把握机会，说不定会有意想不到的惊喜哦！',
+    '吉': '今天运势不错呢！🌸 虽然可能不会有大惊喜，但小确幸会不断出现。保持积极的心态，好事自然会来敲门。',
+    '中吉': '今天运势平稳，就像平静的湖面一样。🌊 虽然不会有太大波澜，但也不会有什么大问题。保持平常心，享受当下吧！',
+    '小吉': '今天运势一般，但别担心！🌱 就像春天的嫩芽，虽然现在看起来不起眼，但未来可期。保持耐心，好运终会到来。',
+    '末吉': '今天运势有点小波动，但别太在意！🌦️ 就像天气一样，阴晴不定是正常的。保持乐观，明天会更好！',
+    '凶': '今天运势不太理想，但别灰心！🌪️ 就像暴风雨过后总会见到彩虹，困难只是暂时的。保持坚强，一切都会好起来的。',
+    '大凶': '今天运势不太好，但请记住：🌧️ 雨过天晴，阳光总在风雨后。保持冷静，谨慎行事，一切都会过去的。'
+  };
+  return fortuneTexts[fortune] || '今天运势平稳，保持平常心。';
+};
+
+const getFortuneImage = (fortune: string) => {
+  const fortuneImages: Record<string, string> = {
+    '大吉': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141919_p0.png',
+    '吉': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141920_p0.png',
+    '中吉': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141921_p0.png',
+    '小吉': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141922_p0.png',
+    '末吉': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141923_p0.png',
+    '凶': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141924_p0.png',
+    '大凶': 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141925_p0.png'
+  };
+  return fortuneImages[fortune] || 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141926_p0.png';
+};
+
+const getFortuneColor = (fortune: string) => {
+  const fortuneColors: Record<string, string> = {
+    '大吉': '#FF6B6B', // 更鲜艳的红色
+    '吉': '#FFB6C1', // 柔和的粉色
+    '中吉': '#98FB98', // 清新的绿色
+    '小吉': '#87CEEB', // 天空蓝
+    '末吉': '#DDA0DD', // 淡紫色
+    '凶': '#A9A9A9', // 灰色
+    '大凶': '#696969' // 深灰色
+  };
+  return fortuneColors[fortune] || '#D3D3D3';
+};
+
+const getFortuneEmoji = (fortune: string) => {
+  const fortuneEmojis: Record<string, string> = {
+    '大吉': '✨', // 星星
+    '吉': '🌸', // 樱花
+    '中吉': '🌊', // 波浪
+    '小吉': '🌱', // 嫩芽
+    '末吉': '🌦️', // 多云
+    '凶': '🌪️', // 龙卷风
+    '大凶': '🌧️' // 下雨
+  };
+  return fortuneEmojis[fortune] || '🌤️';
+};
+
+const getFortuneAdvice = (fortune: string) => {
+  const fortuneAdvice: Record<string, string> = {
+    '大吉': '今天是个好日子，不妨尝试一些新事物，说不定会有意外收获！',
+    '吉': '保持积极乐观的心态，好运自然会来敲门。',
+    '中吉': '稳扎稳打，一步一个脚印，成功就在不远处。',
+    '小吉': '保持耐心，好事多磨，终会迎来转机。',
+    '末吉': '谨慎行事，三思而后行，避免冲动决定。',
+    '凶': '保持冷静，遇事不慌，困难终会过去。',
+    '大凶': '今天宜静不宜动，保持低调，等待时机。'
+  };
+  return fortuneAdvice[fortune] || '保持平常心，顺其自然。';
+};
+
+const getFortuneCharacter = (fortune: string) => {
+  const fortuneCharacters: Record<string, { name: string, image: string, description: string }> = {
+    '大吉': {
+      name: '萃香',
+      image: 'C:/Users/ericd/OneDrive/图片/网站图片/萃香祈祷中.gif',
+      description: '萃香正在为你祈祷，带来好运和祝福！'
+    },
+    '吉': {
+      name: '灵梦',
+      image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141927_p0.png',
+      description: '灵梦正在为你祈福，带来平安和喜乐！'
+    },
+    '中吉': {
+      name: '魔理沙',
+      image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141928_p0.png',
+      description: '魔理沙正在施展魔法，为你带来好运！'
+    },
+    '小吉': {
+      name: '咲夜',
+      image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141929_p0.png',
+      description: '咲夜正在为你准备幸运的茶点！'
+    },
+    '末吉': {
+      name: '帕秋莉',
+      image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141930_p0.png',
+      description: '帕秋莉正在研究幸运的魔法！'
+    },
+    '凶': {
+      name: '蕾米莉亚',
+      image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141931_p0.png',
+      description: '蕾米莉亚正在为你驱散厄运！'
+    },
+    '大凶': {
+      name: '芙兰朵露',
+      image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141932_p0.png',
+      description: '芙兰朵露正在为你打破厄运的枷锁！'
+    }
+  };
+  return fortuneCharacters[fortune] || {
+    name: '神秘少女',
+    image: 'https://i.pixiv.re/img-original/img/2023/12/15/00/00/00/1145141933_p0.png',
+    description: '神秘少女正在为你祈祷！'
+  };
 };
 
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
@@ -567,7 +677,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </LuckStars>
         </LuckMeter>
         
-        <Content>{fortune.content}</Content>
+        <Content>{getFortuneText(fortune.content)}</Content>
         
         <TagsContainer>
           {fortune.tags.map((tag, index) => (
