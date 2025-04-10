@@ -21,7 +21,6 @@ import { DailyFortune as DailyFortuneType } from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
 import AnimeRecommendation from './AnimeRecommendation';
 import DailyWallpaperComponent from './DailyWallpaper';
-import FortuneCharacter from './FortuneCharacter';
 import StreakCounter from './StreakCounter';
 import FortuneCardCollection from './FortuneCardCollection';
 import FortuneGame from './FortuneGame';
@@ -318,62 +317,35 @@ const ArtworkInfo = styled.div`
   line-height: 1.5;
 `;
 
+const CharacterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const CharacterImageContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 8px;
+`;
+
+const CharacterImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const CharacterName = styled.div`
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+`;
+
 interface DailyFortuneProps {
   onBack: () => void;
   onShare: (result: DailyFortuneType) => void;
 }
-
-const characters = [
-  {
-    id: 'energetic',
-    name: '元气少女',
-    avatar: '/images/characters/energetic.jpg',
-    personality: 'energetic',
-    style: {
-      primaryColor: '#FF6B6B',
-      secondaryColor: '#FFFFFF',
-      accent: '#FFD93D'
-    }
-  },
-  {
-    id: 'mysterious',
-    name: '少女祈祷中...',
-    avatar: '/images/suika-praying.gif',
-    personality: 'mysterious',
-    style: {
-      primaryColor: '#6A67CE',
-      secondaryColor: '#FFFFFF',
-      accent: '#9681EB'
-    }
-  },
-  {
-    id: 'shy',
-    name: '害羞书生',
-    avatar: '/images/characters/shy.jpg',
-    personality: 'shy',
-    style: {
-      primaryColor: '#98DDCA',
-      secondaryColor: '#FFFFFF',
-      accent: '#D5ECC2'
-    }
-  },
-  {
-    id: 'arrogant',
-    name: '高傲贵族',
-    avatar: '/images/characters/arrogant.jpg',
-    personality: 'arrogant',
-    style: {
-      primaryColor: '#884A39',
-      secondaryColor: '#FFFFFF',
-      accent: '#C38154'
-    }
-  }
-];
-
-const getRandomCharacter = () => {
-  const randomIndex = Math.floor(Math.random() * characters.length);
-  return characters[randomIndex];
-};
 
 const fadeInVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -536,7 +508,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [activeTabKey, setActiveTabKey] = useState('1');
   const [showCollection, setShowCollection] = useState(false);
   const [showGame, setShowGame] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState(getRandomCharacter());
   const [streakDays, setStreakDays] = useState(0);
   const [lastCheckedDate, setLastCheckedDate] = useState('');
   const [coinsBalance, setCoinsBalance] = useState(0);
@@ -670,6 +641,13 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           {fortune.date}
         </DateDisplay>
         
+        <CharacterContainer>
+          <CharacterImageContainer>
+            <CharacterImage src="/images/suika-praying.gif" alt="少女祈祷中..." />
+          </CharacterImageContainer>
+          <CharacterName>少女祈祷中...</CharacterName>
+        </CharacterContainer>
+        
         <LuckMeter>
           <LuckTitle>今日运势指数</LuckTitle>
           <LuckStars>
@@ -677,7 +655,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </LuckStars>
         </LuckMeter>
         
-        <Content>{getFortuneText(fortune.content)}</Content>
+        <Content>{fortune.content}</Content>
         
         <TagsContainer>
           {fortune.tags.map((tag, index) => (
@@ -685,11 +663,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           ))}
         </TagsContainer>
       </FortuneCard>
-      
-      <FortuneCharacter 
-        character={selectedCharacter} 
-        fortune={fortune.content} 
-      />
       
       <ActionsContainer>
         <ActionButton icon={<HeartOutlined />} onClick={handleFavorite}>
