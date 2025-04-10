@@ -675,7 +675,16 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </LuckStars>
         </LuckMeter>
         
-        <Content>{generateBasicFortuneContent(fortune.categories)}</Content>
+        <Content>
+          {Object.entries(fortune.categories).map(([key, category]) => (
+            <div key={key}>
+              <strong>{category.name}：</strong> {category.level}
+              <div>建议：{category.advice}</div>
+            </div>
+          ))}
+          <Divider />
+          <div>总结：今天的运势整体较为平稳，适合保持现状，谨慎行事。</div>
+        </Content>
         
         <TagsContainer>
           {fortune.tags.map((tag, index) => (
