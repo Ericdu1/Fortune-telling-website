@@ -751,10 +751,10 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         </LuckMeter>
         
         <Content>
-          <div>🎲 抽卡运势：吉</div>
-          <div>🗣 社交运势：大吉</div>
-          <div>📦 财运运势：凶</div>
-          <div>🎯 直觉运势：大凶</div>
+          <div>🎲 抽卡运势：{getFortuneLevelText(fortune.categories.game.level)}</div>
+          <div>🗣 社交运势：{getFortuneLevelText(fortune.categories.social.level)}</div>
+          <div>📦 财运运势：{getFortuneLevelText(fortune.categories.create.level)}</div>
+          <div>🎯 直觉运势：{getFortuneLevelText(fortune.categories.anime.level)}</div>
           <div>🌟 今日综合运势：{'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}</div>
           <div>🔮 神秘签文：{fortune.mysticMessage}</div>
         </Content>
