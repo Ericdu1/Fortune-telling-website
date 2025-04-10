@@ -17,7 +17,8 @@ import {
   TeamOutlined,
   SyncOutlined,
   GiftOutlined,
-  AimOutlined
+  AimOutlined,
+  ArrowRightOutlined
 } from '@ant-design/icons';
 import { formatDate } from '../utils/date';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
@@ -164,8 +165,8 @@ const ButtonContainer = styled.div`
   margin-top: 2rem;
   
   @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
   }
 `;
 
@@ -174,10 +175,11 @@ const StyledButton = styled(Button)`
   border: none;
   color: white;
   height: 40px;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   
   @media (max-width: 480px) {
-    width: 100%;
+    flex: 1;
+    min-width: 30%;
   }
   
   &:hover {
@@ -587,6 +589,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [streakDays, setStreakDays] = useState(0);
   const [lastCheckedDate, setLastCheckedDate] = useState('');
   const [coinsBalance, setCoinsBalance] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 3;
 
   useEffect(() => {
     const fetchFortune = async () => {
@@ -765,15 +769,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           ))}
         </TagsContainer>
       </FortuneCard>
-      
-      <ActionsContainer>
-        <ActionButton icon={<HeartOutlined />} onClick={handleFavorite}>
-          收藏运势
-        </ActionButton>
-        <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
-          分享运势
-        </ActionButton>
-      </ActionsContainer>
     </TabContent>
   );
   
@@ -931,9 +926,33 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       </StyledTabs>
 
       <ButtonContainer>
-        <StyledButton onClick={onBack}>
-          <ArrowLeftOutlined /> 返回
+        {currentPage === 1 ? (
+          <StyledButton onClick={onBack}>
+            <ArrowLeftOutlined /> 返回
+          </StyledButton>
+        ) : (
+          <StyledButton onClick={() => setCurrentPage(currentPage - 1)}>
+            <ArrowLeftOutlined /> 上一页
+          </StyledButton>
+        )}
+        
+        <StyledButton icon={<HeartOutlined />} onClick={handleFavorite}>
+          收藏运势
         </StyledButton>
+        
+        <StyledButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
+          分享运势
+        </StyledButton>
+        
+        {currentPage === totalPages ? (
+          <StyledButton onClick={onBack}>
+            返回
+          </StyledButton>
+        ) : (
+          <StyledButton onClick={() => setCurrentPage(currentPage + 1)}>
+            下一页 <ArrowRightOutlined />
+          </StyledButton>
+        )}
       </ButtonContainer>
 
       <FortuneCardCollection 
