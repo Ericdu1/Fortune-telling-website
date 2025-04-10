@@ -720,7 +720,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   );
   
   // 星座运势标签页
-  const renderZodiacFortune = () => {
+  const ZodiacFortune: React.FC = () => {
     const [birthday, setBirthday] = useState(localStorage.getItem('user-birthday') || '');
     const [showInput, setShowInput] = useState(!birthday);
 
@@ -839,7 +839,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           key="2"
         >
           <AnimatePresence mode="wait">
-            {activeTabKey === '2' && renderZodiacFortune()}
+            {activeTabKey === '2' && <ZodiacFortune />}
           </AnimatePresence>
         </TabPane>
         
