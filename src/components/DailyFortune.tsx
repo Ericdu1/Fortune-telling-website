@@ -549,7 +549,10 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         });
         const averageLuck = Math.round(levels.reduce((a, b) => a + b, 0) / levels.length);
         
-        setFortune({ ...dailyFortune, luck: averageLuck });
+        // 动态生成总结
+        const summary = averageLuck >= 4 ? '今天的运势非常好，适合尝试新事物！' : averageLuck >= 3 ? '今天的运势不错，保持积极心态。' : '今天运势一般，谨慎行事。';
+        
+        setFortune({ ...dailyFortune, luck: averageLuck, content: summary });
         
         saveToHistory(dailyFortune);
       } catch (error) {
@@ -560,6 +563,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     };
 
     loadUserData();
+    handleCheckin(); // 自动签到
     
     fetchFortune();
   }, []);
@@ -717,98 +721,8 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     </TabContent>
   );
   
-  // 二次元运势标签页
-  const renderAnimeFortune = () => (
-    <TabContent>
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12}>
-          <CategoryCard
-            variants={fadeInVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <CategoryTitle>
-              动画运势 <LevelBadge level={fortune.categories.anime.level}>{fortune.categories.anime.level}</LevelBadge>
-            </CategoryTitle>
-            <CategoryContent>
-              <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.anime.description}</Paragraph>
-              {fortune.categories.anime.advice && (
-                <CategoryAdvice>
-                  <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.anime.advice}
-                </CategoryAdvice>
-              )}
-            </CategoryContent>
-          </CategoryCard>
-        </Col>
-        
-        <Col xs={24} sm={12}>
-          <CategoryCard
-            variants={fadeInVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <CategoryTitle>
-              游戏运势 <LevelBadge level={fortune.categories.game.level}>{fortune.categories.game.level}</LevelBadge>
-            </CategoryTitle>
-            <CategoryContent>
-              <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.game.description}</Paragraph>
-              {fortune.categories.game.advice && (
-                <CategoryAdvice>
-                  <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.game.advice}
-                </CategoryAdvice>
-              )}
-            </CategoryContent>
-          </CategoryCard>
-        </Col>
-      </Row>
-      
-      <FortuneCard
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        <CategoryTitle>今日推荐</CategoryTitle>
-        <RecommendGrid>
-          {fortune.dailyRecommend?.anime && (
-            <RecommendItem>
-              <RecommendTitle>动画推荐</RecommendTitle>
-              <div style={{ fontWeight: 'bold' }}>{fortune.dailyRecommend.anime.title}</div>
-              <div>{fortune.dailyRecommend.anime.episode}</div>
-              <div style={{ color: '#a0a0a0', marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                {fortune.dailyRecommend.anime.reason}
-              </div>
-            </RecommendItem>
-          )}
-          
-          {fortune.dailyRecommend?.game && (
-            <RecommendItem>
-              <RecommendTitle>游戏推荐</RecommendTitle>
-              <div style={{ fontWeight: 'bold' }}>{fortune.dailyRecommend.game.title}</div>
-              <div>{fortune.dailyRecommend.game.type}</div>
-              <div style={{ color: '#a0a0a0', marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                {fortune.dailyRecommend.game.reason}
-              </div>
-            </RecommendItem>
-          )}
-        </RecommendGrid>
-        
-        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <ActionButton 
-            icon={<PlayCircleOutlined />} 
-            onClick={() => setShowGame(true)}
-          >
-            运势小游戏
-          </ActionButton>
-        </div>
-      </FortuneCard>
-    </TabContent>
-  );
-  
-  // 社交运势标签页
-  const renderSocialFortune = () => (
+  // 星座运势标签页
+  const renderZodiacFortune = () => (
     <TabContent>
       <CategoryCard
         variants={fadeInVariants}
@@ -817,52 +731,21 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         exit="exit"
       >
         <CategoryTitle>
-          社交运势 <LevelBadge level={fortune.categories.social.level}>{fortune.categories.social.level}</LevelBadge>
+          星座运势 <LevelBadge level={fortune.categories.zodiac?.level}>{fortune.categories.zodiac?.level}</LevelBadge>
         </CategoryTitle>
         <CategoryContent>
-          <Paragraph style={{ color: '#e0e0e0', fontSize: '1.1rem', lineHeight: '1.8' }}>
-            {fortune.categories.social.description}
-          </Paragraph>
-          {fortune.categories.social.advice && (
+          <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.zodiac?.description}</Paragraph>
+          {fortune.categories.zodiac?.advice && (
             <CategoryAdvice>
-              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.social.advice}
+              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.zodiac?.advice}
             </CategoryAdvice>
           )}
         </CategoryContent>
       </CategoryCard>
-      
-      {fortune.events?.list && fortune.events.list.length > 0 && (
-        <FortuneCard
-          variants={fadeInVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <CategoryTitle>今日活动</CategoryTitle>
-          <div>
-            {fortune.events.list.map((event, index) => (
-              <div 
-                key={index} 
-                style={{ 
-                  marginBottom: '1rem', 
-                  padding: '0.8rem', 
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '8px'
-                }}
-              >
-                <div style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{event.title}</div>
-                <div>{event.description}</div>
-                {event.time && <div style={{ color: '#a0a0a0', fontSize: '0.9rem', marginTop: '0.5rem' }}>{event.time}</div>}
-              </div>
-            ))}
-          </div>
-        </FortuneCard>
-      )}
     </TabContent>
   );
-  
-  // 创作运势标签页
-  const renderCreativeFortune = () => (
+
+  const renderAnimalFortune = () => (
     <TabContent>
       <CategoryCard
         variants={fadeInVariants}
@@ -871,55 +754,17 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         exit="exit"
       >
         <CategoryTitle>
-          创作运势 <LevelBadge level={fortune.categories.create.level}>{fortune.categories.create.level}</LevelBadge>
+          生肖运势 <LevelBadge level={fortune.categories.animal?.level}>{fortune.categories.animal?.level}</LevelBadge>
         </CategoryTitle>
         <CategoryContent>
-          <Paragraph style={{ color: '#e0e0e0', fontSize: '1.1rem', lineHeight: '1.8' }}>
-            {fortune.categories.create.description}
-          </Paragraph>
-          {fortune.categories.create.advice && (
+          <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.animal?.description}</Paragraph>
+          {fortune.categories.animal?.advice && (
             <CategoryAdvice>
-              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.create.advice}
+              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.animal?.advice}
             </CategoryAdvice>
           )}
         </CategoryContent>
       </CategoryCard>
-      
-      <ArtworkContainer>
-        <CategoryTitle>今日美图</CategoryTitle>
-        <ArtworkImage 
-          src={fortune.dailyArtwork?.imageUrl} 
-          alt={fortune.dailyArtwork?.title}
-        />
-        <ArtworkInfo>
-          <div style={{ fontWeight: 'bold' }}>{fortune.dailyArtwork?.title}</div>
-          <div>画师：{fortune.dailyArtwork?.artistName}</div>
-          <div>Pixiv ID: {fortune.dailyArtwork?.id}</div>
-        </ArtworkInfo>
-      </ArtworkContainer>
-      
-      {fortune.dailyRecommend?.music && (
-        <CategoryCard
-          variants={fadeInVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <CategoryTitle>音乐推荐</CategoryTitle>
-          <div style={{ fontWeight: 'bold' }}>{fortune.dailyRecommend.music.title}</div>
-          <div>{fortune.dailyRecommend.music.artist}</div>
-          {fortune.dailyRecommend.music.link && (
-            <Button 
-              type="link" 
-              href={fortune.dailyRecommend.music.link} 
-              target="_blank" 
-              style={{ paddingLeft: 0, color: '#85a5ff' }}
-            >
-              在网易云音乐中收听
-            </Button>
-          )}
-        </CategoryCard>
-      )}
     </TabContent>
   );
 
@@ -966,39 +811,26 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <TabPane 
           tab={
             <span>
-              <DesktopOutlined /> 二次元
+              <StarOutlined /> 星座
             </span>
           } 
           key="2"
         >
           <AnimatePresence mode="wait">
-            {activeTabKey === '2' && renderAnimeFortune()}
+            {activeTabKey === '2' && renderZodiacFortune()}
           </AnimatePresence>
         </TabPane>
         
         <TabPane 
           tab={
             <span>
-              <TeamOutlined /> 社交
+              <UserOutlined /> 生肖
             </span>
           } 
           key="3"
         >
           <AnimatePresence mode="wait">
-            {activeTabKey === '3' && renderSocialFortune()}
-          </AnimatePresence>
-        </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <BulbOutlined /> 创作
-            </span>
-          } 
-          key="4"
-        >
-          <AnimatePresence mode="wait">
-            {activeTabKey === '4' && renderCreativeFortune()}
+            {activeTabKey === '3' && renderAnimalFortune()}
           </AnimatePresence>
         </TabPane>
       </StyledTabs>
