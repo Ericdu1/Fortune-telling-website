@@ -536,7 +536,20 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       try {
         await clearDailyFortuneCache();
         const dailyFortune = await getDailyFortune();
-        setFortune(dailyFortune);
+        
+        // 计算综合运势指数
+        const levels = Object.values(dailyFortune.categories).map(category => {
+          switch (category.level) {
+            case 'SSR': return 5;
+            case 'SR': return 4;
+            case 'R': return 3;
+            case 'N': return 2;
+            default: return 1;
+          }
+        });
+        const averageLuck = Math.round(levels.reduce((a, b) => a + b, 0) / levels.length);
+        
+        setFortune({ ...dailyFortune, luck: averageLuck });
         
         saveToHistory(dailyFortune);
       } catch (error) {
