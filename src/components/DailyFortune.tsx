@@ -686,21 +686,19 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         </CharacterContainer>
         
         <LuckMeter>
-          <LuckTitle>今日运势指数</LuckTitle>
+          <LuckTitle>今日综合运势</LuckTitle>
           <LuckStars>
             {'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}
           </LuckStars>
         </LuckMeter>
         
         <Content>
-          {Object.entries(fortune.categories).map(([key, category]) => (
-            <div key={key}>
-              <strong>{category.name}：</strong> {category.level}
-              <div>建议：{category.advice}</div>
-            </div>
-          ))}
-          <Divider />
-          <div>总结：今天的运势整体较为平稳，适合保持现状，谨慎行事。</div>
+          <div>🎲 抽卡运势：吉</div>
+          <div>🗣 社交运势：大吉</div>
+          <div>📦 财运运势：凶</div>
+          <div>🎯 直觉运势：大凶</div>
+          <div>🌟 今日综合运势：{'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}</div>
+          <div>🔮 神秘签文：xxxxxxxxx</div>
         </Content>
         
         <TagsContainer>
@@ -722,28 +720,52 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   );
   
   // 星座运势标签页
-  const renderZodiacFortune = () => (
-    <TabContent>
-      <CategoryCard
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        <CategoryTitle>
-          星座运势 <LevelBadge level={fortune.categories.zodiac?.level}>{fortune.categories.zodiac?.level}</LevelBadge>
-        </CategoryTitle>
-        <CategoryContent>
-          <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.zodiac?.description}</Paragraph>
-          {fortune.categories.zodiac?.advice && (
-            <CategoryAdvice>
-              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.zodiac?.advice}
-            </CategoryAdvice>
-          )}
-        </CategoryContent>
-      </CategoryCard>
-    </TabContent>
-  );
+  const renderZodiacFortune = () => {
+    const [birthday, setBirthday] = useState(localStorage.getItem('user-birthday') || '');
+    const [showInput, setShowInput] = useState(!birthday);
+
+    const handleBirthdaySubmit = (date) => {
+      localStorage.setItem('user-birthday', date);
+      setBirthday(date);
+      setShowInput(false);
+    };
+
+    const resetBirthday = () => {
+      localStorage.removeItem('user-birthday');
+      setShowInput(true);
+    };
+
+    return (
+      <TabContent>
+        {showInput ? (
+          <div>
+            <input type="date" onChange={(e) => handleBirthdaySubmit(e.target.value)} />
+            <div>系统将自动记住你，下次无需填写~✨</div>
+          </div>
+        ) : (
+          <CategoryCard
+            variants={fadeInVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <CategoryTitle>
+              星座运势 <LevelBadge level={fortune.categories.zodiac?.level}>{fortune.categories.zodiac?.level}</LevelBadge>
+            </CategoryTitle>
+            <CategoryContent>
+              <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.zodiac?.description}</Paragraph>
+              {fortune.categories.zodiac?.advice && (
+                <CategoryAdvice>
+                  <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.zodiac?.advice}
+                </CategoryAdvice>
+              )}
+            </CategoryContent>
+            <Button onClick={resetBirthday}>重新设置生日</Button>
+          </CategoryCard>
+        )}
+      </TabContent>
+    );
+  };
 
   const renderAnimalFortune = () => (
     <TabContent>
