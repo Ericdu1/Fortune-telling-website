@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { Button, Tag, Card, Tabs, Typography, Badge, Row, Col, Divider } from 'antd';
+import { Button, Tag, Card, Tabs, Typography, Badge, Row, Col, Divider, Modal } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeftOutlined, 
@@ -490,6 +490,21 @@ const generateBasicFortuneContent = (categories: DailyFortuneType['categories'])
   return content;
 };
 
+const generateMysticMessage = (categories: DailyFortuneType['categories']) => {
+  const messages = [
+    '今天是个好日子，适合尝试新事物！',
+    '保持积极乐观的心态，好运自然会来敲门。',
+    '稳扎稳打，一步一个脚印，成功就在不远处。',
+    '保持耐心，好事多磨，终会迎来转机。',
+    '谨慎行事，三思而后行，避免冲动决定。',
+    '保持冷静，遇事不慌，困难终会过去。',
+    '今天宜静不宜动，保持低调，等待时机。'
+  ];
+
+  const randomIndex = Math.floor(Math.random() * messages.length);
+  return messages[randomIndex];
+};
+
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
@@ -549,10 +564,11 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         });
         const averageLuck = Math.round(levels.reduce((a, b) => a + b, 0) / levels.length);
         
-        // 动态生成总结
+        // 动态生成总结和神秘签文
         const summary = averageLuck >= 4 ? '今天的运势非常好，适合尝试新事物！' : averageLuck >= 3 ? '今天的运势不错，保持积极心态。' : '今天运势一般，谨慎行事。';
+        const mysticMessage = generateMysticMessage(dailyFortune.categories);
         
-        setFortune({ ...dailyFortune, luck: averageLuck, content: summary });
+        setFortune({ ...dailyFortune, luck: averageLuck, content: summary, mysticMessage });
         
         saveToHistory(dailyFortune);
       } catch (error) {
@@ -698,7 +714,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           <div>📦 财运运势：凶</div>
           <div>🎯 直觉运势：大凶</div>
           <div>🌟 今日综合运势：{'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}</div>
-          <div>🔮 神秘签文：xxxxxxxxx</div>
+          <div>🔮 神秘签文：{fortune.mysticMessage}</div>
         </Content>
         
         <TagsContainer>
@@ -722,27 +738,29 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   // 星座运势标签页
   const ZodiacFortune: React.FC = () => {
     const [birthday, setBirthday] = useState(localStorage.getItem('user-birthday') || '');
-    const [showInput, setShowInput] = useState(!birthday);
+    const [showModal, setShowModal] = useState(!birthday);
 
     const handleBirthdaySubmit = (date) => {
       localStorage.setItem('user-birthday', date);
       setBirthday(date);
-      setShowInput(false);
+      setShowModal(false);
     };
 
     const resetBirthday = () => {
       localStorage.removeItem('user-birthday');
-      setShowInput(true);
+      setShowModal(true);
     };
 
     return (
       <TabContent>
-        {showInput ? (
-          <div>
+        <Modal visible={showModal} onCancel={() => setShowModal(false)} footer={null}>
+          <div style={{ textAlign: 'center' }}>
             <input type="date" onChange={(e) => handleBirthdaySubmit(e.target.value)} />
+            <Button onClick={() => setShowModal(false)}>确认</Button>
             <div>系统将自动记住你，下次无需填写~✨</div>
           </div>
-        ) : (
+        </Modal>
+        {!showModal && (
           <CategoryCard
             variants={fadeInVariants}
             initial="hidden"
@@ -753,12 +771,10 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
               星座运势 <LevelBadge level={fortune.categories.zodiac?.level}>{fortune.categories.zodiac?.level}</LevelBadge>
             </CategoryTitle>
             <CategoryContent>
-              <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.zodiac?.description}</Paragraph>
-              {fortune.categories.zodiac?.advice && (
-                <CategoryAdvice>
-                  <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.zodiac?.advice}
-                </CategoryAdvice>
-              )}
+              <Paragraph style={{ color: '#e0e0e0' }}>今天是个适合与人交流的日子，可能会有意外的惊喜。</Paragraph>
+              <CategoryAdvice>
+                <strong style={{ color: '#ffd700' }}>建议：</strong> 保持开放的心态，迎接新机会。
+              </CategoryAdvice>
             </CategoryContent>
             <Button onClick={resetBirthday}>重新设置生日</Button>
           </CategoryCard>
@@ -767,28 +783,43 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     );
   };
 
-  const renderAnimalFortune = () => (
-    <TabContent>
-      <CategoryCard
-        variants={fadeInVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        <CategoryTitle>
-          生肖运势 <LevelBadge level={fortune.categories.animal?.level}>{fortune.categories.animal?.level}</LevelBadge>
-        </CategoryTitle>
-        <CategoryContent>
-          <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.animal?.description}</Paragraph>
-          {fortune.categories.animal?.advice && (
-            <CategoryAdvice>
-              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.animal?.advice}
-            </CategoryAdvice>
-          )}
-        </CategoryContent>
-      </CategoryCard>
-    </TabContent>
-  );
+  const renderAnimalFortune = () => {
+    const [showModal, setShowModal] = useState(true);
+
+    const handleModalClose = () => {
+      setShowModal(false);
+    };
+
+    return (
+      <TabContent>
+        <Modal visible={showModal} onCancel={handleModalClose} footer={null}>
+          <div style={{ textAlign: 'center' }}>
+            <input type="date" onChange={() => handleModalClose()} />
+            <Button onClick={handleModalClose}>确认</Button>
+            <div>系统将自动记住你，下次无需填写~✨</div>
+          </div>
+        </Modal>
+        {!showModal && (
+          <CategoryCard
+            variants={fadeInVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <CategoryTitle>
+              生肖运势 <LevelBadge level={fortune.categories.animal?.level}>{fortune.categories.animal?.level}</LevelBadge>
+            </CategoryTitle>
+            <CategoryContent>
+              <Paragraph style={{ color: '#e0e0e0' }}>今天可能会遇到一些挑战，但也有机会展现你的能力。</Paragraph>
+              <CategoryAdvice>
+                <strong style={{ color: '#ffd700' }}>建议：</strong> 勇敢面对，积极应对挑战。
+              </CategoryAdvice>
+            </CategoryContent>
+          </CategoryCard>
+        )}
+      </TabContent>
+    );
+  };
 
   if (loading) {
     return (

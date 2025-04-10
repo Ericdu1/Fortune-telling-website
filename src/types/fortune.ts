@@ -114,6 +114,7 @@ export interface DailyFortune {
   dailyRecommend: DailyRecommend;
   events?: DailyEvents;
   dailyArtwork?: PixivArtwork;
+  mysticMessage: string;
 }
 
 export interface TarotCardResult {

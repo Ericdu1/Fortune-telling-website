@@ -1,0 +1,1 @@
+mysticMessage: string; 
