@@ -1,94 +1,170 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { Button, Tag, Card, List, Typography } from 'antd';
+import { Button, Tag, Card, Tabs, Typography, Badge, Row, Col, Divider } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeftOutlined, 
   ShareAltOutlined, 
   CalendarOutlined, 
   StarOutlined, 
-  NotificationOutlined,
+  BookOutlined,
   PlayCircleOutlined,
   HeartOutlined,
-  FireOutlined
+  FireOutlined,
+  UserOutlined,
+  DesktopOutlined,
+  BulbOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 import { formatDate } from '../utils/date';
 import { DailyFortune as DailyFortuneType } from '../types/fortune';
 import { getDailyFortune } from '../utils/cache';
 import AnimeRecommendation from './AnimeRecommendation';
 import DailyWallpaperComponent from './DailyWallpaper';
-import InteractiveFortuneCard from './InteractiveFortuneCard';
 import FortuneCharacter from './FortuneCharacter';
 import StreakCounter from './StreakCounter';
 import FortuneCardCollection from './FortuneCardCollection';
 import FortuneGame from './FortuneGame';
 
-const { Title: AntTitle, Text } = Typography;
+const { Title: AntTitle, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
 
 const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem;
   color: white;
+  
+  @media (max-width: 768px) {
+    padding: 1rem 0.8rem;
+  }
 `;
 
 const Title = styled.h2`
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: white;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+  }
 `;
 
-const FortuneCard = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(255, 215, 0, 0.3);
+const StyledTabs = styled(Tabs)`
+  .ant-tabs-nav {
+    margin-bottom: 1.5rem;
+  
+    &::before {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  .ant-tabs-tab {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .ant-tabs-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+  
+  .ant-tabs-tab-active {
+    .ant-tabs-tab-btn {
+      color: #ffd700 !important;
+    }
+  }
+  
+  .ant-tabs-ink-bar {
+    background: #ffd700;
+  }
+  
+  @media (max-width: 768px) {
+    .ant-tabs-tab {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      margin: 0 0.3rem 0 0;
+    }
+  }
+`;
+
+const FortuneCard = styled(motion.div)`
+  background: linear-gradient(135deg, #6941C6, #3730A3);
+  color: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 24px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const DateDisplay = styled.div`
-  color: #ffd700;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  text-align: center;
-`;
-
-const Content = styled.div`
-  color: #e0e0e0;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 2rem;
-  white-space: pre-wrap;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
 `;
 
 const LuckMeter = styled.div`
-  margin: 2rem 0;
+  margin: 16px 0;
   text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 8px;
 `;
 
 const LuckTitle = styled.div`
-  color: #ffd700;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.9);
 `;
 
 const LuckStars = styled.div`
-  color: #ffd700;
-  font-size: 1.5rem;
-  letter-spacing: 0.5rem;
+  font-size: 24px;
+  color: gold;
+  letter-spacing: 4px;
+`;
+
+const Content = styled.div`
+  margin: 20px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
 `;
 
 const TagsContainer = styled.div`
-  margin-top: 2rem;
   display: flex;
-  gap: 0.5rem;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -98,136 +174,47 @@ const StyledButton = styled(Button)`
   height: 40px;
   padding: 0 2rem;
   
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+  
   &:hover {
     opacity: 0.9;
     color: white;
   }
 `;
 
-const ArtworkSection = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-`;
-
-const ArtworkTitle = styled.h3`
-  color: #ffd700;
+const CategoryCard = styled(FortuneCard)`
+  padding: 1.5rem;
   margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  
+  @media (max-width: 768px) {
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
 `;
 
-const ArtworkImage = styled.img`
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
+const CategoryTitle = styled.h3`
+  color: #ffd700;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
-const ArtworkInfo = styled.div`
+const CategoryContent = styled.div`
   color: #e0e0e0;
-  font-size: 0.9rem;
-  
-  a {
-    color: #ffd700;
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+  font-size: 1rem;
+  line-height: 1.6;
 `;
 
-const CategoryCard = styled(Card)`
-  margin-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  
-  .ant-card-head {
-    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-    min-height: auto;
-    
-    .ant-card-head-title {
-      color: #ffd700;
-      padding: 8px 0;
-    }
-  }
-  
-  .ant-card-body {
-    padding: 12px;
-    color: #e0e0e0;
-  }
-`;
-
-const RecommendSection = styled.div`
-  margin-top: 2rem;
-`;
-
-const RecommendTitle = styled.h3`
-  color: #ffd700;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-`;
-
-const RecommendCard = styled(Card)`
-  margin-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  
-  .ant-card-head {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    
-    .ant-card-head-title {
-      color: #ffd700;
-    }
-  }
-  
-  .ant-card-body {
-    color: #e0e0e0;
-  }
-  
-  img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 8px;
-  }
-`;
-
-const EventsSection = styled.div`
-  margin-top: 2rem;
-`;
-
-const EventsTitle = styled.h3`
-  color: #ffd700;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-`;
-
-const EventListWrapper = styled.div`
-  .event-list {
-    .ant-list-item {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 8px 0;
-      
-      &:last-child {
-        border-bottom: none;
-      }
-    }
-    
-    .ant-list-item-meta-title {
-      color: #ffd700;
-      margin-bottom: 4px;
-    }
-    
-    .ant-list-item-meta-description {
-      color: #e0e0e0;
-    }
-  }
-`;
-
-const LevelTag = styled(Tag)<{ level: 'SSR' | 'SR' | 'R' | 'N' }>`
+const LevelBadge = styled.span<{ level: 'SSR' | 'SR' | 'R' | 'N' }>`
   background: ${props => {
     switch (props.level) {
       case 'SSR': return 'linear-gradient(45deg, #FFD700, #FFA500)';
@@ -236,15 +223,35 @@ const LevelTag = styled(Tag)<{ level: 'SSR' | 'SR' | 'R' | 'N' }>`
       case 'N': return 'linear-gradient(45deg, #808080, #696969)';
     }
   }};
-  border: none;
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
   margin-left: 8px;
+`;
+
+const CategoryAdvice = styled.div`
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-left: 3px solid #ffd700;
+`;
+
+const TabContent = styled.div`
+  padding: 0.5rem 0;
 `;
 
 const ActionsContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
+  gap: 1rem;
+  margin: 2rem 0;
+  
+  @media (max-width: 480px) {
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
 `;
 
 const ActionButton = styled(Button)`
@@ -252,7 +259,13 @@ const ActionButton = styled(Button)`
   border: none;
   color: white;
   height: 40px;
-  padding: 0 15px;
+  padding: 0 1.5rem;
+  
+  @media (max-width: 480px) {
+    flex: 1;
+    min-width: 45%;
+    padding: 0 1rem;
+  }
   
   &:hover {
     opacity: 0.9;
@@ -260,30 +273,50 @@ const ActionButton = styled(Button)`
   }
 `;
 
-const CardContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 30px 0;
-  flex-wrap: wrap;
+const RecommendGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
-interface AnimeUpdate {
-  title: string;
-  episode: number;
-  time: string;
-}
+const RecommendItem = styled.div`
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`;
 
-interface GameEvent {
-  game: string;
-  event: string;
-  endTime: string;
-}
+const RecommendTitle = styled.h4`
+  color: #ffd700;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+  padding-bottom: 0.5rem;
+`;
 
-interface Birthday {
-  character: string;
-  from: string;
-}
+const ArtworkContainer = styled.div`
+  margin: 2rem 0;
+  text-align: center;
+`;
+
+const ArtworkImage = styled.img`
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+`;
+
+const ArtworkInfo = styled.div`
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+`;
 
 interface DailyFortuneProps {
   onBack: () => void;
@@ -342,6 +375,20 @@ const getRandomCharacter = () => {
   return characters[randomIndex];
 };
 
+const fadeInVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5 }
+  },
+  exit: { 
+    opacity: 0,
+    y: -20,
+    transition: { duration: 0.3 }
+  }
+};
+
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
@@ -376,10 +423,10 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [activeTabKey, setActiveTabKey] = useState('1');
   const [showCollection, setShowCollection] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(getRandomCharacter());
-  const [flippedCards, setFlippedCards] = useState<{ [key: string]: boolean }>({});
   const [streakDays, setStreakDays] = useState(0);
   const [lastCheckedDate, setLastCheckedDate] = useState('');
   const [coinsBalance, setCoinsBalance] = useState(0);
@@ -477,13 +524,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     return diffDays === 1;
   };
 
-  const handleCardFlip = (key: string) => {
-    setFlippedCards(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
   const handleFavorite = () => {
     try {
       const favoritesString = localStorage.getItem('fortune-favorites');
@@ -506,6 +546,258 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     }
   };
 
+  // 主要运势内容标签页
+  const renderBasicFortune = () => (
+    <TabContent>
+      <FortuneCard
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <DateDisplay>
+          <CalendarOutlined style={{ marginRight: '8px' }} />
+          {fortune.date}
+        </DateDisplay>
+        
+        <LuckMeter>
+          <LuckTitle>今日运势指数</LuckTitle>
+          <LuckStars>
+            {'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}
+          </LuckStars>
+        </LuckMeter>
+        
+        <Content>{fortune.content}</Content>
+        
+        <TagsContainer>
+          {fortune.tags.map((tag, index) => (
+            <Tag key={index} color="gold">{tag}</Tag>
+          ))}
+        </TagsContainer>
+      </FortuneCard>
+      
+      <FortuneCharacter 
+        character={selectedCharacter} 
+        fortune={fortune.content} 
+      />
+      
+      <ActionsContainer>
+        <ActionButton icon={<HeartOutlined />} onClick={handleFavorite}>
+          收藏运势
+        </ActionButton>
+        <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
+          分享运势
+        </ActionButton>
+      </ActionsContainer>
+    </TabContent>
+  );
+  
+  // 二次元运势标签页
+  const renderAnimeFortune = () => (
+    <TabContent>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12}>
+          <CategoryCard
+            variants={fadeInVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <CategoryTitle>
+              动画运势 <LevelBadge level={fortune.categories.anime.level}>{fortune.categories.anime.level}</LevelBadge>
+            </CategoryTitle>
+            <CategoryContent>
+              <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.anime.description}</Paragraph>
+              {fortune.categories.anime.advice && (
+                <CategoryAdvice>
+                  <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.anime.advice}
+                </CategoryAdvice>
+              )}
+            </CategoryContent>
+          </CategoryCard>
+        </Col>
+        
+        <Col xs={24} sm={12}>
+          <CategoryCard
+            variants={fadeInVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <CategoryTitle>
+              游戏运势 <LevelBadge level={fortune.categories.game.level}>{fortune.categories.game.level}</LevelBadge>
+            </CategoryTitle>
+            <CategoryContent>
+              <Paragraph style={{ color: '#e0e0e0' }}>{fortune.categories.game.description}</Paragraph>
+              {fortune.categories.game.advice && (
+                <CategoryAdvice>
+                  <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.game.advice}
+                </CategoryAdvice>
+              )}
+            </CategoryContent>
+          </CategoryCard>
+        </Col>
+      </Row>
+      
+      <FortuneCard
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <CategoryTitle>今日推荐</CategoryTitle>
+        <RecommendGrid>
+          {fortune.dailyRecommend?.anime && (
+            <RecommendItem>
+              <RecommendTitle>动画推荐</RecommendTitle>
+              <div style={{ fontWeight: 'bold' }}>{fortune.dailyRecommend.anime.title}</div>
+              <div>{fortune.dailyRecommend.anime.episode}</div>
+              <div style={{ color: '#a0a0a0', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                {fortune.dailyRecommend.anime.reason}
+              </div>
+            </RecommendItem>
+          )}
+          
+          {fortune.dailyRecommend?.game && (
+            <RecommendItem>
+              <RecommendTitle>游戏推荐</RecommendTitle>
+              <div style={{ fontWeight: 'bold' }}>{fortune.dailyRecommend.game.title}</div>
+              <div>{fortune.dailyRecommend.game.type}</div>
+              <div style={{ color: '#a0a0a0', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                {fortune.dailyRecommend.game.reason}
+              </div>
+            </RecommendItem>
+          )}
+        </RecommendGrid>
+        
+        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+          <ActionButton 
+            icon={<PlayCircleOutlined />} 
+            onClick={() => setShowGame(true)}
+          >
+            运势小游戏
+          </ActionButton>
+        </div>
+      </FortuneCard>
+    </TabContent>
+  );
+  
+  // 社交运势标签页
+  const renderSocialFortune = () => (
+    <TabContent>
+      <CategoryCard
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <CategoryTitle>
+          社交运势 <LevelBadge level={fortune.categories.social.level}>{fortune.categories.social.level}</LevelBadge>
+        </CategoryTitle>
+        <CategoryContent>
+          <Paragraph style={{ color: '#e0e0e0', fontSize: '1.1rem', lineHeight: '1.8' }}>
+            {fortune.categories.social.description}
+          </Paragraph>
+          {fortune.categories.social.advice && (
+            <CategoryAdvice>
+              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.social.advice}
+            </CategoryAdvice>
+          )}
+        </CategoryContent>
+      </CategoryCard>
+      
+      {fortune.events?.list && fortune.events.list.length > 0 && (
+        <FortuneCard
+          variants={fadeInVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          <CategoryTitle>今日活动</CategoryTitle>
+          <div>
+            {fortune.events.list.map((event, index) => (
+              <div 
+                key={index} 
+                style={{ 
+                  marginBottom: '1rem', 
+                  padding: '0.8rem', 
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <div style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{event.title}</div>
+                <div>{event.description}</div>
+                {event.time && <div style={{ color: '#a0a0a0', fontSize: '0.9rem', marginTop: '0.5rem' }}>{event.time}</div>}
+              </div>
+            ))}
+          </div>
+        </FortuneCard>
+      )}
+    </TabContent>
+  );
+  
+  // 创作运势标签页
+  const renderCreativeFortune = () => (
+    <TabContent>
+      <CategoryCard
+        variants={fadeInVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <CategoryTitle>
+          创作运势 <LevelBadge level={fortune.categories.create.level}>{fortune.categories.create.level}</LevelBadge>
+        </CategoryTitle>
+        <CategoryContent>
+          <Paragraph style={{ color: '#e0e0e0', fontSize: '1.1rem', lineHeight: '1.8' }}>
+            {fortune.categories.create.description}
+          </Paragraph>
+          {fortune.categories.create.advice && (
+            <CategoryAdvice>
+              <strong style={{ color: '#ffd700' }}>建议：</strong> {fortune.categories.create.advice}
+            </CategoryAdvice>
+          )}
+        </CategoryContent>
+      </CategoryCard>
+      
+      <ArtworkContainer>
+        <CategoryTitle>今日美图</CategoryTitle>
+        <ArtworkImage 
+          src={fortune.dailyArtwork?.imageUrl} 
+          alt={fortune.dailyArtwork?.title}
+        />
+        <ArtworkInfo>
+          <div style={{ fontWeight: 'bold' }}>{fortune.dailyArtwork?.title}</div>
+          <div>画师：{fortune.dailyArtwork?.artistName}</div>
+          <div>Pixiv ID: {fortune.dailyArtwork?.id}</div>
+        </ArtworkInfo>
+      </ArtworkContainer>
+      
+      {fortune.dailyRecommend?.music && (
+        <CategoryCard
+          variants={fadeInVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          <CategoryTitle>音乐推荐</CategoryTitle>
+          <div style={{ fontWeight: 'bold' }}>{fortune.dailyRecommend.music.title}</div>
+          <div>{fortune.dailyRecommend.music.artist}</div>
+          {fortune.dailyRecommend.music.link && (
+            <Button 
+              type="link" 
+              href={fortune.dailyRecommend.music.link} 
+              target="_blank" 
+              style={{ paddingLeft: 0, color: '#85a5ff' }}
+            >
+              在网易云音乐中收听
+            </Button>
+          )}
+        </CategoryCard>
+      )}
+    </TabContent>
+  );
+
   if (loading) {
     return (
       <Container>
@@ -527,205 +819,64 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       
       <Title>每日运势</Title>
       
-      <CardContainer>
-        <InteractiveFortuneCard
-          isFlipped={flippedCards['fortune'] || false}
-          onFlip={() => handleCardFlip('fortune')}
-          frontContent={
-            <div>
-              <h3 style={{ marginBottom: '10px' }}>今日运势</h3>
-              <div style={{ fontSize: '18px', color: '#FFD700' }}>
-                {formatDate()}
-              </div>
-              <div style={{ marginTop: '30px' }}>
-                点击翻开查看
-              </div>
-            </div>
-          }
-          backContent={
-            <div>
-              <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>今日运势指数</h3>
-              <div style={{ marginBottom: '10px', fontSize: '24px' }}>
-                {'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}
-              </div>
-              <p style={{ marginBottom: '15px', whiteSpace: 'pre-wrap' }}>{fortune.content}</p>
-              <div>
-                {fortune.tags.map((tag, idx) => (
-                  <span key={idx} style={{ 
-                    background: 'rgba(255,215,0,0.2)', 
-                    padding: '2px 8px', 
-                    borderRadius: '12px',
-                    margin: '0 4px 4px 0',
-                    display: 'inline-block',
-                    fontSize: '12px'
-                  }}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          }
-        />
+      <StyledTabs 
+        defaultActiveKey="1" 
+        activeKey={activeTabKey}
+        onChange={setActiveTabKey}
+        centered
+      >
+        <TabPane 
+          tab={
+            <span>
+              <CalendarOutlined /> 基础运势
+            </span>
+          } 
+          key="1"
+        >
+          <AnimatePresence mode="wait">
+            {activeTabKey === '1' && renderBasicFortune()}
+          </AnimatePresence>
+        </TabPane>
         
-        {Object.entries(fortune.categories).slice(0, 2).map(([key, category]) => (
-          <InteractiveFortuneCard
-            key={key}
-            isFlipped={flippedCards[key] || false}
-            onFlip={() => handleCardFlip(key)}
-            frontContent={
-              <div>
-                <h3 style={{ marginBottom: '10px' }}>{category.name}</h3>
-                <div style={{ 
-                  background: 'rgba(255,215,0,0.2)', 
-                  padding: '3px 10px', 
-                  borderRadius: '12px',
-                  margin: '10px auto',
-                  display: 'inline-block'
-                }}>
-                  {category.level}
-                </div>
-                <div style={{ marginTop: '30px' }}>
-                  点击翻开查看
-                </div>
-              </div>
-            }
-            backContent={
-              <div>
-                <h3 style={{ color: '#ffd700', marginBottom: '15px' }}>{category.name}</h3>
-                <div style={{ 
-                  background: 'rgba(255,215,0,0.2)', 
-                  padding: '3px 10px', 
-                  borderRadius: '12px',
-                  margin: '0 auto 15px',
-                  display: 'inline-block'
-                }}>
-                  {category.level}
-                </div>
-                <p style={{ marginBottom: '15px' }}>{category.description}</p>
-                {category.advice && (
-                  <div>
-                    <h4 style={{ color: '#ffd700', marginBottom: '5px' }}>建议</h4>
-                    <p>{category.advice}</p>
-                  </div>
-                )}
-              </div>
-            }
-          />
-        ))}
-      </CardContainer>
-      
-      <FortuneCharacter 
-        character={selectedCharacter} 
-        fortune={fortune.content} 
-      />
-      
-      <ActionsContainer>
-        <ActionButton icon={<HeartOutlined />} onClick={handleFavorite}>
-          收藏运势
-        </ActionButton>
-        <ActionButton icon={<PlayCircleOutlined />} onClick={() => setShowGame(true)}>
-          运势小游戏
-        </ActionButton>
-        <ActionButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
-          分享运势
-        </ActionButton>
-      </ActionsContainer>
-      
-      <div>
-        {Object.entries(fortune.categories).map(([key, category]) => (
-          <CategoryCard 
-            key={key}
-            title={
-              <div>
-                {category.name}
-                <LevelTag level={category.level}>{category.level}</LevelTag>
-              </div>
-            }
-          >
-            {category.description}
-          </CategoryCard>
-        ))}
-      </div>
-
-      <DailyWallpaperComponent />
-      
-      <AnimeRecommendation />
-      
-      <RecommendSection>
-        <RecommendTitle>今日推荐</RecommendTitle>
-        {fortune.dailyRecommend?.anime && (
-          <RecommendCard title="动画推荐">
-            {fortune.dailyRecommend.anime.image && (
-              <img src={fortune.dailyRecommend.anime.image} alt={fortune.dailyRecommend.anime.title} />
-            )}
-            <AntTitle level={4}>{fortune.dailyRecommend.anime.title}</AntTitle>
-            <Text>{fortune.dailyRecommend.anime.episode}</Text>
-            <Text type="secondary" style={{ display: 'block', marginTop: '8px' }}>
-              {fortune.dailyRecommend.anime.reason}
-            </Text>
-          </RecommendCard>
-        )}
+        <TabPane 
+          tab={
+            <span>
+              <DesktopOutlined /> 二次元
+            </span>
+          } 
+          key="2"
+        >
+          <AnimatePresence mode="wait">
+            {activeTabKey === '2' && renderAnimeFortune()}
+          </AnimatePresence>
+        </TabPane>
         
-        {fortune.dailyRecommend?.game && (
-          <RecommendCard title="游戏推荐">
-            {fortune.dailyRecommend.game.image && (
-              <img src={fortune.dailyRecommend.game.image} alt={fortune.dailyRecommend.game.title} />
-            )}
-            <AntTitle level={4}>{fortune.dailyRecommend.game.title}</AntTitle>
-            <Text>{fortune.dailyRecommend.game.type}</Text>
-            <Text type="secondary" style={{ display: 'block', marginTop: '8px' }}>
-              {fortune.dailyRecommend.game.reason}
-            </Text>
-          </RecommendCard>
-        )}
+        <TabPane 
+          tab={
+            <span>
+              <TeamOutlined /> 社交
+            </span>
+          } 
+          key="3"
+        >
+          <AnimatePresence mode="wait">
+            {activeTabKey === '3' && renderSocialFortune()}
+          </AnimatePresence>
+        </TabPane>
         
-        {fortune.dailyRecommend?.music && (
-          <RecommendCard title="音乐推荐">
-            <AntTitle level={4}>{fortune.dailyRecommend.music.title}</AntTitle>
-            <Text>{fortune.dailyRecommend.music.artist}</Text>
-            {fortune.dailyRecommend.music.link && (
-              <Button type="link" href={fortune.dailyRecommend.music.link} target="_blank">
-                在网易云音乐中收听
-              </Button>
-            )}
-          </RecommendCard>
-        )}
-      </RecommendSection>
-
-      <EventsSection>
-        <EventsTitle>今日动态</EventsTitle>
-        
-        <EventListWrapper>
-          {fortune.events?.list?.length > 0 && (
-            <List
-              className="event-list"
-              header={<AntTitle level={4} style={{ color: '#ffd700' }}>今日事件</AntTitle>}
-              dataSource={fortune.events?.list || []}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<CalendarOutlined style={{ color: '#ffd700' }} />}
-                    title={item.title}
-                    description={`${item.description}${item.time ? ` - ${item.time}` : ''}`}
-                  />
-                </List.Item>
-              )}
-            />
-          )}
-        </EventListWrapper>
-      </EventsSection>
-
-      <ArtworkSection>
-        <ArtworkTitle>今日美图</ArtworkTitle>
-        <ArtworkImage src={fortune.dailyArtwork?.imageUrl} alt={fortune.dailyArtwork?.title} />
-        <ArtworkInfo>
-          {fortune.dailyArtwork?.title}
-          <br />
-          画师：{fortune.dailyArtwork?.artistName}
-          <br />
-          Pixiv ID: {fortune.dailyArtwork?.id}
-        </ArtworkInfo>
-      </ArtworkSection>
+        <TabPane 
+          tab={
+            <span>
+              <BulbOutlined /> 创作
+            </span>
+          } 
+          key="4"
+        >
+          <AnimatePresence mode="wait">
+            {activeTabKey === '4' && renderCreativeFortune()}
+          </AnimatePresence>
+        </TabPane>
+      </StyledTabs>
 
       <ButtonContainer>
         <StyledButton onClick={onBack}>
