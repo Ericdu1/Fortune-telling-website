@@ -444,6 +444,39 @@ const Star = styled.span<{ filled: boolean }>`
   font-size: 18px;
 `;
 
+const ResetButton = styled(Button)`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  padding: 4px 8px;
+  height: auto;
+  
+  &:hover {
+    color: #ffd700;
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+  }
+`;
+
+const DetailedAnalysis = styled.div`
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+`;
+
+const AnalysisSection = styled.div`
+  margin-bottom: 15px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
 const renderStars = (rating: string) => {
   const stars = [];
   const filledStars = rating.split('★').length - 1;
@@ -973,58 +1006,70 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         luck: '★★★☆☆'
       };
 
+      const detailedAnalysis = {
+        overall: {
+          title: '整体运势',
+          content: '今天的整体运势不错，适合处理重要事务。保持积极乐观的心态，会有意外的惊喜。',
+          advice: '把握机会，相信自己的判断。'
+        },
+        love: {
+          title: '爱情运势',
+          content: '单身者可能会遇到心动的对象，已有伴侣的要注意沟通方式。',
+          advice: '保持真诚，表达自己的感受。'
+        },
+        career: {
+          title: '事业运势',
+          content: '工作上会遇到新的挑战，但这也是展现能力的好机会。团队合作会带来不错的成果。',
+          advice: '主动承担责任，展现领导力。'
+        },
+        wealth: {
+          title: '财运运势',
+          content: '财运稳定，可能有意外收获。投资理财需要谨慎，避免冲动消费。',
+          advice: '合理规划支出，关注长期投资。'
+        },
+        health: {
+          title: '健康运势',
+          content: '身体状况良好，但要注意作息规律。适当的运动能提升精神状态。',
+          advice: '保持规律作息，注意饮食均衡。'
+        },
+        luck: {
+          title: '幸运指数',
+          content: '今日幸运颜色：蓝色\n幸运数字：6、8\n吉利方位：东南方',
+          advice: '佩戴蓝色饰品能增添好运。'
+        }
+      };
+
       return (
         <ZodiacAnalysis>
           <AnalysisTitle>深度运势分析</AnalysisTitle>
           <AnalysisContent>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <AnalysisLabel>整体运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.overall)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <AnalysisLabel>爱情运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.love)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <AnalysisLabel>事业运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.career)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <AnalysisLabel>财运运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.wealth)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <AnalysisLabel>健康运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.health)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <AnalysisLabel>幸运指数</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.luck)}</AnalysisValue>
-            </AnalysisItem>
+            {Object.entries(analysis).map(([key, value], index) => (
+              <AnalysisItem
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <AnalysisLabel>{detailedAnalysis[key].title}</AnalysisLabel>
+                <AnalysisValue>{renderStars(value)}</AnalysisValue>
+                <DetailedAnalysis>
+                  <AnalysisSection>
+                    <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                      {detailedAnalysis[key].content}
+                    </Text>
+                  </AnalysisSection>
+                  <AnalysisSection>
+                    <AnalysisTitle>
+                      <BulbOutlined />
+                      建议
+                    </AnalysisTitle>
+                    <Text style={{ color: '#ffd700' }}>
+                      {detailedAnalysis[key].advice}
+                    </Text>
+                  </AnalysisSection>
+                </DetailedAnalysis>
+              </AnalysisItem>
+            ))}
           </AnalysisContent>
           <TrendChart>
             运势趋势图表（待实现）
@@ -1035,11 +1080,36 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
     return (
       <TabContent>
-        <Modal visible={showModal} onCancel={() => setShowModal(false)} footer={null}>
-          <div style={{ textAlign: 'center' }}>
-            <input type="date" onChange={(e) => handleBirthdaySubmit(e.target.value)} />
-            <Button onClick={() => setShowModal(false)}>确认</Button>
-            <div>系统将自动记住你，下次无需填写~✨</div>
+        <ResetButton onClick={() => setShowModal(true)}>
+          <SyncOutlined /> 重设生日
+        </ResetButton>
+        <Modal 
+          visible={showModal} 
+          onCancel={resetBirthday} 
+          footer={null}
+          width={300}
+          style={{ textAlign: 'center' }}
+        >
+          <div style={{ padding: '20px 0' }}>
+            <input 
+              type="date" 
+              onChange={handleBirthdaySubmit} 
+              style={{ marginBottom: '15px' }}
+            />
+            <Button 
+              type="primary" 
+              onClick={resetBirthday}
+              style={{ width: '100%' }}
+            >
+              确认
+            </Button>
+            <div style={{ 
+              marginTop: '10px',
+              fontSize: '12px',
+              color: 'rgba(0, 0, 0, 0.45)'
+            }}>
+              系统将自动记住你，下次无需填写~✨
+            </div>
           </div>
         </Modal>
         {!showModal && (
@@ -1058,7 +1128,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
                 <strong style={{ color: '#ffd700' }}>建议：</strong> 保持开放的心态，迎接新机会。
               </CategoryAdvice>
             </CategoryContent>
-            <Button onClick={resetBirthday}>重新设置生日</Button>
           </CategoryCard>
         )}
         {renderZodiacAnalysis(fortune.categories.zodiac?.name || '')}
@@ -1122,58 +1191,70 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         compatibility: '★★★☆☆'
       };
 
+      const detailedAnalysis = {
+        overall: {
+          title: '整体运势',
+          content: '今日运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。',
+          advice: '把握当下，循序渐进。'
+        },
+        career: {
+          title: '事业运势',
+          content: '职场上可能会遇到新的机遇，团队协作顺利。注意把握细节，展现专业能力。',
+          advice: '保持专注，注重细节。'
+        },
+        wealth: {
+          title: '财运运势',
+          content: '财运较好，可能有额外收入。投资方面要保持谨慎，避免冒险。',
+          advice: '稳健理财，适度消费。'
+        },
+        love: {
+          title: '感情运势',
+          content: '感情生活平稳，与伴侣沟通顺畅。单身者可能会遇到有趣的人。',
+          advice: '保持真诚，珍惜缘分。'
+        },
+        health: {
+          title: '健康运势',
+          content: '身体状况良好，但要注意劳逸结合。适当运动能提升身心状态。',
+          advice: '规律作息，适度运动。'
+        },
+        compatibility: {
+          title: '贵人运势',
+          content: '今日贵人星座：金牛座、天蝎座\n相配生肖：兔、猴\n有利方位：西北方',
+          advice: '主动社交，结识贵人。'
+        }
+      };
+
       return (
         <AnimalAnalysis>
           <AnalysisTitle>生肖运势分析</AnalysisTitle>
           <AnalysisContent>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <AnalysisLabel>整体运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.overall)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <AnalysisLabel>事业运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.career)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <AnalysisLabel>财运运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.wealth)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <AnalysisLabel>感情运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.love)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <AnalysisLabel>健康运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.health)}</AnalysisValue>
-            </AnalysisItem>
-            <AnalysisItem
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <AnalysisLabel>贵人运势</AnalysisLabel>
-              <AnalysisValue>{renderStars(analysis.compatibility)}</AnalysisValue>
-            </AnalysisItem>
+            {Object.entries(analysis).map(([key, value], index) => (
+              <AnalysisItem
+                key={key}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <AnalysisLabel>{detailedAnalysis[key].title}</AnalysisLabel>
+                <AnalysisValue>{renderStars(value)}</AnalysisValue>
+                <DetailedAnalysis>
+                  <AnalysisSection>
+                    <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                      {detailedAnalysis[key].content}
+                    </Text>
+                  </AnalysisSection>
+                  <AnalysisSection>
+                    <AnalysisTitle>
+                      <BulbOutlined />
+                      建议
+                    </AnalysisTitle>
+                    <Text style={{ color: '#ffd700' }}>
+                      {detailedAnalysis[key].advice}
+                    </Text>
+                  </AnalysisSection>
+                </DetailedAnalysis>
+              </AnalysisItem>
+            ))}
           </AnalysisContent>
           <TrendChart>
             运势趋势图表（待实现）
