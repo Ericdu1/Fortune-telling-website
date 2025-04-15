@@ -374,6 +374,91 @@ const StatusText = styled.span`
   font-size: 1rem;
 `;
 
+const ZodiacAnalysis = styled.div`
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+`;
+
+const AnalysisTitle = styled.h3`
+  color: #ffd700;
+  margin-bottom: 15px;
+  font-size: 18px;
+`;
+
+const AnalysisContent = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+`;
+
+const AnalysisItem = styled(motion.div)`
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    background: rgba(0, 0, 0, 0.3);
+  }
+`;
+
+const AnalysisLabel = styled.div`
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin-bottom: 5px;
+`;
+
+const AnalysisValue = styled.div`
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+`;
+
+const TrendChart = styled.div`
+  height: 200px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+`;
+
+const AnimalAnalysis = styled(ZodiacAnalysis)`
+  background: rgba(255, 255, 255, 0.1);
+`;
+
+const StarRating = styled.div`
+  display: flex;
+  gap: 4px;
+  color: #ffd700;
+`;
+
+const Star = styled.span<{ filled: boolean }>`
+  color: ${props => props.filled ? '#ffd700' : 'rgba(255, 255, 255, 0.3)'};
+  font-size: 18px;
+`;
+
+const renderStars = (rating: string) => {
+  const stars = [];
+  const filledStars = rating.split('★').length - 1;
+  const emptyStars = 5 - filledStars;
+
+  for (let i = 0; i < filledStars; i++) {
+    stars.push(<Star key={`filled-${i}`} filled>★</Star>);
+  }
+  for (let i = 0; i < emptyStars; i++) {
+    stars.push(<Star key={`empty-${i}`} filled={false}>☆</Star>);
+  }
+
+  return <StarRating>{stars}</StarRating>;
+};
+
 interface DailyFortuneProps {
   onBack: () => void;
   onShare: (result: DailyFortuneType) => void;
@@ -878,6 +963,76 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       setShowModal(true);
     };
 
+    const renderZodiacAnalysis = (zodiac: string) => {
+      const analysis = {
+        overall: '★★★★☆',
+        love: '★★★☆☆',
+        career: '★★★★☆',
+        wealth: '★★★☆☆',
+        health: '★★★★☆',
+        luck: '★★★☆☆'
+      };
+
+      return (
+        <ZodiacAnalysis>
+          <AnalysisTitle>深度运势分析</AnalysisTitle>
+          <AnalysisContent>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <AnalysisLabel>整体运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.overall)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <AnalysisLabel>爱情运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.love)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <AnalysisLabel>事业运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.career)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <AnalysisLabel>财运运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.wealth)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <AnalysisLabel>健康运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.health)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <AnalysisLabel>幸运指数</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.luck)}</AnalysisValue>
+            </AnalysisItem>
+          </AnalysisContent>
+          <TrendChart>
+            运势趋势图表（待实现）
+          </TrendChart>
+        </ZodiacAnalysis>
+      );
+    };
+
     return (
       <TabContent>
         <Modal visible={showModal} onCancel={() => setShowModal(false)} footer={null}>
@@ -906,15 +1061,125 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             <Button onClick={resetBirthday}>重新设置生日</Button>
           </CategoryCard>
         )}
+        {renderZodiacAnalysis(fortune.categories.zodiac?.name || '')}
       </TabContent>
     );
   };
 
   const AnimalFortune: React.FC = () => {
-    const [showModal, setShowModal] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [fortune, setFortune] = useState<DailyFortuneType>({
+      date: new Date().toISOString(),
+      content: '',
+      luck: 0,
+      tags: [],
+      dailyRecommend: {
+        anime: undefined,
+        game: undefined,
+        music: undefined
+      },
+      mysticMessage: '',
+      categories: {
+        animal: {
+          name: '',
+          level: 'N',
+          description: ''
+        },
+        game: {
+          name: '',
+          level: 'N',
+          description: ''
+        },
+        anime: {
+          name: '',
+          level: 'N',
+          description: ''
+        },
+        create: {
+          name: '',
+          level: 'N',
+          description: ''
+        },
+        social: {
+          name: '',
+          level: 'N',
+          description: ''
+        }
+      }
+    });
 
     const handleModalClose = () => {
       setShowModal(false);
+    };
+
+    const renderAnimalAnalysis = (animal: string) => {
+      const analysis = {
+        overall: '★★★★☆',
+        career: '★★★☆☆',
+        wealth: '★★★★☆',
+        love: '★★★☆☆',
+        health: '★★★★☆',
+        compatibility: '★★★☆☆'
+      };
+
+      return (
+        <AnimalAnalysis>
+          <AnalysisTitle>生肖运势分析</AnalysisTitle>
+          <AnalysisContent>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <AnalysisLabel>整体运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.overall)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <AnalysisLabel>事业运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.career)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <AnalysisLabel>财运运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.wealth)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <AnalysisLabel>感情运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.love)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <AnalysisLabel>健康运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.health)}</AnalysisValue>
+            </AnalysisItem>
+            <AnalysisItem
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <AnalysisLabel>贵人运势</AnalysisLabel>
+              <AnalysisValue>{renderStars(analysis.compatibility)}</AnalysisValue>
+            </AnalysisItem>
+          </AnalysisContent>
+          <TrendChart>
+            运势趋势图表（待实现）
+          </TrendChart>
+        </AnimalAnalysis>
+      );
     };
 
     return (
@@ -944,142 +1209,30 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             </CategoryContent>
           </CategoryCard>
         )}
+        {renderAnimalAnalysis(fortune.categories.animal?.name || '')}
       </TabContent>
     );
   };
 
-  // 处理页面导航
-  const handlePageChange = (direction: 'prev' | 'next') => {
-    // 根据当前标签页计算下一个标签页
-    const currentTab = parseInt(activeTabKey);
-    let newTab: number;
-    
-    if (direction === 'prev') {
-      newTab = currentTab > 1 ? currentTab - 1 : 4;  // 循环到最后一个标签页
-    } else {
-      newTab = currentTab < 4 ? currentTab + 1 : 1;  // 循环到第一个标签页
-    }
-    
-    // 设置新的标签页
-    setActiveTabKey(newTab.toString());
-  };
-
-  if (loading) {
-    return (
-      <Container>
-        <Title>每日运势</Title>
-        <div style={{ textAlign: 'center', color: '#ffd700', marginTop: '2rem' }}>
-          正在为您抽取今日运势...
-        </div>
-      </Container>
-    );
-  }
-
   return (
     <Container>
-      <StreakCounter 
-        streakDays={streakDays} 
-        lastCheckedDate={lastCheckedDate}
-        onCheckin={handleCheckin}
-      />
-      
-      <Title>每日运势</Title>
-      
-      <StyledTabs 
-        defaultActiveKey="1" 
-        activeKey={activeTabKey}
-        onChange={setActiveTabKey}
-        centered
-      >
-        <TabPane 
-          tab={
-            <span>
-              <CalendarOutlined /> 基础运势
-            </span>
-          } 
-          key="1"
-        >
-          <AnimatePresence mode="wait">
-            {activeTabKey === '1' && renderBasicFortune()}
-          </AnimatePresence>
+      <Title>今日运势</Title>
+      <StyledTabs defaultActiveKey="1" type="card">
+        <TabPane tab="综合运势" key="1">
+          {renderBasicFortune()}
         </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <StarOutlined /> 星座
-            </span>
-          } 
-          key="2"
-        >
-          <AnimatePresence mode="wait">
-            {activeTabKey === '2' && <ZodiacFortune />}
-          </AnimatePresence>
+        <TabPane tab="星座运势" key="2">
+          <ZodiacFortune />
         </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <UserOutlined /> 生肖
-            </span>
-          } 
-          key="3"
-        >
-          <AnimatePresence mode="wait">
-            {activeTabKey === '3' && <AnimalFortune />}
-          </AnimatePresence>
+        <TabPane tab="生肖运势" key="3">
+          <AnimalFortune />
         </TabPane>
-        
-        <TabPane 
-          tab={
-            <span>
-              <BulbOutlined /> 幸运提示
-            </span>
-          } 
-          key="4"
-        >
-          <AnimatePresence mode="wait">
-            {activeTabKey === '4' && <LuckyHint />}
-          </AnimatePresence>
+        <TabPane tab="幸运提示" key="4">
+          <LuckyHint />
         </TabPane>
       </StyledTabs>
-
-      <ButtonContainer>
-        <StyledButton onClick={() => handlePageChange('prev')}>
-          <ArrowLeftOutlined /> 上一页
-        </StyledButton>
-        
-        <StyledButton icon={<HeartOutlined />} onClick={handleFavorite}>
-          收藏运势
-        </StyledButton>
-        
-        <StyledButton icon={<ShareAltOutlined />} onClick={() => onShare(fortune)}>
-          分享运势
-        </StyledButton>
-        
-        <StyledButton onClick={() => handlePageChange('next')}>
-          下一页 <ArrowRightOutlined />
-        </StyledButton>
-      </ButtonContainer>
-      
-      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <StyledButton onClick={onBack}>
-          返回主页
-        </StyledButton>
-      </div>
-
-      <FortuneCardCollection 
-        visible={showCollection}
-        onClose={() => setShowCollection(false)}
-      />
-      
-      <FortuneGame
-        visible={showGame}
-        onClose={() => setShowGame(false)}
-        dailyFortune={fortune}
-      />
     </Container>
   );
 };
 
-export default DailyFortune; 
+export default DailyFortune;
