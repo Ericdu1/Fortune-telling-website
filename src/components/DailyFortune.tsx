@@ -1466,6 +1466,15 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       </TabNav>
       
       {renderTabContent()}
+      
+      <ButtonContainer>
+        <ActionButton onClick={onBack} icon={<ArrowLeftOutlined />}>
+          返回首页
+        </ActionButton>
+        <ActionButton onClick={() => onShare(fortune)} icon={<ShareAltOutlined />}>
+          分享运势
+        </ActionButton>
+      </ButtonContainer>
     </Container>
   );
 };
