@@ -402,13 +402,25 @@ const StyledButton = styled(Button)`
 `;
 
 const DailyFortuneHeader = styled.div`
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
   text-align: center;
 `;
 
-const Date = styled.div`
+const FortuneTitle = styled.div`
+  font-size: 1.8rem;
   color: #ffd700;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+`;
+
+const Date = styled.div`
   font-size: 1.2rem;
+  color: #e0e0e0;
   margin-bottom: 1rem;
 `;
 
@@ -675,6 +687,40 @@ const EventDescription = styled.div`
   }
 `;
 
+const FortuneDisplayGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FortuneItem = styled.div`
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const FortuneItemIcon = styled.div`
+  color: #ffd700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FortuneItemContent = styled.div`
+  color: #ffffff;
+  font-size: 1rem;
+`;
+
 interface ShareResultProps {
   dailyFortune?: DailyFortune;
   tarotResult?: {
@@ -808,6 +854,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
           {dailyFortune && (
             <>
               <DailyFortuneHeader>
+                <FortuneTitle>今日运势占卜</FortuneTitle>
                 <Date>{dailyFortune.date}</Date>
                 <LuckMeter>
                   <LuckTitle>今日运势指数</LuckTitle>
@@ -817,13 +864,51 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
 
               <DailyFortuneContent>
                 <Content>{dailyFortune.content}</Content>
+                
+                <FortuneDisplayGrid>
+                  <FortuneItem>
+                    <FortuneItemIcon>🎲</FortuneItemIcon>
+                    <FortuneItemContent>
+                      抽卡运势：{dailyFortune.categories.game?.level || 'N'}
+                    </FortuneItemContent>
+                  </FortuneItem>
+                  <FortuneItem>
+                    <FortuneItemIcon>🗣️</FortuneItemIcon>
+                    <FortuneItemContent>
+                      社交运势：{dailyFortune.categories.social?.level || 'N'}
+                    </FortuneItemContent>
+                  </FortuneItem>
+                  <FortuneItem>
+                    <FortuneItemIcon>📦</FortuneItemIcon>
+                    <FortuneItemContent>
+                      财运运势：{dailyFortune.categories.create?.level || 'N'}
+                    </FortuneItemContent>
+                  </FortuneItem>
+                  <FortuneItem>
+                    <FortuneItemIcon>🎯</FortuneItemIcon>
+                    <FortuneItemContent>
+                      直觉运势：{dailyFortune.categories.anime?.level || 'N'}
+                    </FortuneItemContent>
+                  </FortuneItem>
+                </FortuneDisplayGrid>
+
+                <div style={{ 
+                  background: 'rgba(255, 215, 0, 0.1)', 
+                  padding: '1rem', 
+                  borderRadius: '8px', 
+                  marginTop: '1rem',
+                  borderLeft: '3px solid #ffd700'
+                }}>
+                  <div style={{ color: '#ffd700', marginBottom: '0.5rem' }}>🔮 神秘签文：</div>
+                  <div>{dailyFortune.mysticMessage}</div>
+                </div>
 
                 <TagsContainer>
                   {dailyFortune.tags.map((tag, index) => (
                     <Tag 
                       key={index}
                       color="gold"
-                      style={{ fontSize: '1rem', padding: '0.3rem 0.8rem' }}
+                      style={{ fontSize: '0.9rem', padding: '0.2rem 0.6rem', margin: '0.3rem' }}
                     >
                       {tag}
                     </Tag>
