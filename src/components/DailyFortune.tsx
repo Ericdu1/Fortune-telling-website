@@ -99,20 +99,30 @@ const StyledTabs = styled(Tabs)`
 `;
 
 const FortuneCard = styled(motion.div)`
-  background: linear-gradient(135deg, #6941C6, #3730A3);
+  background: linear-gradient(135deg, rgba(105, 65, 198, 0.3), rgba(55, 48, 163, 0.3));
   color: white;
   border-radius: 16px;
-  padding: 20px;
+  padding: 24px;
   margin-bottom: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto 24px;
-  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
   
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   }
 `;
 
@@ -203,13 +213,19 @@ const CategoryCard = styled(FortuneCard)`
   }
 `;
 
-const CategoryTitle = styled.h3`
-  color: #ffd700;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+const CategoryTitle = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  h3 {
+    margin: 0;
+    color: #ffd700;
+    font-size: 20px;
+  }
 `;
 
 const CategoryContent = styled.div`
@@ -342,7 +358,7 @@ const CharacterImageContainer = styled.div`
 `;
 
 const CharacterImage = styled.img`
-  width: 100%;
+    width: 100%;
   height: 100%;
   object-fit: contain;
 `;
@@ -389,16 +405,18 @@ const AnalysisTitle = styled.h3`
 
 const AnalysisContent = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 `;
 
 const AnalysisItem = styled(motion.div)`
   background: rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  height: 100%;
 
   &:hover {
     transform: translateY(-5px);
@@ -407,15 +425,43 @@ const AnalysisItem = styled(motion.div)`
 `;
 
 const AnalysisLabel = styled.div`
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  margin-bottom: 5px;
+  color: #ffd700;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
 `;
 
 const AnalysisValue = styled.div`
-  color: white;
-  font-size: 16px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+`;
+
+const StarRating = styled.div`
+  display: flex;
+  gap: 4px;
+  color: #ffd700;
+  font-size: 18px;
+`;
+
+const ContentText = styled(Text)`
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  white-space: pre-line;
+`;
+
+const AdviceText = styled(Text)`
+  display: block;
+  color: #ffd700;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #ffd700;
 `;
 
 const TrendChart = styled.div`
@@ -433,12 +479,6 @@ const AnimalAnalysis = styled(ZodiacAnalysis)`
   background: rgba(255, 255, 255, 0.1);
 `;
 
-const StarRating = styled.div`
-  display: flex;
-  gap: 4px;
-  color: #ffd700;
-`;
-
 const Star = styled.span<{ filled: boolean }>`
   color: ${props => props.filled ? '#ffd700' : 'rgba(255, 255, 255, 0.3)'};
   font-size: 18px;
@@ -446,26 +486,49 @@ const Star = styled.span<{ filled: boolean }>`
 
 const ResetButton = styled(Button)`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 16px;
+  right: 16px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.6);
   font-size: 12px;
-  padding: 4px 8px;
-  height: auto;
+  padding: 4px 12px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   
   &:hover {
     color: #ffd700;
     border-color: #ffd700;
     background: rgba(255, 215, 0, 0.1);
   }
+
+  .anticon {
+    font-size: 12px;
+  }
+`;
+
+const MainContent = styled.div`
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  margin-top: 20px;
+`;
+
+const Description = styled(Text)`
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 16px 0;
+  text-align: center;
 `;
 
 const DetailedAnalysis = styled.div`
-  margin-top: 20px;
+  margin-top: 15px;
   padding: 15px;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
 `;
 
@@ -834,7 +897,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
     loadUserData();
     handleCheckin(); // 自动签到
-    
+
     fetchFortune();
   }, []);
 
@@ -954,7 +1017,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           </CharacterImageContainer>
           <CharacterName>少女祈祷中...</CharacterName>
         </CharacterContainer>
-        
+
         <LuckMeter>
           <LuckTitle>今日综合运势</LuckTitle>
           <LuckStars>
@@ -970,7 +1033,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           <div>🌟 今日综合运势：{'★'.repeat(fortune.luck)}{'☆'.repeat(5 - fortune.luck)}</div>
           <div>🔮 神秘签文：{fortune.mysticMessage}</div>
         </Content>
-        
+
         <TagsContainer>
           {fortune.tags.map((tag, index) => (
             <Tag key={index} color="gold">{tag}</Tag>
@@ -991,7 +1054,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       setShowModal(false);
     };
 
-    const resetBirthday = () => {
+    const handleModalClose = () => {
       localStorage.removeItem('user-birthday');
       setShowModal(true);
     };
@@ -1085,50 +1148,81 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         </ResetButton>
         <Modal 
           visible={showModal} 
-          onCancel={resetBirthday} 
+          onCancel={handleModalClose} 
           footer={null}
           width={300}
-          style={{ textAlign: 'center' }}
+          style={{ 
+            textAlign: 'center',
+            borderRadius: '12px',
+            overflow: 'hidden'
+          }}
+          bodyStyle={{
+            padding: '24px'
+          }}
         >
-          <div style={{ padding: '20px 0' }}>
+          <div>
+            <h3 style={{ 
+              color: '#1a1a1a', 
+              marginBottom: '20px',
+              fontSize: '18px'
+            }}>
+              设置生日
+            </h3>
             <input 
               type="date" 
-              onChange={handleBirthdaySubmit} 
-              style={{ marginBottom: '15px' }}
+              onChange={handleBirthdaySubmit}
+              style={{ 
+                width: '100%',
+                padding: '8px',
+                marginBottom: '16px',
+                borderRadius: '6px',
+                border: '1px solid #d9d9d9'
+              }}
             />
             <Button 
               type="primary" 
-              onClick={resetBirthday}
-              style={{ width: '100%' }}
+              onClick={handleModalClose}
+              style={{ 
+                width: '100%',
+                height: '36px',
+                borderRadius: '6px',
+                background: 'linear-gradient(45deg, #6b6bff, #8e8eff)'
+              }}
             >
               确认
             </Button>
             <div style={{ 
-              marginTop: '10px',
+              marginTop: '12px',
               fontSize: '12px',
               color: 'rgba(0, 0, 0, 0.45)'
             }}>
-              系统将自动记住你，下次无需填写~✨
+              系统将自动记住你的选择 ✨
             </div>
           </div>
         </Modal>
         {!showModal && (
-          <CategoryCard
-            variants={fadeInVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
+          <FortuneCard>
             <CategoryTitle>
-              星座运势 <LevelBadge level={fortune.categories.zodiac?.level}>{fortune.categories.zodiac?.level}</LevelBadge>
+              <h3>星座运势</h3>
+              <Tag color="gold">{fortune.categories.zodiac?.name || '未设置'}</Tag>
             </CategoryTitle>
-            <CategoryContent>
-              <Paragraph style={{ color: '#e0e0e0' }}>今天是个适合与人交流的日子，可能会有意外的惊喜。</Paragraph>
-              <CategoryAdvice>
-                <strong style={{ color: '#ffd700' }}>建议：</strong> 保持开放的心态，迎接新机会。
-              </CategoryAdvice>
-            </CategoryContent>
-          </CategoryCard>
+            <MainContent>
+              <Description>
+                今天是个适合与人交流的日子，可能会有意外的惊喜。
+              </Description>
+              <div style={{ 
+                background: 'rgba(255, 215, 0, 0.1)',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px'
+              }}>
+                <Text style={{ color: '#ffd700' }}>
+                  <BulbOutlined style={{ marginRight: 8 }} />
+                  建议：保持开放的心态，迎接新机会。
+                </Text>
+              </div>
+            </MainContent>
+          </FortuneCard>
         )}
         {renderZodiacAnalysis(fortune.categories.zodiac?.name || '')}
       </TabContent>
@@ -1316,4 +1410,4 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   );
 };
 
-export default DailyFortune;
+export default DailyFortune; 
