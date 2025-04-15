@@ -32,6 +32,9 @@ import FortuneGame from './FortuneGame';
 const { Title: AntTitle, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 
+// 添加TabType类型定义
+type TabType = 'overall' | 'zodiac' | 'animal' | 'lucky';
+
 const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
@@ -539,6 +542,29 @@ const AnalysisSection = styled.div`
   }
 `;
 
+const TabNav = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const TabButton = styled.button<{ active: boolean }>`
+  background: ${props => props.active ? '#ffd700' : 'transparent'};
+  border: none;
+  color: ${props => props.active ? '#1a1a1a' : 'rgba(255, 255, 255, 0.7)'};
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: ${props => props.active ? '#ffd700' : 'rgba(255, 255, 255, 0.1)'};
+    color: ${props => props.active ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)'};
+  }
+`;
+
 const renderStars = (rating: string) => {
   const stars = [];
   const filledStars = rating.split('★').length - 1;
@@ -819,6 +845,7 @@ const LuckyHint: React.FC = () => {
 };
 
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
+  const [activeTab, setActiveTab] = useState<TabType>('overall');
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
     content: '正在加载今日运势...',
@@ -853,7 +880,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   });
 
   const [loading, setLoading] = useState(true);
-  const [activeTabKey, setActiveTabKey] = useState('1');
   const [showCollection, setShowCollection] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [streakDays, setStreakDays] = useState(0);
@@ -1394,23 +1420,52 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     );
   };
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overall':
+        return renderBasicFortune();
+      case 'zodiac':
+        return <ZodiacFortune />;
+      case 'animal':
+        return <AnimalFortune />;
+      case 'lucky':
+        return <LuckyHint />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Container>
       <Title>今日运势</Title>
-      <StyledTabs defaultActiveKey="1" type="card">
-        <TabPane tab="综合运势" key="1">
-          {renderBasicFortune()}
-        </TabPane>
-        <TabPane tab="星座运势" key="2">
-          <ZodiacFortune />
-        </TabPane>
-        <TabPane tab="生肖运势" key="3">
-          <AnimalFortune />
-        </TabPane>
-        <TabPane tab="幸运提示" key="4">
-          <LuckyHint />
-        </TabPane>
-      </StyledTabs>
+      <TabNav>
+        <TabButton
+          active={activeTab === 'overall'} 
+          onClick={() => setActiveTab('overall')}
+        >
+          综合运势
+        </TabButton>
+        <TabButton
+          active={activeTab === 'zodiac'} 
+          onClick={() => setActiveTab('zodiac')}
+        >
+          星座运势
+        </TabButton>
+        <TabButton
+          active={activeTab === 'animal'} 
+          onClick={() => setActiveTab('animal')}
+        >
+          生肖运势
+        </TabButton>
+        <TabButton
+          active={activeTab === 'lucky'} 
+          onClick={() => setActiveTab('lucky')}
+        >
+          幸运提示
+        </TabButton>
+      </TabNav>
+      
+      {renderTabContent()}
     </Container>
   );
 };
