@@ -404,8 +404,8 @@ const AnalysisTitle = styled.h3`
 `;
 
 const AnalysisContent = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 20px;
   margin-top: 20px;
 `;
@@ -414,9 +414,7 @@ const AnalysisItem = styled(motion.div)`
   background: rgba(0, 0, 0, 0.2);
   padding: 20px;
   border-radius: 12px;
-  cursor: pointer;
   transition: all 0.3s ease;
-  height: 100%;
 
   &:hover {
     transform: translateY(-5px);
@@ -513,7 +511,8 @@ const MainContent = styled.div`
   padding: 20px;
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  margin-top: 20px;
+  margin: 20px 0;
+  position: relative;
 `;
 
 const Description = styled(Text)`
@@ -1143,9 +1142,26 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
     return (
       <TabContent>
-        <ResetButton onClick={() => setShowModal(true)}>
-          <SyncOutlined /> 重设生日
-        </ResetButton>
+        <MainContent>
+          <ResetButton onClick={() => setShowModal(true)}>
+            <SyncOutlined /> 重设生日
+          </ResetButton>
+          <Description>
+            今天是个适合与人交流的日子，可能会有意外的惊喜。
+          </Description>
+          <div style={{ 
+            background: 'rgba(255, 215, 0, 0.1)',
+            padding: '12px',
+            borderRadius: '8px',
+            marginBottom: '20px'
+          }}>
+            <Text style={{ color: '#ffd700' }}>
+              <BulbOutlined style={{ marginRight: 8 }} />
+              建议：保持开放的心态，迎接新机会。
+            </Text>
+          </div>
+        </MainContent>
+        {renderZodiacAnalysis(fortune.categories.zodiac?.name || '')}
         <Modal 
           visible={showModal} 
           onCancel={handleModalClose} 
@@ -1200,31 +1216,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
             </div>
           </div>
         </Modal>
-        {!showModal && (
-          <FortuneCard>
-            <CategoryTitle>
-              <h3>星座运势</h3>
-              <Tag color="gold">{fortune.categories.zodiac?.name || '未设置'}</Tag>
-            </CategoryTitle>
-            <MainContent>
-              <Description>
-                今天是个适合与人交流的日子，可能会有意外的惊喜。
-              </Description>
-              <div style={{ 
-                background: 'rgba(255, 215, 0, 0.1)',
-                padding: '12px',
-                borderRadius: '8px',
-                marginBottom: '20px'
-              }}>
-                <Text style={{ color: '#ffd700' }}>
-                  <BulbOutlined style={{ marginRight: 8 }} />
-                  建议：保持开放的心态，迎接新机会。
-                </Text>
-              </div>
-            </MainContent>
-          </FortuneCard>
-        )}
-        {renderZodiacAnalysis(fortune.categories.zodiac?.name || '')}
       </TabContent>
     );
   };
@@ -1359,32 +1350,46 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
 
     return (
       <TabContent>
-        <Modal visible={showModal} onCancel={handleModalClose} footer={null}>
+        <MainContent>
+          <ResetButton onClick={() => setShowModal(true)}>
+            <SyncOutlined /> 重设生日
+          </ResetButton>
+          <Description>
+            今天可能会遇到一些挑战，但也有机会展现你的能力。
+          </Description>
+          <div style={{ 
+            background: 'rgba(255, 215, 0, 0.1)',
+            padding: '12px',
+            borderRadius: '8px',
+            marginBottom: '20px'
+          }}>
+            <Text style={{ color: '#ffd700' }}>
+              <BulbOutlined style={{ marginRight: 8 }} />
+              建议：勇敢面对，积极应对挑战。
+            </Text>
+          </div>
+        </MainContent>
+        {renderAnimalAnalysis(fortune.categories.animal?.name || '')}
+        <Modal 
+          visible={showModal} 
+          onCancel={handleModalClose} 
+          footer={null}
+          width={300}
+          style={{ 
+            textAlign: 'center',
+            borderRadius: '12px',
+            overflow: 'hidden'
+          }}
+          bodyStyle={{
+            padding: '24px'
+          }}
+        >
           <div style={{ textAlign: 'center' }}>
             <input type="date" onChange={() => handleModalClose()} />
             <Button onClick={handleModalClose}>确认</Button>
             <div>系统将自动记住你，下次无需填写~✨</div>
           </div>
         </Modal>
-        {!showModal && (
-          <CategoryCard
-            variants={fadeInVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <CategoryTitle>
-              生肖运势 <LevelBadge level={fortune.categories.animal?.level}>{fortune.categories.animal?.level}</LevelBadge>
-            </CategoryTitle>
-            <CategoryContent>
-              <Paragraph style={{ color: '#e0e0e0' }}>今天可能会遇到一些挑战，但也有机会展现你的能力。</Paragraph>
-              <CategoryAdvice>
-                <strong style={{ color: '#ffd700' }}>建议：</strong> 勇敢面对，积极应对挑战。
-              </CategoryAdvice>
-            </CategoryContent>
-          </CategoryCard>
-        )}
-        {renderAnimalAnalysis(fortune.categories.animal?.name || '')}
       </TabContent>
     );
   };
