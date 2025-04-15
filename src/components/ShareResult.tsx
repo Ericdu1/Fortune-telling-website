@@ -792,7 +792,9 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         <ShareContent ref={contentRef} className="share-content">
           <Header>
             <HeaderTitle>二次元占卜屋</HeaderTitle>
-            <DateTime>{formatDate()} 塔罗牌占卜</DateTime>
+            <DateTime>
+              {formatDate()} {dailyFortune ? '今日运势' : '塔罗牌占卜'}
+            </DateTime>
           </Header>
 
           {tarotResult && tarotResult.cards && tarotResult.cards.length > 0 && (
@@ -869,7 +871,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                   <FortuneItem>
                     <FortuneItemIcon>🎲</FortuneItemIcon>
                     <FortuneItemContent>
-                      抽卡运势：{dailyFortune.categories.game?.level || 'N'}
+                      游戏运势：{dailyFortune.categories.game?.level || 'N'}
                     </FortuneItemContent>
                   </FortuneItem>
                   <FortuneItem>
@@ -881,17 +883,17 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                   <FortuneItem>
                     <FortuneItemIcon>📦</FortuneItemIcon>
                     <FortuneItemContent>
-                      财运运势：{dailyFortune.categories.create?.level || 'N'}
+                      创作运势：{dailyFortune.categories.create?.level || 'N'}
                     </FortuneItemContent>
                   </FortuneItem>
                   <FortuneItem>
                     <FortuneItemIcon>🎯</FortuneItemIcon>
                     <FortuneItemContent>
-                      直觉运势：{dailyFortune.categories.anime?.level || 'N'}
+                      动画运势：{dailyFortune.categories.anime?.level || 'N'}
                     </FortuneItemContent>
                   </FortuneItem>
                 </FortuneDisplayGrid>
-
+                
                 <div style={{ 
                   background: 'rgba(255, 215, 0, 0.1)', 
                   padding: '1rem', 
@@ -1017,7 +1019,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               />
             </QRCodeContainer>
             <Watermark>
-              二次元占卜屋 · JOJO塔罗牌
+              二次元占卜屋 {dailyFortune ? '· 每日运势' : '· JOJO塔罗牌'}
               <br />
               扫描二维码获取你的占卜结果
             </Watermark>
