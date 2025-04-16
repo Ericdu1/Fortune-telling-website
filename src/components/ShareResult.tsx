@@ -733,11 +733,12 @@ interface ShareResultProps {
 const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, onBack }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [renderKey, setRenderKey] = useState(Date.now()); // 用于强制重新渲染
+  const [renderKey, setRenderKey] = useState<number>(0);
 
   // 组件挂载时重置渲染键，确保每次打开分享页面都重新渲染
   useEffect(() => {
-    setRenderKey(Date.now());
+    // 使用随机数防止缓存
+    setRenderKey(Math.random());
   }, [dailyFortune, tarotResult]);
 
   // 提取卡片意义的辅助函数
@@ -751,17 +752,15 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     
     setLoading(true);
     try {
-      // 简化配置，专注于核心功能
-      const canvas = await html2canvas(contentRef.current, {
-        backgroundColor: '#1a1a2e',
+      // 使用any类型规避类型检查问题
+      const options: any = {
+        background: '#1a1a2e',
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        logging: true,
-        onclone: (doc) => {
+        onclone: (doc: Document) => {
           const content = doc.querySelector('.share-content');
           if (content) {
-            // 确保所有样式正确应用
             const style = doc.createElement('style');
             style.innerHTML = `
               .share-content {
@@ -778,7 +777,9 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
             doc.head.appendChild(style);
           }
         }
-      });
+      };
+      
+      const canvas = await html2canvas(contentRef.current, options);
       
       // 创建下载链接
       const imgData = canvas.toDataURL('image/png');
