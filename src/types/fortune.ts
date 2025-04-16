@@ -116,6 +116,40 @@ export interface DailyFortune {
   dailyArtwork?: PixivArtwork;
   mysticMessage: string;
   activeTab?: 'overall' | 'zodiac' | 'animal' | 'lucky';
+  
+  // 新增星座运势信息
+  zodiacInfo?: {
+    analysis: {
+      overall: string; // 星级表示，如"★★★★☆"
+      career: string;
+      wealth: string;
+      love: string;
+      health: string;
+      luck: string;
+    }
+  };
+  
+  // 新增生肖运势信息
+  animalInfo?: {
+    analysis: {
+      overall: string;
+      career: string;
+      wealth: string;
+      love: string;
+      health: string;
+      compatibility: string;
+    }
+  };
+  
+  // 新增幸运提示信息
+  luckyInfo?: {
+    color: string;
+    number: string;
+    keyword: string;
+    goodActivity: string;
+    badActivity: string;
+    behavior: string;
+  };
 }
 
 export interface TarotCardResult {

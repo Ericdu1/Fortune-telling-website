@@ -1653,7 +1653,45 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <ActionButton onClick={onBack} icon={<ArrowLeftOutlined />}>
           返回首页
         </ActionButton>
-        <ActionButton onClick={() => onShare(fortune)} icon={<ShareAltOutlined />}>
+        <ActionButton onClick={() => {
+          // 根据当前活跃的标签页准备适当的数据
+          const completeFortuneData = {
+            ...fortune,
+            activeTab: activeTab,
+            // 确保activeTab信息被传递
+            zodiacInfo: activeTab === 'zodiac' ? {
+              analysis: {
+                overall: '★★★★☆',
+                career: '★★★★☆',
+                wealth: '★★★☆☆',
+                love: '★★★★☆',
+                health: '★★★★☆',
+                luck: '★★★★☆',
+              }
+            } : undefined,
+            animalInfo: activeTab === 'animal' ? {
+              analysis: {
+                overall: '★★★★☆',
+                career: '★★★☆☆',
+                wealth: '★★★★☆',
+                love: '★★★☆☆',
+                health: '★★★★☆',
+                compatibility: '★★★☆☆',
+              }
+            } : undefined,
+            luckyInfo: activeTab === 'lucky' ? {
+              color: '蓝色',
+              number: '7, 9',
+              keyword: '创新、合作、直觉',
+              goodActivity: '学习新技能、参加社交活动',
+              badActivity: '冲动消费、轻率决策',
+              behavior: '今天是提升自我和拓展视野的好时机，尝试接触新事物，与不同领域的人交流，可能会有意想不到的收获和灵感。同时，需要注意控制情绪和消费欲望，避免做出冲动的决定。'
+            } : undefined
+          };
+          
+          // 调用共享函数
+          onShare(completeFortuneData);
+        }} icon={<ShareAltOutlined />}>
           分享运势
         </ActionButton>
       </ButtonContainer>
