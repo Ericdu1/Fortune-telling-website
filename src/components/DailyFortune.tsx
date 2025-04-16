@@ -604,6 +604,7 @@ const renderStars = (rating: string) => {
 
 interface DailyFortuneProps {
   onBack: () => void;
+  onShare?: (fortune: DailyFortuneType) => void;
 }
 
 const fadeInVariants = {
@@ -865,7 +866,7 @@ const LuckyHint: React.FC = () => {
   );
 };
 
-const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
+const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [activeTab, setActiveTab] = useState<TabType>('overall');
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
@@ -1223,6 +1224,67 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
     } catch (error) {
       console.error('收藏运势失败：', error);
     }
+  };
+
+  // 处理分享功能
+  const handleShare = () => {
+    if (!onShare) return;
+    
+    // 创建星座运势数据
+    const zodiacInfo = {
+      sign: '水瓶座',
+      description: '今日星座运势整体状况良好，工作学习都将有所突破。感情方面可能会有些小波折，注意沟通方式。财运平稳，适合稳健投资。健康方面需要注意休息，避免过度疲劳。',
+      advice: '把握机会，相信自己的判断。',
+      analysis: {
+        overall: '★★★★☆',
+        career: '★★★★☆', 
+        wealth: '★★★☆☆',
+        love: '★★★★☆',
+        health: '★★★★☆',
+        luck: '★★★★☆'
+      }
+    };
+
+    // 创建生肖运势数据
+    const animalInfo = {
+      animal: '兔',
+      description: '今日生肖运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。事业上可能有新的机遇，要保持专注。',
+      advice: '把握当下，循序渐进。',
+      analysis: {
+        overall: '★★★★☆',
+        career: '★★★☆☆',
+        wealth: '★★★★☆',
+        love: '★★★☆☆',
+        health: '★★★★☆',
+        compatibility: '★★★☆☆'
+      }
+    };
+
+    // 创建幸运提示数据
+    const luckyInfo = {
+      color: '红色',
+      number: '41',
+      keyword: '专注',
+      goodActivity: ['阅读', '创作'],
+      badActivity: ['过度劳累', '做重大决定'],
+      behavior: '保持耐心，好事多磨'
+    };
+
+    // 将当前活跃的标签页信息添加到fortune数据中
+    const fortuneWithActiveTab = {
+      ...fortune,
+      activeTab,
+      isFullShare: true,  // 添加标志，表示需要生成完整的综合运势内容
+      zodiacInfo,         // 添加星座运势数据
+      animalInfo,         // 添加生肖运势数据
+      luckyInfo           // 添加幸运提示数据
+    };
+
+    // 在控制台输出调试信息
+    console.log("分享运势数据:", fortuneWithActiveTab);
+    
+    // 调用父组件的onShare函数
+    onShare(fortuneWithActiveTab);
   };
 
   // 主要运势内容标签页
@@ -1678,6 +1740,11 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
         <ActionButton onClick={onBack} icon={<ArrowLeftOutlined />}>
           返回首页
         </ActionButton>
+        {onShare && (
+          <ActionButton onClick={handleShare} icon={<ShareAltOutlined />}>
+            分享运势
+          </ActionButton>
+        )}
       </ButtonContainer>
     </Container>
   );

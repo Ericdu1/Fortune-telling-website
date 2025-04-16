@@ -115,6 +115,7 @@ const MainContent = styled.div`
 type Step = 
   | 'home'
   | 'daily-fortune'
+  | 'daily-fortune-share'
   | 'tarot-reading'
   | 'tarot-result'
   | 'tarot-share'
@@ -246,8 +247,21 @@ const App: React.FC = () => {
         return (
           <DailyFortune 
             onBack={() => setState(prev => ({ ...prev, currentStep: 'home' }))}
+            onShare={(fortune) => setState(prev => ({
+              ...prev,
+              currentStep: 'daily-fortune-share',
+              dailyFortuneResult: fortune
+            }))}
           />
         );
+
+      case 'daily-fortune-share':
+        return state.dailyFortuneResult ? (
+          <ShareResult 
+            dailyFortune={state.dailyFortuneResult}
+            onBack={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
+          />
+        ) : null;
 
       default:
         return null;
