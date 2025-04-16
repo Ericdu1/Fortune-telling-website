@@ -9,6 +9,7 @@ import TarotResult from './components/TarotResult';
 import ShareResult from './components/ShareResult';
 import DailyFortune from './components/DailyFortune';
 import { HomeOutlined, StarOutlined, CalendarOutlined, UserOutlined, HistoryOutlined } from '@ant-design/icons';
+import GlobalStyles from './styles/GlobalStyles';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -114,7 +115,6 @@ const MainContent = styled.div`
 type Step = 
   | 'home'
   | 'daily-fortune'
-  | 'daily-fortune-share'
   | 'tarot-reading'
   | 'tarot-result'
   | 'tarot-share'
@@ -246,21 +246,8 @@ const App: React.FC = () => {
         return (
           <DailyFortune 
             onBack={() => setState(prev => ({ ...prev, currentStep: 'home' }))}
-            onShare={(result) => setState(prev => ({
-              ...prev,
-              currentStep: 'daily-fortune-share',
-              dailyFortuneResult: result
-            }))}
           />
         );
-
-      case 'daily-fortune-share':
-        return state.dailyFortuneResult ? (
-          <ShareResult 
-            dailyFortune={state.dailyFortuneResult}
-            onBack={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
-          />
-        ) : null;
 
       default:
         return null;
@@ -268,43 +255,46 @@ const App: React.FC = () => {
   };
 
   return (
-    <AppContainer>
-      <Sidebar>
-        <SidebarItem 
-          active={state.currentStep === 'home'}
-          onClick={() => setState(prev => ({ ...prev, currentStep: 'home' }))}
-        >
-          <HomeOutlined />
-        </SidebarItem>
-        <SidebarItem 
-          active={state.currentStep.startsWith('tarot')}
-          onClick={() => setState(prev => ({ ...prev, currentStep: 'tarot-reading' }))}
-        >
-          <StarOutlined />
-        </SidebarItem>
-        <SidebarItem 
-          active={state.currentStep.startsWith('daily')}
-          onClick={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
-        >
-          <CalendarOutlined />
-        </SidebarItem>
-        <SidebarItem 
-          active={state.currentStep === 'profile'}
-          onClick={() => setState(prev => ({ ...prev, currentStep: 'profile' }))}
-        >
-          <UserOutlined />
-        </SidebarItem>
-        <SidebarItem 
-          active={state.currentStep === 'history'}
-          onClick={() => setState(prev => ({ ...prev, currentStep: 'history' }))}
-        >
-          <HistoryOutlined />
-        </SidebarItem>
-      </Sidebar>
-      <MainContent>
-        {renderStep()}
-      </MainContent>
-    </AppContainer>
+    <>
+      <GlobalStyles />
+      <AppContainer>
+        <Sidebar>
+          <SidebarItem 
+            active={state.currentStep === 'home'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'home' }))}
+          >
+            <HomeOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep.startsWith('tarot')}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'tarot-reading' }))}
+          >
+            <StarOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep.startsWith('daily')}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
+          >
+            <CalendarOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep === 'profile'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'profile' }))}
+          >
+            <UserOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep === 'history'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'history' }))}
+          >
+            <HistoryOutlined />
+          </SidebarItem>
+        </Sidebar>
+        <MainContent>
+          {renderStep()}
+        </MainContent>
+      </AppContainer>
+    </>
   );
 };
 
