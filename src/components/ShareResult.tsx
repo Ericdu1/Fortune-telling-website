@@ -1164,24 +1164,28 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         return;
       }
 
-      // 使用html2canvas直接将DOM元素转为图片 (类型转换以避免TS错误)
-      const canvas = await html2canvas(shareCardRef.current, {
-        backgroundColor: '#1a1a2e', // 实际上是正确的选项，但类型不匹配
-        useCORS: true, // 允许加载跨域图片
+      // 使用html2canvas直接将DOM元素转为图片
+      const canvasOptions = {
+        useCORS: true,         // 允许加载跨域图片
         logging: false,
         allowTaint: true,
-        onclone: (document) => {
+        onclone: (document: Document) => {
           // 简化克隆的文档内样式，以提高转换效率
           const clonedContent = document.querySelector('.share-content');
-          if (clonedContent) {
+          if (clonedContent instanceof HTMLElement) {
             clonedContent.style.boxShadow = 'none';
           }
         }
-      } as any);
+      };
+      
+      // 使用any绕过类型检查
+      const canvas = await html2canvas(shareCardRef.current, canvasOptions as any);
       
       // 创建下载链接
       const link = document.createElement('a');
-      const timestamp = String(new Date().getTime()).slice(-6);
+      // 使用当前时间戳
+      const now = new Date();
+      const timestamp = now.getTime().toString().slice(-6);
       const fileName = `运势占卜_${formatDate().replace(/\//g, '')}_${timestamp}.png`;
       
       // 将canvas转换为Blob并创建下载链接
@@ -1215,7 +1219,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
-  // 添加Web共享API功能
+  // 添加Web共享API功能 (修复类型错误)
   const handleShare = async () => {
     try {
       if (!shareCardRef.current) {
@@ -1223,19 +1227,20 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         return;
       }
       
-      if (!navigator.share) {
+      if (typeof navigator.share !== 'function') {
         message.info('您的浏览器不支持Web分享API，已切换到图片下载模式');
         handleSaveImage();
         return;
       }
       
       // 将内容转换为图片
-      const canvas = await html2canvas(shareCardRef.current, {
-        backgroundColor: '#1a1a2e',
+      const canvasOptions = {
         useCORS: true,
         logging: false,
         allowTaint: true
-      } as any); // 类型转换避免TS错误
+      };
+      
+      const canvas = await html2canvas(shareCardRef.current, canvasOptions as any);
       
       // 将Canvas转换为Blob
       const blob = await new Promise<Blob | null>((resolve) => 
@@ -1250,14 +1255,25 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
       // 创建文件对象
       const file = new File([blob], '二次元占卜运势.png', { type: 'image/png' });
       
-      // 调用Web Share API
-      await navigator.share({
-        title: '二次元占卜屋 - 今日运势',
-        text: '来看看我今天的运势占卜结果吧！',
-        files: [file]
-      });
-      
-      message.success('分享成功！');
+      // 检查是否支持文件分享
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        // 调用Web Share API
+        await navigator.share({
+          title: '二次元占卜屋 - 今日运势',
+          text: '来看看我今天的运势占卜结果吧！',
+          files: [file]
+        });
+        
+        message.success('分享成功！');
+      } else {
+        // 如果不支持文件分享，回退到基本分享
+        await navigator.share({
+          title: '二次元占卜屋 - 今日运势',
+          text: '来看看我今天的运势占卜结果吧！\n https://fortune-telling-website.vercel.app/'
+        });
+        
+        message.success('分享成功！');
+      }
     } catch (error) {
       console.error('分享失败:', error);
       
@@ -1355,7 +1371,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         <div style={{ color: '#ffd700', marginBottom: '0.8rem', fontSize: '1.1rem', textAlign: 'center' }}>
                           总体运势
                         </div>
-                        <Content>{dailyFortune.content}</Content>
+              <Content>{dailyFortune.content}</Content>
                       </div>
                       
                       {/* 运势类别概览 */}
@@ -1392,17 +1408,17 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       {/* 标签 */}
                       <div style={{ textAlign: 'center', margin: '1rem 0' }}>
                         <div style={{ color: '#ffd700', marginBottom: '0.8rem' }}>今日关键词</div>
-                        <TagsContainer>
-                          {dailyFortune.tags.map((tag, index) => (
-                            <Tag 
-                              key={index}
-                              color="gold"
+              <TagsContainer>
+                {dailyFortune.tags.map((tag, index) => (
+                  <Tag 
+                    key={index}
+                    color="gold"
                               style={{ fontSize: '0.9rem', padding: '0.2rem 0.6rem', margin: '0.3rem' }}
-                            >
-                              {tag}
-                            </Tag>
-                          ))}
-                        </TagsContainer>
+                  >
+                    {tag}
+                  </Tag>
+                ))}
+              </TagsContainer>
                       </div>
 
                       {/* 神秘签文 */}
@@ -1445,16 +1461,16 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                           }}></div>
                         </div>
 
-                        {Object.entries(dailyFortune.categories).map(([key, category]) => (
-                          <CategoryCard key={key}>
-                            <CategoryHeader>
-                              <CategoryName>{category.name}</CategoryName>
-                              <CategoryLevel level={category.level}>{category.level}</CategoryLevel>
-                            </CategoryHeader>
-                            <CategoryDescription>{category.description}</CategoryDescription>
+              {Object.entries(dailyFortune.categories).map(([key, category]) => (
+                <CategoryCard key={key}>
+                  <CategoryHeader>
+                    <CategoryName>{category.name}</CategoryName>
+                    <CategoryLevel level={category.level}>{category.level}</CategoryLevel>
+                  </CategoryHeader>
+                  <CategoryDescription>{category.description}</CategoryDescription>
                             <CategoryAdvice>建议：{category.advice}</CategoryAdvice>
-                          </CategoryCard>
-                        ))}
+                </CategoryCard>
+              ))}
                       </div>
                     </div>
                   </>
@@ -1487,7 +1503,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         background: 'rgba(255, 215, 0, 0.3)',
                         zIndex: 0
                       }}></div>
-                    </div>
+                      </div>
 
                     <div style={{ 
                       background: 'rgba(0, 0, 0, 0.3)', 
@@ -1862,7 +1878,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         >
           保存图片
         </StyledButton>
-        {navigator.share && (
+        {typeof navigator !== 'undefined' && 'share' in navigator && (
           <StyledButton 
             icon={<ShareAltOutlined />}
             onClick={handleShare}
