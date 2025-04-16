@@ -115,6 +115,7 @@ export interface DailyFortune {
   events?: DailyEvents;
   dailyArtwork?: PixivArtwork;
   mysticMessage: string;
+  activeTab?: 'overall' | 'zodiac' | 'animal' | 'lucky';
 }
 
 export interface TarotCardResult {
