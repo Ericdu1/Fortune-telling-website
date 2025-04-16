@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Button, message, Tag } from 'antd';
 import { ArrowLeftOutlined, DownloadOutlined } from '@ant-design/icons';
@@ -733,6 +733,12 @@ interface ShareResultProps {
 const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, onBack }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const [renderKey, setRenderKey] = useState(Date.now()); // 用于强制重新渲染
+
+  // 组件挂载时重置渲染键，确保每次打开分享页面都重新渲染
+  useEffect(() => {
+    setRenderKey(Date.now());
+  }, [dailyFortune, tarotResult]);
 
   // 提取卡片意义的辅助函数
   const extractCardMeaning = (position: string) => {
@@ -745,40 +751,42 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     
     setLoading(true);
     try {
-      // 计算内容的实际高度
-      const contentHeight = contentRef.current.scrollHeight;
-      
+      // 简化配置，专注于核心功能
       const canvas = await html2canvas(contentRef.current, {
-        background: '#1a1a2e',
+        backgroundColor: '#1a1a2e',
         scale: 2,
-        height: contentHeight,
-        windowHeight: contentHeight + 200, // 增加高度确保所有内容都被捕获
-        logging: false,
         useCORS: true,
         allowTaint: true,
-        onclone: (documentClone: Document) => {
-          // 确保克隆的文档有正确的尺寸
-          const clonedContent = documentClone.querySelector('.share-content');
-          if (clonedContent) {
-            (clonedContent as HTMLElement).style.height = `${contentHeight}px`;
-            (clonedContent as HTMLElement).style.overflow = 'visible';
-            
-            // 修复图片加载问题
-            const images = documentClone.querySelectorAll('img');
-            images.forEach((img) => {
-              if (img.complete && img.naturalHeight !== 0) {
-                return;
+        logging: true,
+        onclone: (doc) => {
+          const content = doc.querySelector('.share-content');
+          if (content) {
+            // 确保所有样式正确应用
+            const style = doc.createElement('style');
+            style.innerHTML = `
+              .share-content {
+                background: #1a1a2e !important;
+                color: white !important;
+                padding: 1.5rem !important;
+                width: 100% !important;
               }
-              img.style.visibility = 'hidden';
-            });
+              
+              .share-content * {
+                visibility: visible !important;
+              }
+            `;
+            doc.head.appendChild(style);
           }
         }
-      } as any);
-
+      });
+      
+      // 创建下载链接
+      const imgData = canvas.toDataURL('image/png');
       const link = document.createElement('a');
+      link.href = imgData;
       link.download = `二次元占卜屋_${formatDate()}.png`;
-      link.href = canvas.toDataURL('image/png');
       link.click();
+      
       message.success('图片保存成功！');
     } catch (error) {
       console.error('保存图片失败:', error);
@@ -793,7 +801,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
       <Title>分享今日运势</Title>
 
       <ShareCard>
-        <ShareContent ref={contentRef} className="share-content">
+        <ShareContent ref={contentRef} className="share-content" key={renderKey}>
           <Header>
             <HeaderTitle>二次元占卜屋</HeaderTitle>
             <DateTime>
