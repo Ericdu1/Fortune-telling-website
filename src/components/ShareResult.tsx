@@ -989,7 +989,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     setLoading(true);
     try {
       // 添加一个随机查询参数，确保每次生成的图片都是唯一的，避免浏览器缓存
-      const timestamp = new Date().getTime();
+      const timestamp = `${Math.floor(Math.random() * 10000000000)}`;
       const uniqueId = Math.random().toString(36).substring(2, 15);
       
       // 直接创建一个新的HTML页面，然后在新页面中生成图片
@@ -1194,7 +1194,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <div class="category-card">
                 <div class="category-header">
                   <span class="category-name">整体运势</span>
-                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.zodiacInfo?.analysis.overall || "★★★★☆"}</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune?.zodiacInfo?.analysis?.overall || "★★★★☆"}</span>
                 </div>
                 <div>今天的整体运势不错，适合处理重要事务。保持积极乐观的心态，会有意外的惊喜。</div>
                 <div style="color: #a0a0a0; margin-top: 8px;">建议：把握机会，相信自己的判断。</div>
@@ -1203,7 +1203,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <div class="category-card">
                 <div class="category-header">
                   <span class="category-name">爱情运势</span>
-                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.zodiacInfo?.analysis.love || "★★★☆☆"}</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune?.zodiacInfo?.analysis?.love || "★★★☆☆"}</span>
                 </div>
                 <div>单身者可能会遇到心动的对象，已有伴侣的要注意沟通方式。</div>
                 <div style="color: #a0a0a0; margin-top: 8px;">建议：保持真诚，表达自己的感受。</div>
@@ -1212,7 +1212,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <div class="category-card">
                 <div class="category-header">
                   <span class="category-name">事业运势</span>
-                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.zodiacInfo?.analysis.career || "★★★★☆"}</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune?.zodiacInfo?.analysis?.career || "★★★★☆"}</span>
                 </div>
                 <div>工作上会遇到新的挑战，但这也是展现能力的好机会。团队合作会带来不错的成果。</div>
                 <div style="color: #a0a0a0; margin-top: 8px;">建议：主动承担责任，展现领导力。</div>
@@ -1231,7 +1231,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <div class="category-card">
                 <div class="category-header">
                   <span class="category-name">整体运势</span>
-                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.animalInfo?.analysis.overall || "★★★★☆"}</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune?.animalInfo?.analysis?.overall || "★★★★☆"}</span>
                 </div>
                 <div>今日运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。</div>
                 <div style="color: #a0a0a0; margin-top: 8px;">建议：把握当下，循序渐进。</div>
@@ -1240,7 +1240,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <div class="category-card">
                 <div class="category-header">
                   <span class="category-name">事业运势</span>
-                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.animalInfo?.analysis.career || "★★★☆☆"}</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune?.animalInfo?.analysis?.career || "★★★☆☆"}</span>
                 </div>
                 <div>职场上可能会遇到新的机遇，团队协作顺利。注意把握细节，展现专业能力。</div>
                 <div style="color: #a0a0a0; margin-top: 8px;">建议：保持专注，注重细节。</div>
@@ -1249,7 +1249,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               <div class="category-card">
                 <div class="category-header">
                   <span class="category-name">财运运势</span>
-                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.animalInfo?.analysis.wealth || "★★★★☆"}</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune?.animalInfo?.analysis?.wealth || "★★★★☆"}</span>
                 </div>
                 <div>财运较好，可能有额外收入。投资方面要保持谨慎，避免冒险。</div>
                 <div style="color: #a0a0a0; margin-top: 8px;">建议：稳健理财，适度消费。</div>
@@ -1260,32 +1260,32 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
             <div style="display: flex; flex-direction: column; gap: 16px; margin: 20px 0;">
               <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
                 <div style="color: #ffd700; margin-bottom: 8px;">🎨 幸运色：</div>
-                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.color || "蓝色"}</div>
+                <div style="font-size: 16px;">${dailyFortune?.luckyInfo?.color || "蓝色"}</div>
               </div>
               
               <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
                 <div style="color: #ffd700; margin-bottom: 8px;">🔢 幸运数字：</div>
-                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.number || "7, 9"}</div>
+                <div style="font-size: 16px;">${dailyFortune?.luckyInfo?.number || "7, 9"}</div>
               </div>
               
               <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
                 <div style="color: #ffd700; margin-bottom: 8px;">🔑 幸运关键词：</div>
-                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.keyword || "创新、合作、直觉"}</div>
+                <div style="font-size: 16px;">${dailyFortune?.luckyInfo?.keyword || "创新、合作、直觉"}</div>
               </div>
               
               <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
                 <div style="color: #ffd700; margin-bottom: 8px;">✅ 今日宜：</div>
-                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.goodActivity || "学习新技能、参加社交活动"}</div>
+                <div style="font-size: 16px;">${dailyFortune?.luckyInfo?.goodActivity || "学习新技能、参加社交活动"}</div>
               </div>
               
               <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
                 <div style="color: #ffd700; margin-bottom: 8px;">❌ 今日忌：</div>
-                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.badActivity || "冲动消费、轻率决策"}</div>
+                <div style="font-size: 16px;">${dailyFortune?.luckyInfo?.badActivity || "冲动消费、轻率决策"}</div>
               </div>
               
               <div style="padding: 16px; border-radius: 8px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700;">
                 <div style="color: #ffd700; margin-bottom: 8px;">🌟 行为引导：</div>
-                <div style="font-size: 16px; line-height: 1.6;">${dailyFortune.luckyInfo?.behavior || "今天是提升自我和拓展视野的好时机，尝试接触新事物，与不同领域的人交流，可能会有意想不到的收获和灵感。同时，需要注意控制情绪和消费欲望，避免做出冲动的决定。"}</div>
+                <div style="font-size: 16px; line-height: 1.6;">${dailyFortune?.luckyInfo?.behavior || "今天是提升自我和拓展视野的好时机，尝试接触新事物，与不同领域的人交流，可能会有意想不到的收获和灵感。同时，需要注意控制情绪和消费欲望，避免做出冲动的决定。"}</div>
               </div>
             </div>
             ` : `
