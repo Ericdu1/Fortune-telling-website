@@ -116,6 +116,7 @@ export interface DailyFortune {
   dailyArtwork?: PixivArtwork;
   mysticMessage: string;
   activeTab?: 'overall' | 'zodiac' | 'animal' | 'lucky';
+  isFullShare?: boolean;
   
   // 新增星座运势信息
   zodiacInfo?: {
