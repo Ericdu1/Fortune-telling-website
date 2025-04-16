@@ -119,6 +119,7 @@ export interface DailyFortune {
   
   // 新增星座运势信息
   zodiacInfo?: {
+    sign?: string;
     analysis: {
       overall: string; // 星级表示，如"★★★★☆"
       career: string;
@@ -126,11 +127,14 @@ export interface DailyFortune {
       love: string;
       health: string;
       luck: string;
-    }
+    };
+    description?: string;
+    advice?: string;
   };
   
   // 新增生肖运势信息
   animalInfo?: {
+    animal?: string;
     analysis: {
       overall: string;
       career: string;
@@ -138,7 +142,9 @@ export interface DailyFortune {
       love: string;
       health: string;
       compatibility: string;
-    }
+    };
+    description?: string;
+    advice?: string;
   };
   
   // 新增幸运提示信息
@@ -146,8 +152,8 @@ export interface DailyFortune {
     color: string;
     number: string;
     keyword: string;
-    goodActivity: string;
-    badActivity: string;
+    goodActivity: string[] | string;
+    badActivity: string[] | string;
     behavior: string;
   };
 }
