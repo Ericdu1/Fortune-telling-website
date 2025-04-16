@@ -733,18 +733,120 @@ interface ShareResultProps {
 const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, onBack }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [renderKey, setRenderKey] = useState<number>(0);
+  const [simpleImageContent, setSimpleImageContent] = useState<string>('');
 
-  // 组件挂载时重置渲染键，确保每次打开分享页面都重新渲染
-  useEffect(() => {
-    // 使用随机数防止缓存
-    setRenderKey(Math.random());
-  }, [dailyFortune, tarotResult]);
-
-  // 提取卡片意义的辅助函数
+  // 提取卡片意义的辅助函数(恢复这个函数以修复塔罗牌部分的错误)
   const extractCardMeaning = (position: string) => {
     const card = tarotResult?.cards?.find(c => c.position === position);
     return card?.isReversed ? card.reversedMeaning : card?.meaning;
+  };
+
+  // 组件挂载时生成简化版内容
+  useEffect(() => {
+    if (dailyFortune) {
+      // 生成简化的HTML内容用于图片
+      generateSimpleContent();
+    }
+  }, [dailyFortune, tarotResult]);
+
+  // 生成简化版的内容用于图片生成
+  const generateSimpleContent = () => {
+    if (!dailyFortune) return;
+    
+    // 构建简单的HTML结构
+    const content = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto; background: #1a1a2e; color: white; padding: 24px; width: 100%; max-width: 500px; border-radius: 12px;">
+        <!-- 头部 -->
+        <div style="text-align: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255, 215, 0, 0.3); padding-bottom: 16px;">
+          <h2 style="color: #ffd700; font-size: 28px; margin-bottom: 8px;">二次元占卜屋</h2>
+          <div style="color: #e0e0e0; font-size: 16px;">${formatDate()} 今日运势</div>
+        </div>
+        
+        <!-- 运势标题 -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 24px; color: #ffd700; margin-bottom: 8px; font-weight: bold;">今日运势占卜</div>
+          <div style="font-size: 18px; color: #e0e0e0; margin-bottom: 16px;">${dailyFortune.date}</div>
+          <div style="margin: 16px 0;">
+            <div style="color: #ffd700; margin-bottom: 8px;">今日运势指数</div>
+            <div style="color: #ffd700; font-size: 24px;">${'★'.repeat(dailyFortune.luck)}${'☆'.repeat(5 - dailyFortune.luck)}</div>
+          </div>
+        </div>
+        
+        <!-- 总体运势 -->
+        <div style="background: rgba(0, 0, 0, 0.3); padding: 16px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); margin-bottom: 20px;">
+          <div style="color: #ffd700; margin-bottom: 12px; font-size: 18px; text-align: center;">总体运势</div>
+          <div style="font-size: 16px; line-height: 1.6;">${dailyFortune.content}</div>
+        </div>
+        
+        <!-- 运势概览 -->
+        <div style="text-align: center; margin: 20px 0;">
+          <div style="color: #ffd700; margin-bottom: 12px; font-size: 18px;">运势概览</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div style="color: #ffd700; font-size: 24px;">🎮</div>
+              <div style="color: #ffffff; font-size: 16px;">游戏运势：${dailyFortune.categories.game?.level || 'N'}</div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div style="color: #ffd700; font-size: 24px;">👥</div>
+              <div style="color: #ffffff; font-size: 16px;">社交运势：${dailyFortune.categories.social?.level || 'N'}</div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div style="color: #ffd700; font-size: 24px;">✍️</div>
+              <div style="color: #ffffff; font-size: 16px;">创作运势：${dailyFortune.categories.create?.level || 'N'}</div>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div style="color: #ffd700; font-size: 24px;">📺</div>
+              <div style="color: #ffffff; font-size: 16px;">动画运势：${dailyFortune.categories.anime?.level || 'N'}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 神秘签文 -->
+        <div style="background: rgba(255, 215, 0, 0.1); padding: 16px; border-radius: 8px; margin: 20px 0; border-left: 3px solid #ffd700;">
+          <div style="color: #ffd700; margin-bottom: 8px; font-size: 16px;">🔮 神秘签文</div>
+          <div style="font-size: 18px; font-style: italic;">${dailyFortune.mysticMessage}</div>
+        </div>
+        
+        <!-- 详细运势分析 -->
+        <div style="margin: 20px 0;">
+          <div style="color: #ffd700; margin-bottom: 16px; font-size: 18px; text-align: center; position: relative;">
+            <span style="position: relative; background: #1a1a2e; padding: 0 16px; z-index: 1;">详细运势分析</span>
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255, 215, 0, 0.3); z-index: 0;"></div>
+          </div>
+          ${Object.entries(dailyFortune.categories).map(([key, category]) => `
+            <div style="margin: 16px 0; padding: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px;">
+              <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                <span style="color: #ffd700; font-size: 18px;">${category.name}</span>
+                <span style="margin-left: 12px; background: ${getLevelColor(category.level)}; color: white; padding: 2px 8px; border-radius: 4px;">${category.level}</span>
+              </div>
+              <div style="color: #e0e0e0; margin-bottom: 8px;">${category.description}</div>
+              <div style="color: #a0a0a0; font-size: 14px;">建议：${category.advice}</div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <!-- 底部 -->
+        <div style="display: flex; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255, 215, 0, 0.2);">
+          <div style="color: #a0a0a0; font-size: 14px; margin-left: auto;">
+            二次元占卜屋 · 每日运势
+            <br />
+            扫描二维码获取你的占卜结果
+          </div>
+        </div>
+      </div>
+    `;
+    
+    setSimpleImageContent(content);
+  };
+  
+  // 获取等级颜色
+  const getLevelColor = (level: string) => {
+    switch (level) {
+      case 'SSR': return 'linear-gradient(45deg, #FFD700, #FFA500)';
+      case 'SR': return 'linear-gradient(45deg, #C0C0C0, #A0A0A0)';
+      case 'R': return 'linear-gradient(45deg, #CD7F32, #8B4513)';
+      default: return 'linear-gradient(45deg, #808080, #696969)';
+    }
   };
 
   const handleSaveImage = async () => {
@@ -752,34 +854,24 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     
     setLoading(true);
     try {
-      // 使用any类型规避类型检查问题
-      const options: any = {
-        background: '#1a1a2e',
+      // 创建一个临时的DIV元素用于渲染简化内容
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = simpleImageContent;
+      document.body.appendChild(tempDiv);
+      
+      const options = {
+        backgroundColor: '#1a1a2e',
         scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        onclone: (doc: Document) => {
-          const content = doc.querySelector('.share-content');
-          if (content) {
-            const style = doc.createElement('style');
-            style.innerHTML = `
-              .share-content {
-                background: #1a1a2e !important;
-                color: white !important;
-                padding: 1.5rem !important;
-                width: 100% !important;
-              }
-              
-              .share-content * {
-                visibility: visible !important;
-              }
-            `;
-            doc.head.appendChild(style);
-          }
-        }
+        logging: true,
+        width: 500,
+        height: tempDiv.firstChild ? (tempDiv.firstChild as HTMLElement).offsetHeight : 800,
       };
       
-      const canvas = await html2canvas(contentRef.current, options);
+      // 使用简化的DOM结构生成图片
+      const canvas = await html2canvas(tempDiv.firstChild as HTMLElement, options as any);
+      
+      // 清理临时DOM
+      document.body.removeChild(tempDiv);
       
       // 创建下载链接
       const imgData = canvas.toDataURL('image/png');
@@ -802,7 +894,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
       <Title>分享今日运势</Title>
 
       <ShareCard>
-        <ShareContent ref={contentRef} className="share-content" key={renderKey}>
+        <ShareContent ref={contentRef} className="share-content">
           <Header>
             <HeaderTitle>二次元占卜屋</HeaderTitle>
             <DateTime>
