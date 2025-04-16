@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Button, message, Tag } from 'antd';
 import { ArrowLeftOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
+// @ts-ignore - 导入html2canvas但忽略类型检查
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
 import { DailyFortune } from '../types/fortune';
@@ -1154,64 +1155,59 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
+  // 生成图片并保存 - 使用简化方法
   const handleSaveImage = async () => {
     try {
       setIsSaving(true);
       
       if (!shareCardRef.current) {
-        setIsSaving(false);
         message.error('无法获取分享内容');
+        setIsSaving(false);
         return;
       }
 
-      // 使用html2canvas直接将DOM元素转为图片
-      const canvasOptions = {
-        useCORS: true,         // 允许加载跨域图片
+      // @ts-ignore - 忽略html2canvas类型检查
+      const canvas = await html2canvas(shareCardRef.current, {
+        useCORS: true,
         logging: false,
         allowTaint: true,
-        onclone: (document: Document) => {
-          // 简化克隆的文档内样式，以提高转换效率
-          const clonedContent = document.querySelector('.share-content');
-          if (clonedContent instanceof HTMLElement) {
-            clonedContent.style.boxShadow = 'none';
-          }
-        }
-      };
+        scale: 2 // 2x分辨率提高清晰度
+      });
       
-      // 使用any绕过类型检查
-      const canvas = await html2canvas(shareCardRef.current, canvasOptions as any);
-      
-      // 创建下载链接
-      const link = document.createElement('a');
-      // 使用当前时间戳
-      const now = new Date();
-      const timestamp = now.getTime().toString().slice(-6);
+      // 生成文件名
+      const timestamp = String(Math.floor(Math.random() * 1000000));
       const fileName = `运势占卜_${formatDate().replace(/\//g, '')}_${timestamp}.png`;
       
-      // 将canvas转换为Blob并创建下载链接
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          message.error('生成图片失败');
-          setIsSaving(false);
-          return;
-        }
-        
-        // 创建URL并下载
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        
-        // 清理
-        setTimeout(() => {
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-          setIsSaving(false);
-          message.success('运势图片已保存');
-        }, 100);
-      }, 'image/png', 0.95);
-      
+      // 创建下载链接
+      try {
+        // 转换为blob并下载
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            message.error('生成图片失败');
+            setIsSaving(false);
+            return;
+          }
+          
+          // 创建下载链接
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = URL.createObjectURL(blob);
+          document.body.appendChild(link);
+          link.click();
+          
+          // 清理
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+            setIsSaving(false);
+            message.success('运势图片已保存');
+          }, 100);
+        }, 'image/png');
+      } catch (err) {
+        console.error('下载图片失败:', err);
+        message.error('保存图片失败');
+        setIsSaving(false);
+      }
     } catch (error) {
       console.error('保存图片过程中出错:', error);
       message.error('生成图片时出错');
@@ -1219,7 +1215,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
-  // 添加Web共享API功能 (修复类型错误)
+  // 使用Web Share API分享
   const handleShare = async () => {
     try {
       if (!shareCardRef.current) {
@@ -1227,61 +1223,34 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         return;
       }
       
-      if (typeof navigator.share !== 'function') {
-        message.info('您的浏览器不支持Web分享API，已切换到图片下载模式');
+      // 检查是否支持分享API
+      // @ts-ignore - 忽略Navigator API类型检查
+      if (!navigator.share) {
+        message.info('您的浏览器不支持分享功能，已切换为下载模式');
         handleSaveImage();
         return;
       }
       
-      // 将内容转换为图片
-      const canvasOptions = {
-        useCORS: true,
-        logging: false,
-        allowTaint: true
+      // 基础分享数据
+      const shareData = {
+        title: '二次元占卜屋 - 今日运势',
+        text: '来看看我今天的运势占卜结果吧！',
+        url: 'https://fortune-telling-website.vercel.app/'
       };
       
-      const canvas = await html2canvas(shareCardRef.current, canvasOptions as any);
-      
-      // 将Canvas转换为Blob
-      const blob = await new Promise<Blob | null>((resolve) => 
-        canvas.toBlob(resolve, 'image/png', 0.95)
-      );
-      
-      if (!blob) {
-        message.error('生成分享图片失败');
-        return;
-      }
-      
-      // 创建文件对象
-      const file = new File([blob], '二次元占卜运势.png', { type: 'image/png' });
-      
-      // 检查是否支持文件分享
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        // 调用Web Share API
-        await navigator.share({
-          title: '二次元占卜屋 - 今日运势',
-          text: '来看看我今天的运势占卜结果吧！',
-          files: [file]
-        });
-        
+      try {
+        // @ts-ignore - 忽略Navigator API类型检查
+        await navigator.share(shareData);
         message.success('分享成功！');
-      } else {
-        // 如果不支持文件分享，回退到基本分享
-        await navigator.share({
-          title: '二次元占卜屋 - 今日运势',
-          text: '来看看我今天的运势占卜结果吧！\n https://fortune-telling-website.vercel.app/'
-        });
-        
-        message.success('分享成功！');
+      } catch (shareError) {
+        if (shareError instanceof Error && shareError.name !== 'AbortError') {
+          message.error('分享失败，已切换为下载模式');
+          handleSaveImage();
+        }
       }
     } catch (error) {
-      console.error('分享失败:', error);
-      
-      // 如果是用户取消分享，不显示错误
-      if (error instanceof Error && error.name !== 'AbortError') {
-        message.error('分享失败，已切换到图片下载模式');
-        handleSaveImage();
-      }
+      console.error('准备分享时出错:', error);
+      message.error('分享功能出错');
     }
   };
 
@@ -1878,7 +1847,8 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         >
           保存图片
         </StyledButton>
-        {typeof navigator !== 'undefined' && 'share' in navigator && (
+        {/* @ts-ignore - 使用简单的检测方式 */}
+        {typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'share' in navigator && (
           <StyledButton 
             icon={<ShareAltOutlined />}
             onClick={handleShare}
