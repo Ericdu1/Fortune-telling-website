@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Button, message, Tag } from 'antd';
-import { ArrowLeftOutlined, DownloadOutlined, ShareAltOutlined, CopyOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, DownloadOutlined, ShareAltOutlined, CopyOutlined, RollbackOutlined } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
 import { DailyFortune } from '../types/fortune';
@@ -716,6 +716,41 @@ const FortuneItemContent = styled.div`
   font-size: 1rem;
 `;
 
+const ActionButtons = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+`;
+
+const ActionButton = styled.button`
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+`;
+
 interface ShareResultProps {
   dailyFortune?: DailyFortune;
   tarotResult?: {
@@ -736,6 +771,8 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
   const [simpleImageContent, setSimpleImageContent] = useState<string>('');
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [isSaving, setIsSaving] = useState(false);
+  // 在组件开始添加canShare状态
+  const [canShare, setCanShare] = useState(false);
 
   // 提取卡片意义的辅助函数(恢复这个函数以修复塔罗牌部分的错误)
   const extractCardMeaning = (position: string) => {
@@ -1216,72 +1253,14 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
-  // 添加Web共享API功能
-  const handleShare = async () => {
+  // 添加静默复制到剪贴板函数
+  const handleCopyToClipboardSilent = async (): Promise<void> => {
+    setIsSaving(true);
     try {
       if (!shareCardRef.current) {
-        message.error('无法获取分享内容');
-        return;
+        throw new Error('无法获取分享内容');
       }
       
-      if (!navigator.share) {
-        message.info('您的浏览器不支持Web分享API，已切换到图片下载模式');
-        handleSaveImage();
-        return;
-      }
-      
-      // 将内容转换为图片
-      const canvas = await html2canvas(shareCardRef.current, {
-        backgroundColor: '#1a1a2e',
-        useCORS: true,
-        logging: false,
-        allowTaint: true
-      } as any); // 类型转换避免TS错误
-      
-      // 将Canvas转换为Blob
-      const blob = await new Promise<Blob | null>((resolve) => 
-        canvas.toBlob(resolve, 'image/png', 0.95)
-      );
-      
-      if (!blob) {
-        message.error('生成分享图片失败');
-        return;
-      }
-      
-      // 创建文件对象
-      const timestamp = window.Date.now().toString().slice(-6);
-      const file = new File([blob], `二次元占卜运势_${timestamp}.png`, { type: 'image/png' });
-      
-      // 调用Web Share API
-      await navigator.share({
-        title: '二次元占卜屋 - 今日运势',
-        text: '来看看我今天的运势占卜结果吧！',
-        files: [file]
-      });
-      
-      message.success('分享成功！');
-    } catch (error) {
-      console.error('分享失败:', error);
-      
-      // 如果是用户取消分享，不显示错误
-      if (error instanceof Error && error.name !== 'AbortError') {
-        message.error('分享失败，已切换到图片下载模式');
-        handleSaveImage();
-      }
-    }
-  };
-
-  // 添加复制到剪贴板功能
-  const handleCopyToClipboard = async () => {
-    try {
-      setIsSaving(true);
-      
-      if (!shareCardRef.current) {
-        setIsSaving(false);
-        message.error('无法获取分享内容');
-        return;
-      }
-
       // 使用html2canvas直接将DOM元素转为图片
       const canvas = await html2canvas(shareCardRef.current, {
         backgroundColor: '#1a1a2e',
@@ -1304,54 +1283,145 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         // 创建ClipboardItem并写入剪贴板
         const data = [new ClipboardItem({ 'image/png': blob })];
         await navigator.clipboard.write(data);
-        
-        message.success('图片已复制到剪贴板，可直接粘贴');
+        return;
       } catch (clipboardError) {
         console.error('复制到剪贴板失败，尝试备用方法', clipboardError);
         
         // 备用方法：使用canvas.toDataURL创建图片
-        try {
-          const dataUrl = canvas.toDataURL('image/png');
-          
-          // 创建一个临时的<img>元素
-          const img = document.createElement('img');
-          img.src = dataUrl;
-          
-          // 创建一个临时div来容纳图片，并设置为可见但在屏幕外
-          const container = document.createElement('div');
-          container.style.position = 'fixed';
-          container.style.top = '-9999px';
-          container.appendChild(img);
-          document.body.appendChild(container);
-          
-          // 创建选区并复制
-          const range = document.createRange();
-          range.selectNode(img);
-          window.getSelection()?.removeAllRanges();
-          window.getSelection()?.addRange(range);
-          
-          const success = document.execCommand('copy');
-          if (!success) {
-            throw new Error('execCommand复制失败');
-          }
-          
-          // 清理
-          window.getSelection()?.removeAllRanges();
-          document.body.removeChild(container);
-          
-          message.success('图片已复制到剪贴板，可直接粘贴');
-        } catch (fallbackError) {
-          console.error('备用复制方法也失败', fallbackError);
-          message.error('复制到剪贴板失败，请尝试使用保存图片功能');
-          // 如果所有方法都失败，尝试保存图片
-          handleSaveImage();
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // 创建一个临时的<img>元素
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        
+        // 创建一个临时div来容纳图片，并设置为可见但在屏幕外
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '-9999px';
+        container.appendChild(img);
+        document.body.appendChild(container);
+        
+        // 创建选区并复制
+        const range = document.createRange();
+        range.selectNode(img);
+        window.getSelection()?.removeAllRanges();
+        window.getSelection()?.addRange(range);
+        
+        const success = document.execCommand('copy');
+        if (!success) {
+          throw new Error('execCommand复制失败');
         }
+        
+        // 清理
+        window.getSelection()?.removeAllRanges();
+        document.body.removeChild(container);
+        return;
       }
-    } catch (error) {
-      console.error('复制到剪贴板过程中出错:', error);
-      message.error('复制到剪贴板失败');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // 添加useEffect检测分享API支持
+  useEffect(() => {
+    // 检查浏览器是否支持Web Share API
+    setCanShare(!!navigator.share);
+  }, []);
+
+  // 更新handleShare函数
+  const handleShare = async () => {
+    setIsSaving(true);
+    try {
+      if (!shareCardRef.current) {
+        throw new Error('没有找到分享卡片元素');
+      }
+      
+      const canvas = await html2canvas(shareCardRef.current, {
+        useCORS: true,
+        logging: false,
+        background: null
+      });
+      
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          throw new Error('生成图片失败');
+        }
+        
+        const file = new File([blob], 'fortune-share.png', { type: 'image/png' });
+        
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: '二次元占卜屋 - 今日运势',
+              text: '查看我的今日运势预测！',
+              files: [file]
+            });
+            message.success('分享成功！');
+          } catch (error) {
+            console.error('分享失败:', error);
+            if (error instanceof DOMException && error.name === 'NotAllowedError') {
+              message.info('分享已取消');
+            } else {
+              message.error('分享失败，请尝试其他方式');
+              // 尝试复制到剪贴板作为备选方案
+              handleCopyToClipboard();
+            }
+          }
+        } else {
+          message.warning('您的浏览器不支持分享功能，将复制到剪贴板');
+          handleCopyToClipboard();
+        }
+        setIsSaving(false);
+      }, 'image/png');
+    } catch (error) {
+      console.error('准备分享图片时出错:', error);
+      message.error('生成分享图片失败');
+      setIsSaving(false);
+    }
+  };
+
+  // 添加复制到剪贴板功能
+  const handleCopyToClipboard = async () => {
+    try {
+      if (!shareCardRef.current) {
+        throw new Error('没有找到分享卡片元素');
+      }
+      
+      const canvas = await html2canvas(shareCardRef.current, {
+        useCORS: true,
+        logging: false,
+        background: null
+      });
+      
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          throw new Error('生成图片失败');
+        }
+        
+        try {
+          // 创建剪贴板项
+          const item = new ClipboardItem({
+            [blob.type]: blob
+          });
+          await navigator.clipboard.write([item]);
+          message.success('图片已复制到剪贴板！');
+        } catch (error) {
+          console.error('复制到剪贴板失败:', error);
+          // 提供下载选项作为最后的备用方案
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'fortune-share.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          message.success('已生成图片，请查看下载');
+        }
+      }, 'image/png');
+    } catch (error) {
+      console.error('生成图片失败:', error);
+      message.error('无法生成分享图片');
     }
   };
 
@@ -1934,36 +2004,22 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         </ShareContent>
       </ShareCard>
 
-      <ButtonContainer>
-        <StyledButton 
-          icon={<ArrowLeftOutlined />}
-          onClick={onBack}
-        >
-          返回结果
-        </StyledButton>
-        <StyledButton 
-          icon={<CopyOutlined />}
-          onClick={handleCopyToClipboard}
-          loading={isSaving}
-        >
-          复制
-        </StyledButton>
-        <StyledButton 
-          icon={<DownloadOutlined />}
-          onClick={handleSaveImage}
-          loading={isSaving}
-        >
-          保存图片
-        </StyledButton>
+      <ActionButtons>
+        <ActionButton onClick={handleSaveImage}>
+          <DownloadOutlined /> 保存图片
+        </ActionButton>
+        <ActionButton onClick={handleCopyToClipboard}>
+          <CopyOutlined /> 复制到剪贴板
+        </ActionButton>
         {navigator.share && (
-          <StyledButton 
-            icon={<ShareAltOutlined />}
-            onClick={handleShare}
-          >
-            分享
-          </StyledButton>
+          <ActionButton onClick={handleShare}>
+            <ShareAltOutlined /> 分享给朋友
+          </ActionButton>
         )}
-      </ButtonContainer>
+        <ActionButton onClick={onBack}>
+          <RollbackOutlined /> 返回
+        </ActionButton>
+      </ActionButtons>
     </Container>
   );
 };
