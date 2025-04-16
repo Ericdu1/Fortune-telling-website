@@ -1327,6 +1327,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
+  // 确保在return中显示所有内容，不管activeTab是什么
   return (
     <Container>
       <Title>分享今日运势</Title>
@@ -1342,15 +1343,24 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
 
           {dailyFortune && (
             <>
+              {/* 简单指示是否为完整分享模式，方便调试 */}
+              <div style={{ display: 'none' }}>
+                分享模式: {dailyFortune.isFullShare ? '完整' : '单一'}, 
+                活跃标签: {dailyFortune.activeTab || '无'}
+              </div>
+
+              {/* 显示标题，根据是否为完整分享和当前活跃标签页 */}
               <DailyFortuneHeader>
                 <FortuneTitle>
-                  {dailyFortune.activeTab === 'zodiac' 
-                    ? '星座运势占卜' 
-                    : dailyFortune.activeTab === 'animal' 
-                      ? '生肖运势占卜' 
-                      : dailyFortune.activeTab === 'lucky' 
-                        ? '今日幸运提示'
-                        : '今日运势占卜'}
+                  {dailyFortune.isFullShare 
+                    ? '今日运势综合分享'
+                    : dailyFortune.activeTab === 'zodiac' 
+                      ? '星座运势占卜' 
+                      : dailyFortune.activeTab === 'animal' 
+                        ? '生肖运势占卜' 
+                        : dailyFortune.activeTab === 'lucky' 
+                          ? '今日幸运提示'
+                          : '今日运势占卜'}
                 </FortuneTitle>
                 <Date>{dailyFortune.date}</Date>
                 {dailyFortune.activeTab !== 'lucky' && (
@@ -1362,83 +1372,12 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               </DailyFortuneHeader>
 
               <DailyFortuneContent>
-                {dailyFortune.activeTab === 'overall' || !dailyFortune.activeTab ? (
+                {/* 完整分享模式下显示所有内容，或者根据activeTab显示特定内容 */}
+                {(dailyFortune.isFullShare || dailyFortune.activeTab === 'overall' || !dailyFortune.activeTab) && (
                   // 总体运势内容
                   <>
                     {/* 总体运势 */}
-                    <div style={{ 
-                      background: 'rgba(0, 0, 0, 0.3)', 
-                      padding: '1rem', 
-                      borderRadius: '10px',
-                      border: '1px solid rgba(255, 215, 0, 0.3)'
-                    }}>
-                      <div style={{ color: '#ffd700', marginBottom: '0.8rem', fontSize: '1.1rem', textAlign: 'center' }}>
-                        总体运势
-                      </div>
-              <Content>{dailyFortune.content}</Content>
-                    </div>
-                    
-                    {/* 运势类别概览 */}
-                    <div style={{ textAlign: 'center', margin: '1rem 0' }}>
-                      <div style={{ color: '#ffd700', marginBottom: '0.8rem' }}>运势概览</div>
-                      <FortuneDisplayGrid>
-                        <FortuneItem>
-                          <FortuneItemIcon>🎮</FortuneItemIcon>
-                          <FortuneItemContent>
-                            游戏运势：{dailyFortune.categories.game?.level || 'N'}
-                          </FortuneItemContent>
-                        </FortuneItem>
-                        <FortuneItem>
-                          <FortuneItemIcon>👥</FortuneItemIcon>
-                          <FortuneItemContent>
-                            社交运势：{dailyFortune.categories.social?.level || 'N'}
-                          </FortuneItemContent>
-                        </FortuneItem>
-                        <FortuneItem>
-                          <FortuneItemIcon>✍️</FortuneItemIcon>
-                          <FortuneItemContent>
-                            创作运势：{dailyFortune.categories.create?.level || 'N'}
-                          </FortuneItemContent>
-                        </FortuneItem>
-                        <FortuneItem>
-                          <FortuneItemIcon>📺</FortuneItemIcon>
-                          <FortuneItemContent>
-                            动画运势：{dailyFortune.categories.anime?.level || 'N'}
-                          </FortuneItemContent>
-                        </FortuneItem>
-                      </FortuneDisplayGrid>
-                    </div>
-                    
-                    {/* 标签 */}
-                    <div style={{ textAlign: 'center', margin: '1rem 0' }}>
-                      <div style={{ color: '#ffd700', marginBottom: '0.8rem' }}>今日关键词</div>
-              <TagsContainer>
-                {dailyFortune.tags.map((tag, index) => (
-                  <Tag 
-                    key={index}
-                    color="gold"
-                            style={{ fontSize: '0.9rem', padding: '0.2rem 0.6rem', margin: '0.3rem' }}
-                  >
-                    {tag}
-                  </Tag>
-                ))}
-              </TagsContainer>
-                    </div>
-
-                    {/* 神秘签文 */}
-                    <div style={{ 
-                      background: 'rgba(255, 215, 0, 0.1)', 
-                      padding: '1rem', 
-                      borderRadius: '8px', 
-                      margin: '1.5rem 0',
-                      borderLeft: '3px solid #ffd700'
-                    }}>
-                      <div style={{ color: '#ffd700', marginBottom: '0.5rem', fontSize: '1rem' }}>🔮 神秘签文</div>
-                      <div style={{ fontSize: '1.1rem', fontStyle: 'italic' }}>{dailyFortune.mysticMessage}</div>
-                    </div>
-
-                    {/* 详细运势分析 */}
-                    <div style={{ margin: '1.5rem 0' }}>
+                    <div style={{ marginBottom: '2rem' }}>
                       <div style={{ 
                         color: '#ffd700', 
                         marginBottom: '1rem', 
@@ -1452,7 +1391,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                           padding: '0 1rem',
                           zIndex: 1
                         }}>
-                          详细运势分析
+                          综合运势
                         </span>
                         <div style={{
                           position: 'absolute',
@@ -1465,21 +1404,149 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         }}></div>
                       </div>
 
-              {Object.entries(dailyFortune.categories).map(([key, category]) => (
-                <CategoryCard key={key}>
-                  <CategoryHeader>
-                    <CategoryName>{category.name}</CategoryName>
-                    <CategoryLevel level={category.level}>{category.level}</CategoryLevel>
-                  </CategoryHeader>
-                  <CategoryDescription>{category.description}</CategoryDescription>
-                          <CategoryAdvice>建议：{category.advice}</CategoryAdvice>
-                </CategoryCard>
-              ))}
+                      <div style={{ 
+                        background: 'rgba(0, 0, 0, 0.3)', 
+                        padding: '1rem', 
+                        borderRadius: '10px',
+                        border: '1px solid rgba(255, 215, 0, 0.3)'
+                      }}>
+                        <div style={{ color: '#ffd700', marginBottom: '0.8rem', fontSize: '1.1rem', textAlign: 'center' }}>
+                          总体运势
+                        </div>
+                        <Content>{dailyFortune.content}</Content>
+                      </div>
+                      
+                      {/* 运势类别概览 */}
+                      <div style={{ textAlign: 'center', margin: '1rem 0' }}>
+                        <div style={{ color: '#ffd700', marginBottom: '0.8rem' }}>运势概览</div>
+                        <FortuneDisplayGrid>
+                          <FortuneItem>
+                            <FortuneItemIcon>🎮</FortuneItemIcon>
+                            <FortuneItemContent>
+                              游戏运势：{dailyFortune.categories.game?.level || 'N'}
+                            </FortuneItemContent>
+                          </FortuneItem>
+                          <FortuneItem>
+                            <FortuneItemIcon>👥</FortuneItemIcon>
+                            <FortuneItemContent>
+                              社交运势：{dailyFortune.categories.social?.level || 'N'}
+                            </FortuneItemContent>
+                          </FortuneItem>
+                          <FortuneItem>
+                            <FortuneItemIcon>✍️</FortuneItemIcon>
+                            <FortuneItemContent>
+                              创作运势：{dailyFortune.categories.create?.level || 'N'}
+                            </FortuneItemContent>
+                          </FortuneItem>
+                          <FortuneItem>
+                            <FortuneItemIcon>📺</FortuneItemIcon>
+                            <FortuneItemContent>
+                              动画运势：{dailyFortune.categories.anime?.level || 'N'}
+                            </FortuneItemContent>
+                          </FortuneItem>
+                        </FortuneDisplayGrid>
+                      </div>
+                      
+                      {/* 标签 */}
+                      <div style={{ textAlign: 'center', margin: '1rem 0' }}>
+                        <div style={{ color: '#ffd700', marginBottom: '0.8rem' }}>今日关键词</div>
+                        <TagsContainer>
+                          {dailyFortune.tags.map((tag, index) => (
+                            <Tag 
+                              key={index}
+                              color="gold"
+                              style={{ fontSize: '0.9rem', padding: '0.2rem 0.6rem', margin: '0.3rem' }}
+                            >
+                              {tag}
+                            </Tag>
+                          ))}
+                        </TagsContainer>
+                      </div>
+
+                      {/* 神秘签文 */}
+                      <div style={{ 
+                        background: 'rgba(255, 215, 0, 0.1)', 
+                        padding: '1rem', 
+                        borderRadius: '8px', 
+                        margin: '1.5rem 0',
+                        borderLeft: '3px solid #ffd700'
+                      }}>
+                        <div style={{ color: '#ffd700', marginBottom: '0.5rem', fontSize: '1rem' }}>🔮 神秘签文</div>
+                        <div style={{ fontSize: '1.1rem', fontStyle: 'italic' }}>{dailyFortune.mysticMessage}</div>
+                      </div>
+
+                      {/* 详细运势分析 */}
+                      <div style={{ margin: '1.5rem 0' }}>
+                        <div style={{ 
+                          color: '#ffd700', 
+                          marginBottom: '1rem', 
+                          fontSize: '1.1rem',
+                          textAlign: 'center',
+                          position: 'relative'
+                        }}>
+                          <span style={{
+                            position: 'relative',
+                            background: '#1a1a2e',
+                            padding: '0 1rem',
+                            zIndex: 1
+                          }}>
+                            详细运势分析
+                          </span>
+                          <div style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: 0,
+                            right: 0,
+                            height: '1px',
+                            background: 'rgba(255, 215, 0, 0.3)',
+                            zIndex: 0
+                          }}></div>
+                        </div>
+
+                        {Object.entries(dailyFortune.categories).map(([key, category]) => (
+                          <CategoryCard key={key}>
+                            <CategoryHeader>
+                              <CategoryName>{category.name}</CategoryName>
+                              <CategoryLevel level={category.level}>{category.level}</CategoryLevel>
+                            </CategoryHeader>
+                            <CategoryDescription>{category.description}</CategoryDescription>
+                            <CategoryAdvice>建议：{category.advice}</CategoryAdvice>
+                          </CategoryCard>
+                        ))}
+                      </div>
                     </div>
                   </>
-                ) : dailyFortune.activeTab === 'zodiac' ? (
-                  // 星座运势内容
-                  <div>
+                )}
+
+                {/* 星座运势部分 */}
+                {(dailyFortune.isFullShare || dailyFortune.activeTab === 'zodiac') && dailyFortune.zodiacInfo && (
+                  <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ 
+                      color: '#ffd700', 
+                      marginBottom: '1rem', 
+                      fontSize: '1.1rem',
+                      textAlign: 'center',
+                      position: 'relative'
+                    }}>
+                      <span style={{
+                        position: 'relative',
+                        background: '#1a1a2e',
+                        padding: '0 1rem',
+                        zIndex: 1
+                      }}>
+                        星座运势{dailyFortune.zodiacInfo.sign ? ` - ${dailyFortune.zodiacInfo.sign}` : ''}
+                      </span>
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: 0,
+                        right: 0,
+                        height: '1px',
+                        background: 'rgba(255, 215, 0, 0.3)',
+                        zIndex: 0
+                      }}></div>
+                    </div>
+
                     <div style={{ 
                       background: 'rgba(0, 0, 0, 0.3)', 
                       padding: '1rem', 
@@ -1491,7 +1558,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         星座运势分析
                       </div>
                       <Content>
-                        今日星座运势整体状况良好，工作学习都将有所突破。感情方面可能会有些小波折，注意沟通方式。财运平稳，适合稳健投资。健康方面需要注意休息，避免过度疲劳。
+                        {dailyFortune.zodiacInfo.description}
                       </Content>
                     </div>
                     
@@ -1526,16 +1593,16 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>整体运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo?.analysis.overall || '★★★★☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo.analysis.overall}</div>
                         </CategoryHeader>
                         <CategoryDescription>今天的整体运势不错，适合处理重要事务。保持积极乐观的心态，会有意外的惊喜。</CategoryDescription>
-                        <CategoryAdvice>建议：把握机会，相信自己的判断。</CategoryAdvice>
+                        <CategoryAdvice>建议：{dailyFortune.zodiacInfo.advice}</CategoryAdvice>
                       </CategoryCard>
                       
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>爱情运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo?.analysis.love || '★★★☆☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo.analysis.love}</div>
                         </CategoryHeader>
                         <CategoryDescription>单身者可能会遇到心动的对象，已有伴侣的要注意沟通方式。</CategoryDescription>
                         <CategoryAdvice>建议：保持真诚，表达自己的感受。</CategoryAdvice>
@@ -1544,7 +1611,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>事业运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo?.analysis.career || '★★★★☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo.analysis.career}</div>
                         </CategoryHeader>
                         <CategoryDescription>工作上会遇到新的挑战，但这也是展现能力的好机会。团队合作会带来不错的成果。</CategoryDescription>
                         <CategoryAdvice>建议：主动承担责任，展现领导力。</CategoryAdvice>
@@ -1553,7 +1620,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>财运运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo?.analysis.wealth || '★★★☆☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo.analysis.wealth}</div>
                         </CategoryHeader>
                         <CategoryDescription>财运稳定，可能有意外收获。投资理财需要谨慎，避免冲动消费。</CategoryDescription>
                         <CategoryAdvice>建议：合理规划支出，关注长期投资。</CategoryAdvice>
@@ -1562,16 +1629,44 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>健康运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo?.analysis.health || '★★★★☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.zodiacInfo.analysis.health}</div>
                         </CategoryHeader>
                         <CategoryDescription>身体状况良好，但要注意作息规律。适当的运动能提升精神状态。</CategoryDescription>
                         <CategoryAdvice>建议：保持规律作息，注意饮食均衡。</CategoryAdvice>
                       </CategoryCard>
                     </div>
                   </div>
-                ) : dailyFortune.activeTab === 'animal' ? (
-                  // 生肖运势内容
-                  <div>
+                )}
+
+                {/* 生肖运势部分 */}
+                {(dailyFortune.isFullShare || dailyFortune.activeTab === 'animal') && dailyFortune.animalInfo && (
+                  <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ 
+                      color: '#ffd700', 
+                      marginBottom: '1rem', 
+                      fontSize: '1.1rem',
+                      textAlign: 'center',
+                      position: 'relative'
+                    }}>
+                      <span style={{
+                        position: 'relative',
+                        background: '#1a1a2e',
+                        padding: '0 1rem',
+                        zIndex: 1
+                      }}>
+                        生肖运势{dailyFortune.animalInfo.animal ? ` - ${dailyFortune.animalInfo.animal}` : ''}
+                      </span>
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: 0,
+                        right: 0,
+                        height: '1px',
+                        background: 'rgba(255, 215, 0, 0.3)',
+                        zIndex: 0
+                      }}></div>
+                    </div>
+
                     <div style={{ 
                       background: 'rgba(0, 0, 0, 0.3)', 
                       padding: '1rem', 
@@ -1583,7 +1678,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         生肖运势分析
                       </div>
                       <Content>
-                        今日生肖运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。事业上可能有新的机遇，要保持专注。
+                        {dailyFortune.animalInfo.description}
                       </Content>
                     </div>
                     
@@ -1618,16 +1713,16 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>整体运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo?.analysis.overall || '★★★★☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo.analysis.overall}</div>
                         </CategoryHeader>
                         <CategoryDescription>今日运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。</CategoryDescription>
-                        <CategoryAdvice>建议：把握当下，循序渐进。</CategoryAdvice>
+                        <CategoryAdvice>建议：{dailyFortune.animalInfo.advice}</CategoryAdvice>
                       </CategoryCard>
                       
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>事业运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo?.analysis.career || '★★★☆☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo.analysis.career}</div>
                         </CategoryHeader>
                         <CategoryDescription>职场上可能会遇到新的机遇，团队协作顺利。注意把握细节，展现专业能力。</CategoryDescription>
                         <CategoryAdvice>建议：保持专注，注重细节。</CategoryAdvice>
@@ -1636,7 +1731,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>财运运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo?.analysis.wealth || '★★★★☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo.analysis.wealth}</div>
                         </CategoryHeader>
                         <CategoryDescription>财运较好，可能有额外收入。投资方面要保持谨慎，避免冒险。</CategoryDescription>
                         <CategoryAdvice>建议：稳健理财，适度消费。</CategoryAdvice>
@@ -1645,7 +1740,7 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>感情运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo?.analysis.love || '★★★☆☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo.analysis.love}</div>
                         </CategoryHeader>
                         <CategoryDescription>感情生活平稳，与伴侣沟通顺畅。单身者可能会遇到有趣的人。</CategoryDescription>
                         <CategoryAdvice>建议：保持真诚，珍惜缘分。</CategoryAdvice>
@@ -1654,40 +1749,72 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                       <CategoryCard>
                         <CategoryHeader>
                           <CategoryName>健康运势</CategoryName>
-                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo?.analysis.health || '★★★★☆'}</div>
+                          <div style={{ color: '#ffd700', marginLeft: '0.8rem' }}>{dailyFortune.animalInfo.analysis.health}</div>
                         </CategoryHeader>
                         <CategoryDescription>身体状况良好，但要注意劳逸结合。适当运动能提升身心状态。</CategoryDescription>
                         <CategoryAdvice>建议：规律作息，适度运动。</CategoryAdvice>
                       </CategoryCard>
                     </div>
                   </div>
-                ) : dailyFortune.activeTab === 'lucky' ? (
-                  // 幸运提示内容
-                  <div>
+                )}
+
+                {/* 幸运提示部分 */}
+                {(dailyFortune.isFullShare || dailyFortune.activeTab === 'lucky') && dailyFortune.luckyInfo && (
+                  <div style={{ marginBottom: '2rem' }}>
+                    <div style={{ 
+                      color: '#ffd700', 
+                      marginBottom: '1rem', 
+                      fontSize: '1.1rem',
+                      textAlign: 'center',
+                      position: 'relative'
+                    }}>
+                      <span style={{
+                        position: 'relative',
+                        background: '#1a1a2e',
+                        padding: '0 1rem',
+                        zIndex: 1
+                      }}>
+                        今日幸运提示
+                      </span>
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: 0,
+                        right: 0,
+                        height: '1px',
+                        background: 'rgba(255, 215, 0, 0.3)',
+                        zIndex: 0
+                      }}></div>
+                    </div>
+
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
                         <div style={{ color: '#ffd700', marginBottom: '5px' }}>🎨 幸运色：</div>
-                        <div>{dailyFortune.luckyInfo?.color || '蓝色'}</div>
+                        <div>{dailyFortune.luckyInfo.color}</div>
                       </div>
                       
                       <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
                         <div style={{ color: '#ffd700', marginBottom: '5px' }}>🔢 幸运数字：</div>
-                        <div>{dailyFortune.luckyInfo?.number || '7, 9'}</div>
+                        <div>{dailyFortune.luckyInfo.number}</div>
                       </div>
                       
                       <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
                         <div style={{ color: '#ffd700', marginBottom: '5px' }}>🔑 幸运关键词：</div>
-                        <div>{dailyFortune.luckyInfo?.keyword || '创新、合作、直觉'}</div>
+                        <div>{dailyFortune.luckyInfo.keyword}</div>
                       </div>
                       
                       <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
                         <div style={{ color: '#ffd700', marginBottom: '5px' }}>✅ 今日宜：</div>
-                        <div>{dailyFortune.luckyInfo?.goodActivity || '学习新技能、参加社交活动'}</div>
+                        <div>{Array.isArray(dailyFortune.luckyInfo.goodActivity) 
+                          ? dailyFortune.luckyInfo.goodActivity.join('、') 
+                          : dailyFortune.luckyInfo.goodActivity}</div>
                       </div>
                       
                       <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
                         <div style={{ color: '#ffd700', marginBottom: '5px' }}>❌ 今日忌：</div>
-                        <div>{dailyFortune.luckyInfo?.badActivity || '冲动消费、轻率决策'}</div>
+                        <div>{Array.isArray(dailyFortune.luckyInfo.badActivity) 
+                          ? dailyFortune.luckyInfo.badActivity.join('、') 
+                          : dailyFortune.luckyInfo.badActivity}</div>
                       </div>
                       
                       <div style={{ 
@@ -1697,94 +1824,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                         borderLeft: '3px solid #ffd700'
                       }}>
                         <div style={{ color: '#ffd700', marginBottom: '5px' }}>🌟 行为引导：</div>
-                        <div>{dailyFortune.luckyInfo?.behavior || '今天是提升自我和拓展视野的好时机，尝试接触新事物，与不同领域的人交流，可能会有意想不到的收获和灵感。同时，需要注意控制情绪和消费欲望，避免做出冲动的决定。'}</div>
+                        <div>{dailyFortune.luckyInfo.behavior}</div>
                       </div>
                     </div>
                   </div>
-                ) : null}
-
-                {dailyFortune.activeTab === 'overall' && (
-                  <>
-                    {/* 今日推荐 */}
-              <RecommendSection>
-                <RecommendTitle>今日推荐</RecommendTitle>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
-                {dailyFortune.dailyRecommend.anime && (
-                  <RecommendCard>
-                    <RecommendHeader>动画推荐</RecommendHeader>
-                    <RecommendContent>
-                                <div style={{ fontWeight: 'bold' }}>{dailyFortune.dailyRecommend.anime.title}</div>
-                      <div>{dailyFortune.dailyRecommend.anime.episode}</div>
-                    </RecommendContent>
-                  </RecommendCard>
-                )}
-                
-                {dailyFortune.dailyRecommend.game && (
-                  <RecommendCard>
-                    <RecommendHeader>游戏推荐</RecommendHeader>
-                    <RecommendContent>
-                                <div style={{ fontWeight: 'bold' }}>{dailyFortune.dailyRecommend.game.title}</div>
-                      <div>{dailyFortune.dailyRecommend.game.type}</div>
-                    </RecommendContent>
-                  </RecommendCard>
-                )}
-                        </div>
-                {dailyFortune.dailyRecommend.music && (
-                          <RecommendCard style={{ marginTop: '0.8rem' }}>
-                    <RecommendHeader>音乐推荐</RecommendHeader>
-                    <RecommendContent>
-                              <div style={{ fontWeight: 'bold' }}>{dailyFortune.dailyRecommend.music.title}</div>
-                      <div>{dailyFortune.dailyRecommend.music.artist}</div>
-                    </RecommendContent>
-                  </RecommendCard>
-                )}
-              </RecommendSection>
-
-                    {/* 今日动态 */}
-                    {(dailyFortune.events?.animeUpdates?.length > 0 || 
-                      dailyFortune.events?.gameEvents?.length > 0 || 
-                      dailyFortune.events?.birthdays?.length > 0) && (
-              <EventsSection>
-                <EventsTitle>今日动态</EventsTitle>
-                
-                          {dailyFortune.events?.animeUpdates?.length > 0 && (
-                  <EventList>
-                    <RecommendHeader>今日更新</RecommendHeader>
-                              {dailyFortune.events.animeUpdates.slice(0, 3).map((item, index) => (
-                      <EventItem key={index}>
-                        <EventTitle>{item.title}</EventTitle>
-                        <EventDescription>第{item.episode}话 - {item.time}</EventDescription>
-                      </EventItem>
-                    ))}
-                  </EventList>
-                )}
-                
-                          {dailyFortune.events?.gameEvents?.length > 0 && (
-                  <EventList>
-                    <RecommendHeader>游戏活动</RecommendHeader>
-                              {dailyFortune.events.gameEvents.slice(0, 2).map((item, index) => (
-                      <EventItem key={index}>
-                        <EventTitle>{item.game}</EventTitle>
-                        <EventDescription>{item.event} (截止: {item.endTime})</EventDescription>
-                      </EventItem>
-                    ))}
-                  </EventList>
-                )}
-                
-                          {dailyFortune.events?.birthdays?.length > 0 && (
-                  <EventList>
-                    <RecommendHeader>角色生日</RecommendHeader>
-                              {dailyFortune.events.birthdays.slice(0, 2).map((item, index) => (
-                      <EventItem key={index}>
-                        <EventTitle>{item.character}</EventTitle>
-                        <EventDescription>来自: {item.from}</EventDescription>
-                      </EventItem>
-                    ))}
-                  </EventList>
-                )}
-              </EventsSection>
-                      )}
-                  </>
                 )}
               </DailyFortuneContent>
             </>

@@ -1617,6 +1617,64 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     }
   };
 
+  // 处理分享功能
+  const handleShare = () => {
+    // 创建星座运势数据
+    const zodiacInfo = {
+      sign: '水瓶座',
+      description: '今日星座运势整体状况良好，工作学习都将有所突破。感情方面可能会有些小波折，注意沟通方式。财运平稳，适合稳健投资。健康方面需要注意休息，避免过度疲劳。',
+      advice: '把握机会，相信自己的判断。',
+      analysis: {
+        overall: '★★★★☆',
+        career: '★★★★☆', 
+        wealth: '★★★☆☆',
+        love: '★★★★☆',
+        health: '★★★★☆',
+        luck: '★★★★☆'  // 添加luck属性
+      }
+    };
+
+    // 创建生肖运势数据
+    const animalInfo = {
+      animal: '兔',
+      description: '今日生肖运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。事业上可能有新的机遇，要保持专注。',
+      advice: '把握当下，循序渐进。',
+      analysis: {
+        overall: '★★★★☆',
+        career: '★★★☆☆',
+        wealth: '★★★★☆',
+        love: '★★★☆☆',
+        health: '★★★★☆',
+        compatibility: '★★★☆☆'  // 添加compatibility属性
+      }
+    };
+
+    // 创建幸运提示数据
+    const luckyInfo = {
+      color: '红色',
+      number: '41',
+      keyword: '专注',
+      goodActivity: ['阅读', '创作'],
+      badActivity: ['过度劳累', '做重大决定'],
+      behavior: '保持耐心，好事多磨'
+    };
+
+    // 将当前活跃的标签页信息添加到fortune数据中
+    const fortuneWithActiveTab = {
+      ...fortune,
+      activeTab,
+      isFullShare: true,  // 添加标志，表示需要生成完整的综合运势内容
+      zodiacInfo,         // 添加星座运势数据
+      animalInfo,         // 添加生肖运势数据
+      luckyInfo           // 添加幸运提示数据
+    };
+
+    // 在控制台输出调试信息
+    console.log("分享运势数据:", fortuneWithActiveTab);
+    
+    onShare(fortuneWithActiveTab);
+  };
+
   return (
     <Container>
       <Title>今日运势</Title>
@@ -1653,57 +1711,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
         <ActionButton onClick={onBack} icon={<ArrowLeftOutlined />}>
           返回首页
         </ActionButton>
-        <ActionButton onClick={() => {
-          // 创建包含所有板块内容的完整数据
-          const completeFortuneData = {
-            ...fortune,
-            // 不再传递activeTab，而是一个标志表示这是完整分享
-            isFullShare: true,
-            // 星座运势信息 - 无论当前在哪个标签页都包含
-            zodiacInfo: {
-              sign: '水瓶座', 
-              analysis: {
-                overall: '★★★★☆',
-                career: '★★★★☆',
-                wealth: '★★★☆☆',
-                love: '★★★★☆',
-                health: '★★★★☆',
-                luck: '★★★★☆',
-              },
-              description: '今日星座运势整体状况良好，工作学习都将有所突破。感情方面可能会有些小波折，注意沟通方式。财运平稳，适合稳健投资。健康方面需要注意休息，避免过度疲劳。',
-              advice: '把握机会，相信自己的判断。'
-            },
-            // 生肖运势信息 - 无论当前在哪个标签页都包含
-            animalInfo: {
-              animal: '兔',
-              analysis: {
-                overall: '★★★★☆',
-                career: '★★★☆☆',
-                wealth: '★★★★☆',
-                love: '★★★☆☆',
-                health: '★★★★☆',
-                compatibility: '★★★☆☆',
-              },
-              description: '今日生肖运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。事业上可能有新的机遇，要保持专注。',
-              advice: '把握当下，循序渐进。'
-            },
-            // 幸运提示信息 - 无论当前在哪个标签页都包含
-            luckyInfo: {
-              color: '蓝色',
-              number: '7, 9',
-              keyword: '创新、合作、直觉',
-              goodActivity: ['学习新技能', '参加社交活动'],
-              badActivity: ['冲动消费', '轻率决策'],
-              behavior: '今天是提升自我和拓展视野的好时机，尝试接触新事物，与不同领域的人交流，可能会有意想不到的收获和灵感。同时，需要注意控制情绪和消费欲望，避免做出冲动的决定。'
-            }
-          };
-          
-          // 在控制台记录数据，便于调试
-          console.log("发送到分享页面的数据:", completeFortuneData);
-          
-          // 调用共享函数
-          onShare(completeFortuneData);
-        }} icon={<ShareAltOutlined />}>
+        <ActionButton onClick={handleShare} icon={<ShareAltOutlined />}>
           分享运势
         </ActionButton>
       </ButtonContainer>
