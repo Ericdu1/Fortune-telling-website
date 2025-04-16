@@ -908,20 +908,23 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;  // 更新为4个标签页
 
-  // 添加屏幕宽度检测
+  // 添加屏幕宽度检测 - 仅在客户端执行
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 480);
-    };
-    
-    // 初始检查
-    checkMobile();
-    
-    // 添加窗口大小变化监听
-    window.addEventListener('resize', checkMobile);
-    
-    // 组件卸载时清除监听
-    return () => window.removeEventListener('resize', checkMobile);
+    // 确保只在客户端环境执行
+    if (typeof window !== 'undefined') {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth <= 480);
+      };
+      
+      // 初始检查
+      checkMobile();
+      
+      // 添加窗口大小变化监听
+      window.addEventListener('resize', checkMobile);
+      
+      // 组件卸载时清除监听
+      return () => window.removeEventListener('resize', checkMobile);
+    }
   }, []);
 
   // 随机生成运势
