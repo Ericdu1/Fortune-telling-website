@@ -546,18 +546,6 @@ const TabNav = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-  
-  @media (max-width: 480px) {
-    width: 100%;
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding: 0 10px;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
 `;
 
 const TabButton = styled.button<{ active: boolean }>`
@@ -570,18 +558,32 @@ const TabButton = styled.button<{ active: boolean }>`
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
   
   &:hover {
     background: ${props => props.active ? '#ffd700' : 'rgba(255, 255, 255, 0.1)'};
     color: ${props => props.active ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)'};
   }
   
-  @media (max-width: 480px) {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.8rem;
-    margin: 0 0.3rem;
-    flex-shrink: 0;
+  .tab-text {
+    display: inline;
+  }
+  
+  .tab-icon {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+    margin: 0 0.25rem;
+    
+    .tab-text {
+      display: none;
+    }
+    
+    .tab-icon {
+      display: inline;
+      font-size: 1.2rem;
+    }
   }
 `;
 
@@ -865,7 +867,6 @@ const LuckyHint: React.FC = () => {
 
 const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState<TabType>('overall');
-  const [isMobile, setIsMobile] = useState(false);
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
     content: '正在加载今日运势...',
@@ -907,25 +908,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
   const [coinsBalance, setCoinsBalance] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;  // 更新为4个标签页
-
-  // 添加屏幕宽度检测 - 仅在客户端执行
-  useEffect(() => {
-    // 确保只在客户端环境执行
-    if (typeof window !== 'undefined') {
-      const checkMobile = () => {
-        setIsMobile(window.innerWidth <= 480);
-      };
-      
-      // 初始检查
-      checkMobile();
-      
-      // 添加窗口大小变化监听
-      window.addEventListener('resize', checkMobile);
-      
-      // 组件卸载时清除监听
-      return () => window.removeEventListener('resize', checkMobile);
-    }
-  }, []);
 
   // 随机生成运势
   const generateRandomFortune = () => {
@@ -1664,25 +1646,29 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
           active={activeTab === 'overall'} 
           onClick={() => setActiveTab('overall')}
         >
-          {isMobile ? '综合' : '综合运势'}
+          <span className="tab-text">综合运势</span>
+          <span className="tab-icon"><DesktopOutlined /></span>
         </TabButton>
         <TabButton
           active={activeTab === 'zodiac'} 
           onClick={() => setActiveTab('zodiac')}
         >
-          {isMobile ? '星座' : '星座运势'}
+          <span className="tab-text">星座运势</span>
+          <span className="tab-icon"><TeamOutlined /></span>
         </TabButton>
         <TabButton
           active={activeTab === 'animal'} 
           onClick={() => setActiveTab('animal')}
         >
-          {isMobile ? '生肖' : '生肖运势'}
+          <span className="tab-text">生肖运势</span>
+          <span className="tab-icon"><BulbOutlined /></span>
         </TabButton>
         <TabButton
           active={activeTab === 'lucky'} 
           onClick={() => setActiveTab('lucky')}
         >
-          {isMobile ? '幸运' : '幸运提示'}
+          <span className="tab-text">幸运提示</span>
+          <span className="tab-icon"><AimOutlined /></span>
         </TabButton>
       </TabNav>
       
