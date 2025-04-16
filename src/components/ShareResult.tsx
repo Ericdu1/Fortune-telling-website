@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Button, message, Tag } from 'antd';
-import { ArrowLeftOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, DownloadOutlined, ShareAltOutlined, CopyOutlined } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
 import { DailyFortune } from '../types/fortune';
@@ -1271,6 +1271,90 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     }
   };
 
+  // 添加复制到剪贴板功能
+  const handleCopyToClipboard = async () => {
+    try {
+      setIsSaving(true);
+      
+      if (!shareCardRef.current) {
+        setIsSaving(false);
+        message.error('无法获取分享内容');
+        return;
+      }
+
+      // 使用html2canvas直接将DOM元素转为图片
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: '#1a1a2e',
+        useCORS: true,
+        logging: false,
+        allowTaint: true
+      } as any);
+      
+      // 尝试使用现代方式复制到剪贴板
+      try {
+        // 转换为blob并创建ClipboardItem
+        const blob = await new Promise<Blob | null>((resolve) => 
+          canvas.toBlob(resolve, 'image/png', 1.0)
+        );
+        
+        if (!blob) {
+          throw new Error('无法创建图片');
+        }
+        
+        // 创建ClipboardItem并写入剪贴板
+        const data = [new ClipboardItem({ 'image/png': blob })];
+        await navigator.clipboard.write(data);
+        
+        message.success('图片已复制到剪贴板，可直接粘贴');
+      } catch (clipboardError) {
+        console.error('复制到剪贴板失败，尝试备用方法', clipboardError);
+        
+        // 备用方法：使用canvas.toDataURL创建图片
+        try {
+          const dataUrl = canvas.toDataURL('image/png');
+          
+          // 创建一个临时的<img>元素
+          const img = document.createElement('img');
+          img.src = dataUrl;
+          
+          // 创建一个临时div来容纳图片，并设置为可见但在屏幕外
+          const container = document.createElement('div');
+          container.style.position = 'fixed';
+          container.style.top = '-9999px';
+          container.appendChild(img);
+          document.body.appendChild(container);
+          
+          // 创建选区并复制
+          const range = document.createRange();
+          range.selectNode(img);
+          window.getSelection()?.removeAllRanges();
+          window.getSelection()?.addRange(range);
+          
+          const success = document.execCommand('copy');
+          if (!success) {
+            throw new Error('execCommand复制失败');
+          }
+          
+          // 清理
+          window.getSelection()?.removeAllRanges();
+          document.body.removeChild(container);
+          
+          message.success('图片已复制到剪贴板，可直接粘贴');
+        } catch (fallbackError) {
+          console.error('备用复制方法也失败', fallbackError);
+          message.error('复制到剪贴板失败，请尝试使用保存图片功能');
+          // 如果所有方法都失败，尝试保存图片
+          handleSaveImage();
+        }
+      }
+    } catch (error) {
+      console.error('复制到剪贴板过程中出错:', error);
+      message.error('复制到剪贴板失败');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // 确保在return中显示所有内容，不管activeTab是什么
   return (
     <Container>
@@ -1856,6 +1940,13 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
           onClick={onBack}
         >
           返回结果
+        </StyledButton>
+        <StyledButton 
+          icon={<CopyOutlined />}
+          onClick={handleCopyToClipboard}
+          loading={isSaving}
+        >
+          复制
         </StyledButton>
         <StyledButton 
           icon={<DownloadOutlined />}
