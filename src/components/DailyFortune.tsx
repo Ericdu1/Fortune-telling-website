@@ -546,6 +546,18 @@ const TabNav = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+  
+  @media (max-width: 480px) {
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0 10px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 `;
 
 const TabButton = styled.button<{ active: boolean }>`
@@ -558,10 +570,18 @@ const TabButton = styled.button<{ active: boolean }>`
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
   
   &:hover {
     background: ${props => props.active ? '#ffd700' : 'rgba(255, 255, 255, 0.1)'};
     color: ${props => props.active ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)'};
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    margin: 0 0.3rem;
+    flex-shrink: 0;
   }
 `;
 
@@ -582,7 +602,6 @@ const renderStars = (rating: string) => {
 
 interface DailyFortuneProps {
   onBack: () => void;
-  onShare: (result: DailyFortuneType) => void;
 }
 
 const fadeInVariants = {
@@ -844,8 +863,9 @@ const LuckyHint: React.FC = () => {
   );
 };
 
-const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
+const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState<TabType>('overall');
+  const [isMobile, setIsMobile] = useState(false);
   const [fortune, setFortune] = useState<DailyFortuneType>({
     date: formatDate(),
     content: '正在加载今日运势...',
@@ -887,6 +907,22 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [coinsBalance, setCoinsBalance] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;  // 更新为4个标签页
+
+  // 添加屏幕宽度检测
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    // 初始检查
+    checkMobile();
+    
+    // 添加窗口大小变化监听
+    window.addEventListener('resize', checkMobile);
+    
+    // 组件卸载时清除监听
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 随机生成运势
   const generateRandomFortune = () => {
@@ -1534,7 +1570,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
                   <AnalysisSection>
                     <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                       {detailedAnalysis[key].content}
-                    </Text>
+            </Text>
                   </AnalysisSection>
                   <AnalysisSection>
                     <AnalysisTitle>
@@ -1617,64 +1653,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
     }
   };
 
-  // 处理分享功能
-  const handleShare = () => {
-    // 创建星座运势数据
-    const zodiacInfo = {
-      sign: '水瓶座',
-      description: '今日星座运势整体状况良好，工作学习都将有所突破。感情方面可能会有些小波折，注意沟通方式。财运平稳，适合稳健投资。健康方面需要注意休息，避免过度疲劳。',
-      advice: '把握机会，相信自己的判断。',
-      analysis: {
-        overall: '★★★★☆',
-        career: '★★★★☆', 
-        wealth: '★★★☆☆',
-        love: '★★★★☆',
-        health: '★★★★☆',
-        luck: '★★★★☆'  // 添加luck属性
-      }
-    };
-
-    // 创建生肖运势数据
-    const animalInfo = {
-      animal: '兔',
-      description: '今日生肖运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。事业上可能有新的机遇，要保持专注。',
-      advice: '把握当下，循序渐进。',
-      analysis: {
-        overall: '★★★★☆',
-        career: '★★★☆☆',
-        wealth: '★★★★☆',
-        love: '★★★☆☆',
-        health: '★★★★☆',
-        compatibility: '★★★☆☆'  // 添加compatibility属性
-      }
-    };
-
-    // 创建幸运提示数据
-    const luckyInfo = {
-      color: '红色',
-      number: '41',
-      keyword: '专注',
-      goodActivity: ['阅读', '创作'],
-      badActivity: ['过度劳累', '做重大决定'],
-      behavior: '保持耐心，好事多磨'
-    };
-
-    // 将当前活跃的标签页信息添加到fortune数据中
-    const fortuneWithActiveTab = {
-      ...fortune,
-      activeTab,
-      isFullShare: true,  // 添加标志，表示需要生成完整的综合运势内容
-      zodiacInfo,         // 添加星座运势数据
-      animalInfo,         // 添加生肖运势数据
-      luckyInfo           // 添加幸运提示数据
-    };
-
-    // 在控制台输出调试信息
-    console.log("分享运势数据:", fortuneWithActiveTab);
-    
-    onShare(fortuneWithActiveTab);
-  };
-
   return (
     <Container>
       <Title>今日运势</Title>
@@ -1683,25 +1661,25 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
           active={activeTab === 'overall'} 
           onClick={() => setActiveTab('overall')}
         >
-          综合运势
+          {isMobile ? '综合' : '综合运势'}
         </TabButton>
         <TabButton
           active={activeTab === 'zodiac'} 
           onClick={() => setActiveTab('zodiac')}
         >
-          星座运势
+          {isMobile ? '星座' : '星座运势'}
         </TabButton>
         <TabButton
           active={activeTab === 'animal'} 
           onClick={() => setActiveTab('animal')}
         >
-          生肖运势
+          {isMobile ? '生肖' : '生肖运势'}
         </TabButton>
         <TabButton
           active={activeTab === 'lucky'} 
           onClick={() => setActiveTab('lucky')}
         >
-          幸运提示
+          {isMobile ? '幸运' : '幸运提示'}
         </TabButton>
       </TabNav>
       
@@ -1710,9 +1688,6 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
       <ButtonContainer>
         <ActionButton onClick={onBack} icon={<ArrowLeftOutlined />}>
           返回首页
-        </ActionButton>
-        <ActionButton onClick={handleShare} icon={<ShareAltOutlined />}>
-          分享运势
         </ActionButton>
       </ButtonContainer>
     </Container>
