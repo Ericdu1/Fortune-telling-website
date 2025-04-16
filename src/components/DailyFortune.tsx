@@ -226,7 +226,7 @@ const CategoryTitle = styled.div`
   
   h3 {
     margin: 0;
-    color: #ffd700;
+  color: #ffd700;
     font-size: 20px;
   }
 `;
@@ -401,7 +401,7 @@ const ZodiacAnalysis = styled.div`
 `;
 
 const AnalysisTitle = styled.h3`
-  color: #ffd700;
+    color: #ffd700;
   margin-bottom: 15px;
   font-size: 18px;
 `;
@@ -418,8 +418,8 @@ const AnalysisItem = styled(motion.div)`
   padding: 20px;
   border-radius: 12px;
   transition: all 0.3s ease;
-
-  &:hover {
+    
+    &:hover {
     transform: translateY(-5px);
     background: rgba(0, 0, 0, 0.3);
   }
@@ -442,7 +442,7 @@ const AnalysisValue = styled.div`
 const StarRating = styled.div`
   display: flex;
   gap: 4px;
-  color: #ffd700;
+      color: #ffd700;
   font-size: 18px;
 `;
 
@@ -500,7 +500,7 @@ const ResetButton = styled(Button)`
   gap: 4px;
   
   &:hover {
-    color: #ffd700;
+      color: #ffd700;
     border-color: #ffd700;
     background: rgba(255, 215, 0, 0.1);
   }
@@ -536,8 +536,8 @@ const DetailedAnalysis = styled.div`
 
 const AnalysisSection = styled.div`
   margin-bottom: 15px;
-  
-  &:last-child {
+      
+      &:last-child {
     margin-bottom: 0;
   }
 `;
@@ -888,33 +888,215 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;  // 更新为4个标签页
 
+  // 随机生成运势
+  const generateRandomFortune = () => {
+    const gameLevel = ['SSR', 'SR', 'R', 'N'][Math.floor(Math.random() * 4)] as 'SSR' | 'SR' | 'R' | 'N';
+    const animeLevel = ['SSR', 'SR', 'R', 'N'][Math.floor(Math.random() * 4)] as 'SSR' | 'SR' | 'R' | 'N';
+    const createLevel = ['SSR', 'SR', 'R', 'N'][Math.floor(Math.random() * 4)] as 'SSR' | 'SR' | 'R' | 'N';
+    const socialLevel = ['SSR', 'SR', 'R', 'N'][Math.floor(Math.random() * 4)] as 'SSR' | 'SR' | 'R' | 'N';
+    
+    // 游戏运势描述内容
+    const gameDescriptions = [
+      '今天你的抽卡运气会很好，有机会获得稀有角色或道具。',
+      '游戏中可能会遇到有趣的队友，与团队合作将带来好的体验。',
+      '游戏中的挑战任务完成率会很高，适合尝试困难的副本。',
+      '游戏反应和操作会比平时更流畅，是打排位的好时机。',
+      '今天可能会遇到一些挑战，多专注和耐心会帮助你克服困难。',
+      '游戏中可能会遇到意外情况，保持冷静应对。'
+    ];
+    
+    // 二次元运势描述内容
+    const animeDescriptions = [
+      '今天是追番的好日子，可能会发现新的优质作品。',
+      '适合研究动漫角色和故事背景，会有新的理解。',
+      '创作灵感会源源不断，可以尝试同人创作。',
+      '与二次元社区的互动会很顺利，能结交志同道合的朋友。',
+      '专注享受动漫内容，避免被剧透影响体验。',
+      '今天可能没有心仪作品更新，可以回顾一些经典作品。'
+    ];
+    
+    // 创作运势描述内容
+    const createDescriptions = [
+      '今天的创作灵感特别丰富，适合开始新项目。',
+      '你的作品将获得更多关注和好评，是展示的好时机。',
+      '技术和表现力会有突破，尝试新的创作方法会有收获。',
+      '与其他创作者的合作会很顺利，能够互相启发。',
+      '可能会遇到创作瓶颈，不要着急，放松一下再继续。',
+      '今天适合学习和积累，为未来的创作打下基础。'
+    ];
+    
+    // 社交运势描述内容
+    const socialDescriptions = [
+      '今天的社交场合你会成为焦点，容易获得好感。',
+      '线上互动会很活跃，是扩展社交圈的好时机。',
+      '与朋友的聚会会很愉快，能够增进彼此了解。',
+      '今天适合尝试新的社交活动，会有意外收获。',
+      '社交场合可能会有一些尴尬，保持真诚会化解困境。',
+      '今天适合独处和反思，不必强求社交活动。'
+    ];
+    
+    // 建议内容
+    const adviceOptions = {
+      SSR: [
+        '把握今天的好运气，大胆尝试新事物。',
+        '积极参与和分享，好运会加倍。',
+        '相信自己的直觉，今天的决定会带来好结果。'
+      ],
+      SR: [
+        '保持乐观态度，好事会不断发生。',
+        '适当冒险，会有不错的收获。',
+        '与朋友分享喜悦，共同创造美好回忆。'
+      ],
+      R: [
+        '稳扎稳打，踏实行动会有回报。',
+        '保持平常心，不必过度期待或担忧。',
+        '注意细节，避免因小失大。'
+      ],
+      N: [
+        '谨慎行事，避免冲动决策。',
+        '保持低调，等待更好的时机。',
+        '多做准备，以应对可能的变化。'
+      ]
+    };
+    
+    // 随机标签
+    const allTags = ['欧气满满', '手感爆发', '创作灵感', '佛系生活', '社交达人', '二次元幸运日', '宅家快乐', '氪金谨慎', '破圈交友', '剧情深入'];
+    const randomTags = [];
+    for (let i = 0; i < 3; i++) {
+      const randomIndex = Math.floor(Math.random() * allTags.length);
+      randomTags.push(allTags[randomIndex]);
+      allTags.splice(randomIndex, 1);
+    }
+    
+    // 神秘签文
+    const mysticMessages = [
+      '命运之轮不断转动，把握当下才能创造未来。',
+      '星光闪烁之处，藏着你意想不到的惊喜。',
+      '心怀善念，好运自然来敲门。',
+      '云开见月明，难事皆可解。',
+      '静心聆听内心的声音，会找到前进的方向。',
+      '贵人相助，事半功倍。',
+      '放下执念，心境豁然开朗。'
+    ];
+    
+    // 计算运势等级
+    const levels = [gameLevel, animeLevel, createLevel, socialLevel];
+    const luckScore = levels.reduce((sum, level) => {
+      if (level === 'SSR') return sum + 5;
+      if (level === 'SR') return sum + 4;
+      if (level === 'R') return sum + 3;
+      return sum + 2;
+    }, 0);
+    const luck = Math.min(5, Math.max(1, Math.round(luckScore / 4)));
+    
+    // 生成综合描述
+    const overallDescription = luck >= 4 
+      ? '今天的运势非常好，适合尝试新事物！' 
+      : luck >= 3 
+        ? '今天的运势不错，保持积极心态。' 
+        : '今天运势一般，谨慎行事。';
+    
+    return {
+      date: formatDate(),
+      content: overallDescription,
+      luck,
+      tags: randomTags,
+      categories: {
+        game: { 
+          name: '游戏运势', 
+          level: gameLevel, 
+          description: gameDescriptions[Math.floor(Math.random() * gameDescriptions.length)],
+          advice: adviceOptions[gameLevel][Math.floor(Math.random() * adviceOptions[gameLevel].length)]
+        },
+        anime: { 
+          name: '动画运势', 
+          level: animeLevel, 
+          description: animeDescriptions[Math.floor(Math.random() * animeDescriptions.length)],
+          advice: adviceOptions[animeLevel][Math.floor(Math.random() * adviceOptions[animeLevel].length)]
+        },
+        create: { 
+          name: '创作运势', 
+          level: createLevel, 
+          description: createDescriptions[Math.floor(Math.random() * createDescriptions.length)],
+          advice: adviceOptions[createLevel][Math.floor(Math.random() * adviceOptions[createLevel].length)]
+        },
+        social: { 
+          name: '社交运势', 
+          level: socialLevel, 
+          description: socialDescriptions[Math.floor(Math.random() * socialDescriptions.length)],
+          advice: adviceOptions[socialLevel][Math.floor(Math.random() * adviceOptions[socialLevel].length)]
+        }
+      },
+      dailyRecommend: {
+        anime: {
+          title: ['葬送的芙莉莲', '咒术回战', '间谍过家家', '我推的孩子', '无职转生'][Math.floor(Math.random() * 5)],
+          episode: `第${Math.floor(Math.random() * 20) + 1}集`,
+          reason: '精彩的故事和角色成长，契合今日的主题',
+          image: './images/anime/frieren.jpg'
+        },
+        game: {
+          title: ['原神', '崩坏：星穹铁道', '明日方舟', '王者荣耀', '我的世界'][Math.floor(Math.random() * 5)],
+          type: ['RPG', 'MOBA', '策略', '卡牌', '沙盒'][Math.floor(Math.random() * 5)],
+          reason: '庞大的世界观和引人入胜的剧情',
+          image: './images/games/ff7r.jpg'
+        },
+        music: {
+          title: ['PHOENIX', '花の塔', 'Unravel', 'Brave Shine', 'aLIEz'][Math.floor(Math.random() * 5)],
+          artist: ['陈致逸 / HOYO-MiX', 'さユり', 'TK from 凛として時雨', 'Aimer', 'SawanoHiroyuki[nZk]'][Math.floor(Math.random() * 5)],
+          link: 'https://music.163.com/'
+        }
+      },
+      events: {
+        animeUpdates: [],
+        gameEvents: [],
+        birthdays: [],
+        releases: []
+      },
+      dailyArtwork: {
+        id: '',
+        title: '今日精选',
+        artistId: '',
+        artistName: '匿名画师',
+        imageUrl: './images/artworks/127455493_p0.png'
+      },
+      mysticMessage: mysticMessages[Math.floor(Math.random() * mysticMessages.length)]
+    };
+  };
+
   useEffect(() => {
     const fetchFortune = async () => {
       try {
-        await clearDailyFortuneCache();
-        const dailyFortune = await getDailyFortune();
+        setLoading(true);
         
-        // 计算综合运势指数
-        const levels = Object.values(dailyFortune.categories).map(category => {
-          switch (category.level) {
-            case 'SSR': return 5;
-            case 'SR': return 4;
-            case 'R': return 3;
-            case 'N': return 2;
-            default: return 1;
+        // 检查今天是否已经生成过运势
+        const today = formatDate();
+        const savedFortuneString = localStorage.getItem('today-fortune');
+        let dailyFortune;
+        
+        if (savedFortuneString) {
+          const savedFortune = JSON.parse(savedFortuneString);
+          
+          // 检查是否是今天的运势
+          if (savedFortune.date === today) {
+            dailyFortune = savedFortune;
+          } else {
+            // 如果不是今天的运势，生成新的
+            dailyFortune = generateRandomFortune();
+            localStorage.setItem('today-fortune', JSON.stringify(dailyFortune));
           }
-        });
-        const averageLuck = Math.round(levels.reduce((a, b) => a + b, 0) / levels.length);
+        } else {
+          // 没有保存过运势，生成新的
+          dailyFortune = generateRandomFortune();
+          localStorage.setItem('today-fortune', JSON.stringify(dailyFortune));
+        }
         
-        // 动态生成总结和神秘签文
-        const summary = averageLuck >= 4 ? '今天的运势非常好，适合尝试新事物！' : averageLuck >= 3 ? '今天的运势不错，保持积极心态。' : '今天运势一般，谨慎行事。';
-        const mysticMessage = generateMysticMessage(dailyFortune.categories);
-        
-        setFortune({ ...dailyFortune, luck: averageLuck, content: summary, mysticMessage });
-        
+        setFortune(dailyFortune);
         saveToHistory(dailyFortune);
       } catch (error) {
         console.error('获取运势失败：', error);
+        // 出错时也生成随机运势，确保用户体验
+        const fallbackFortune = generateRandomFortune();
+        setFortune(fallbackFortune);
       } finally {
         setLoading(false);
       }
@@ -1144,7 +1326,7 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack, onShare }) => {
                   <AnalysisSection>
                     <Text style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                       {detailedAnalysis[key].content}
-                    </Text>
+          </Text>
                   </AnalysisSection>
                   <AnalysisSection>
                     <AnalysisTitle>
