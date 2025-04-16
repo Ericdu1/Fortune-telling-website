@@ -19,6 +19,7 @@ const Container = styled.div`
   
   @media (max-width: 480px) {
     padding: 1rem 0.8rem;
+    padding-bottom: 5rem;
   }
 `;
 
@@ -336,12 +337,17 @@ const ButtonContainer = styled.div`
   }
   
   @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 1rem;
+    flex-direction: row;
+    gap: 0.5rem;
     margin-top: 2rem;
-    position: sticky;
-    bottom: 1rem;
-    z-index: 10;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(26, 26, 46, 0.9);
+    padding: 0.8rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -365,11 +371,11 @@ const StyledButton = styled.button`
   }
   
   @media (max-width: 480px) {
-    width: 100%;
+    flex: 1;
     justify-content: center;
-    padding: 0.8rem 1rem;
-    font-size: 1rem;
-    gap: 0.5rem;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.9rem;
+    gap: 0.3rem;
   }
   
   &:hover {
