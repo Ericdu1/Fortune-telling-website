@@ -2011,11 +2011,6 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         <ActionButton onClick={handleCopyToClipboard}>
           <CopyOutlined /> 复制到剪贴板
         </ActionButton>
-        {navigator.share && (
-          <ActionButton onClick={handleShare}>
-            <ShareAltOutlined /> 分享给朋友
-          </ActionButton>
-        )}
         <ActionButton onClick={onBack}>
           <RollbackOutlined /> 返回
         </ActionButton>
