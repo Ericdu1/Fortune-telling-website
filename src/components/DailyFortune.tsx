@@ -1647,28 +1647,28 @@ const DailyFortune: React.FC<DailyFortuneProps> = ({ onBack }) => {
           onClick={() => setActiveTab('overall')}
         >
           <span className="tab-text">综合运势</span>
-          <span className="tab-icon"><DesktopOutlined /></span>
+          <span className="tab-icon">📊</span>
         </TabButton>
         <TabButton
           active={activeTab === 'zodiac'} 
           onClick={() => setActiveTab('zodiac')}
         >
           <span className="tab-text">星座运势</span>
-          <span className="tab-icon"><TeamOutlined /></span>
+          <span className="tab-icon">♈</span>
         </TabButton>
         <TabButton
           active={activeTab === 'animal'} 
           onClick={() => setActiveTab('animal')}
         >
           <span className="tab-text">生肖运势</span>
-          <span className="tab-icon"><BulbOutlined /></span>
+          <span className="tab-icon">🐉</span>
         </TabButton>
         <TabButton
           active={activeTab === 'lucky'} 
           onClick={() => setActiveTab('lucky')}
         >
           <span className="tab-text">幸运提示</span>
-          <span className="tab-icon"><AimOutlined /></span>
+          <span className="tab-icon">🍀</span>
         </TabButton>
       </TabNav>
       
