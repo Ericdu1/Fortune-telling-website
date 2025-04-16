@@ -988,6 +988,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     
     setLoading(true);
     try {
+      // 添加一个随机查询参数，确保每次生成的图片都是唯一的，避免浏览器缓存
+      const timestamp = new Date().getTime();
+      const uniqueId = Math.random().toString(36).substring(2, 15);
+      
       // 直接创建一个新的HTML页面，然后在新页面中生成图片
       const newWindow = window.open('', '_blank');
       if (!newWindow) {
@@ -995,14 +999,16 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         setLoading(false);
         return;
       }
-      
-      // 为新窗口写入内容
-      newWindow.document.write(`
+
+      // 构建页面内容时增加时间戳和唯一标识符，确保内容的唯一性
+      const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
-          <title>二次元占卜屋 - 今日运势</title>
+          <title>二次元占卜屋 - 今日运势 ${timestamp}</title>
           <meta charset="UTF-8">
+          <meta name="fortune-timestamp" content="${timestamp}">
+          <meta name="fortune-unique-id" content="${uniqueId}">
           <style>
             body {
               background: #1a1a2e;
@@ -1159,14 +1165,130 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
             
             <!-- 运势标题 -->
             <div style="text-align: center;">
-              <h2 style="color: #ffd700; margin: 0 0 10px 0;">今日运势占卜</h2>
+              <h2 style="color: #ffd700; margin: 0 0 10px 0;">${dailyFortune?.activeTab === 'zodiac' 
+                ? '星座运势占卜' 
+                : dailyFortune?.activeTab === 'animal' 
+                  ? '生肖运势占卜' 
+                  : dailyFortune?.activeTab === 'lucky' 
+                    ? '今日幸运提示'
+                    : '今日运势占卜'}</h2>
               <div style="color: #e0e0e0;">${dailyFortune?.date}</div>
+              ${dailyFortune?.activeTab !== 'lucky' ? `
               <div style="margin: 15px 0;">
                 <div style="color: #ffd700; margin-bottom: 8px;">今日运势指数</div>
                 <div class="lucky-stars">${dailyFortune ? '★'.repeat(dailyFortune.luck) + '☆'.repeat(5 - dailyFortune.luck) : ''}</div>
               </div>
+              ` : ''}
             </div>
             
+            ${dailyFortune?.activeTab === 'zodiac' ? `
+            <!-- 星座运势 -->
+            <div class="section">
+              <div class="section-title">星座运势分析</div>
+              <div class="content">今日星座运势整体状况良好，工作学习都将有所突破。感情方面可能会有些小波折，注意沟通方式。财运平稳，适合稳健投资。健康方面需要注意休息，避免过度疲劳。</div>
+            </div>
+            
+            <!-- 星座运势详解 -->
+            <div class="section">
+              <div class="section-title">运势详解</div>
+              <div class="category-card">
+                <div class="category-header">
+                  <span class="category-name">整体运势</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.zodiacInfo?.analysis.overall || "★★★★☆"}</span>
+                </div>
+                <div>今天的整体运势不错，适合处理重要事务。保持积极乐观的心态，会有意外的惊喜。</div>
+                <div style="color: #a0a0a0; margin-top: 8px;">建议：把握机会，相信自己的判断。</div>
+              </div>
+              
+              <div class="category-card">
+                <div class="category-header">
+                  <span class="category-name">爱情运势</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.zodiacInfo?.analysis.love || "★★★☆☆"}</span>
+                </div>
+                <div>单身者可能会遇到心动的对象，已有伴侣的要注意沟通方式。</div>
+                <div style="color: #a0a0a0; margin-top: 8px;">建议：保持真诚，表达自己的感受。</div>
+              </div>
+              
+              <div class="category-card">
+                <div class="category-header">
+                  <span class="category-name">事业运势</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.zodiacInfo?.analysis.career || "★★★★☆"}</span>
+                </div>
+                <div>工作上会遇到新的挑战，但这也是展现能力的好机会。团队合作会带来不错的成果。</div>
+                <div style="color: #a0a0a0; margin-top: 8px;">建议：主动承担责任，展现领导力。</div>
+              </div>
+            </div>
+            ` : dailyFortune?.activeTab === 'animal' ? `
+            <!-- 生肖运势 -->
+            <div class="section">
+              <div class="section-title">生肖运势分析</div>
+              <div class="content">今日生肖运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。事业上可能有新的机遇，要保持专注。</div>
+            </div>
+            
+            <!-- 生肖运势详解 -->
+            <div class="section">
+              <div class="section-title">运势详解</div>
+              <div class="category-card">
+                <div class="category-header">
+                  <span class="category-name">整体运势</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.animalInfo?.analysis.overall || "★★★★☆"}</span>
+                </div>
+                <div>今日运势平稳，适合规划和执行重要计划。保持冷静理性的态度，会有不错的收获。</div>
+                <div style="color: #a0a0a0; margin-top: 8px;">建议：把握当下，循序渐进。</div>
+              </div>
+              
+              <div class="category-card">
+                <div class="category-header">
+                  <span class="category-name">事业运势</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.animalInfo?.analysis.career || "★★★☆☆"}</span>
+                </div>
+                <div>职场上可能会遇到新的机遇，团队协作顺利。注意把握细节，展现专业能力。</div>
+                <div style="color: #a0a0a0; margin-top: 8px;">建议：保持专注，注重细节。</div>
+              </div>
+              
+              <div class="category-card">
+                <div class="category-header">
+                  <span class="category-name">财运运势</span>
+                  <span style="margin-left: 12px; color: #ffd700;">${dailyFortune.animalInfo?.analysis.wealth || "★★★★☆"}</span>
+                </div>
+                <div>财运较好，可能有额外收入。投资方面要保持谨慎，避免冒险。</div>
+                <div style="color: #a0a0a0; margin-top: 8px;">建议：稳健理财，适度消费。</div>
+              </div>
+            </div>
+            ` : dailyFortune?.activeTab === 'lucky' ? `
+            <!-- 幸运提示 -->
+            <div style="display: flex; flex-direction: column; gap: 16px; margin: 20px 0;">
+              <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                <div style="color: #ffd700; margin-bottom: 8px;">🎨 幸运色：</div>
+                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.color || "蓝色"}</div>
+              </div>
+              
+              <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                <div style="color: #ffd700; margin-bottom: 8px;">🔢 幸运数字：</div>
+                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.number || "7, 9"}</div>
+              </div>
+              
+              <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                <div style="color: #ffd700; margin-bottom: 8px;">🔑 幸运关键词：</div>
+                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.keyword || "创新、合作、直觉"}</div>
+              </div>
+              
+              <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                <div style="color: #ffd700; margin-bottom: 8px;">✅ 今日宜：</div>
+                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.goodActivity || "学习新技能、参加社交活动"}</div>
+              </div>
+              
+              <div style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.2);">
+                <div style="color: #ffd700; margin-bottom: 8px;">❌ 今日忌：</div>
+                <div style="font-size: 16px;">${dailyFortune.luckyInfo?.badActivity || "冲动消费、轻率决策"}</div>
+              </div>
+              
+              <div style="padding: 16px; border-radius: 8px; background: rgba(255, 215, 0, 0.1); border-left: 3px solid #ffd700;">
+                <div style="color: #ffd700; margin-bottom: 8px;">🌟 行为引导：</div>
+                <div style="font-size: 16px; line-height: 1.6;">${dailyFortune.luckyInfo?.behavior || "今天是提升自我和拓展视野的好时机，尝试接触新事物，与不同领域的人交流，可能会有意想不到的收获和灵感。同时，需要注意控制情绪和消费欲望，避免做出冲动的决定。"}</div>
+              </div>
+            </div>
+            ` : `
             <!-- 总体运势 -->
             <div class="section">
               <div class="section-title">总体运势</div>
@@ -1216,10 +1338,11 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
                 </div>
               `).join('') : ''}
             </div>
+            `}
             
             <!-- 底部 -->
             <div class="footer">
-              二次元占卜屋 · 每日运势<br>
+              二次元占卜屋 · 每日运势 (${timestamp})<br>
               长按图片或截图保存
             </div>
             
@@ -1237,8 +1360,9 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
           </script>
         </body>
         </html>
-      `);
+      `;
       
+      newWindow.document.write(htmlContent);
       newWindow.document.close();
       message.success('图片已在新标签页生成，请在新页面保存');
     } catch (error) {
