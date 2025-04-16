@@ -1150,8 +1150,8 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
       setIsSaving(true);
       
       // 创建一个唯一的标识符和时间戳，用于确保内容唯一性
-      const uniqueId = `fortune-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-      const timestamp = new Date().toISOString();
+      const uniqueId = `fortune-${window.Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+      const timestamp = new window.Date().toISOString();
       
       if (!shareCardRef.current) {
         setIsSaving(false);
