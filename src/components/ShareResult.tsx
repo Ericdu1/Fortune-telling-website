@@ -745,7 +745,16 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
 
   // 组件挂载时生成简化版内容
   useEffect(() => {
+    console.log("ShareResult组件收到的数据:", dailyFortune);
+    
     if (dailyFortune) {
+      // 检查是否有isFullShare标志
+      if (dailyFortune.isFullShare) {
+        console.log("生成完整分享内容");
+      } else {
+        console.log("生成标签页分享内容:", dailyFortune.activeTab);
+      }
+      
       // 生成简化的HTML内容用于图片
       generateSimpleContent();
     }
@@ -1158,7 +1167,15 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         return;
       }
 
-      // 构建页面内容
+      // 获取原始元素的HTML内容和样式
+      const contentElement = shareCardRef.current.querySelector('.share-content');
+      if (!contentElement) {
+        message.error('无法获取分享内容');
+        setIsSaving(false);
+        return;
+      }
+
+      // 构建基础HTML页面结构，使用完整的内容
       const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -1178,18 +1195,101 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
               justify-content: center;
             }
             .fortune-card {
-              max-width: 600px;
+              max-width: 800px;
+              width: 100%;
               background: #1a1a2e;
               padding: 30px;
               border-radius: 12px;
               box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             }
-            /* 更多样式内容... */
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+              padding-bottom: 15px;
+            }
+            .header-title {
+              font-size: 24px;
+              font-weight: bold;
+              color: #ffd700;
+              margin-bottom: 10px;
+            }
+            .date-time {
+              font-size: 14px;
+              color: rgba(255, 255, 255, 0.7);
+            }
+            /* 复制原始样式以确保显示一致 */
+            .share-content {
+              color: white;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            .category-header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 10px;
+            }
+            .category-name {
+              font-size: 18px;
+              color: #ffd700;
+            }
+            .category-level {
+              padding: 2px 10px;
+              border-radius: 12px;
+              font-size: 14px;
+              background: linear-gradient(45deg, #6b6bff, #8e8eff);
+            }
+            .ssr {
+              background: linear-gradient(45deg, #FFD700, #FFA500);
+            }
+            .sr {
+              background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
+            }
+            .r {
+              background: linear-gradient(45deg, #CD7F32, #8B4513);
+            }
+            .n {
+              background: linear-gradient(45deg, #808080, #696969);
+            }
+            .fortune-display-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 10px;
+              margin: 15px 0;
+            }
+            .fortune-item {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              background: rgba(0, 0, 0, 0.2);
+              padding: 10px;
+              border-radius: 8px;
+            }
+            .tags-container {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 8px;
+              margin-top: 16px;
+            }
+            .tag {
+              background: rgba(255, 215, 0, 0.2);
+              color: #ffd700;
+              padding: 4px 12px;
+              border-radius: 16px;
+              font-size: 14px;
+            }
           </style>
         </head>
         <body>
           <div class="fortune-card">
-            <!-- 内容将在这里 -->
+            <div class="header">
+              <div class="header-title">二次元占卜屋</div>
+              <div class="date-time">${formatDate()} ${dailyFortune ? '今日运势' : '塔罗牌占卜'}</div>
+            </div>
+            <div class="share-content">
+              ${contentElement.innerHTML}
+            </div>
           </div>
         </body>
         </html>
@@ -1206,22 +1306,20 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
       // 将HTML内容写入新窗口
       newWindow.document.write(htmlContent);
       newWindow.document.close();
-
-      // 等待页面加载完成
+      
+      // 等待内容和样式完全加载
       setTimeout(() => {
-        if (!newWindow) return;
-        
         try {
-          // 这里使用新窗口的打印功能
+          // 使用新窗口的打印功能
           newWindow.print();
           message.success('运势分享已生成，您可以保存为图片或打印');
-          setIsSaving(false);
         } catch (error) {
           console.error('打印过程中出错:', error);
           message.error('生成图片时出错');
+        } finally {
           setIsSaving(false);
         }
-      }, 500);
+      }, 1000);
     } catch (error) {
       console.error('保存图片过程中出错:', error);
       message.error('生成图片时出错');
