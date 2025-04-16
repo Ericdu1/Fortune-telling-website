@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Button, message, Tag } from 'antd';
-import { ArrowLeftOutlined, DownloadOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
 import { DailyFortune } from '../types/fortune';
@@ -1158,172 +1158,114 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     try {
       setIsSaving(true);
       
-      // 创建一个唯一的标识符和时间戳，用于确保内容唯一性
-      const uniqueId = `fortune-${window.Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-      const timestamp = new window.Date().toISOString();
-      
       if (!shareCardRef.current) {
         setIsSaving(false);
-        return;
-      }
-
-      // 获取原始元素的HTML内容和样式
-      const contentElement = shareCardRef.current.querySelector('.share-content');
-      if (!contentElement) {
         message.error('无法获取分享内容');
-        setIsSaving(false);
         return;
       }
 
-      // 构建基础HTML页面结构，使用完整的内容
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>二次元占卜屋 - 今日运势</title>
-          <meta charset="UTF-8">
-          <meta name="fortune-timestamp" content="${timestamp}">
-          <meta name="fortune-unique-id" content="${uniqueId}">
-          <style>
-            body {
-              background: #1a1a2e;
-              color: white;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              margin: 0;
-              padding: 20px;
-              display: flex;
-              justify-content: center;
-            }
-            .fortune-card {
-              max-width: 800px;
-              width: 100%;
-              background: #1a1a2e;
-              padding: 30px;
-              border-radius: 12px;
-              box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 20px;
-              border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-              padding-bottom: 15px;
-            }
-            .header-title {
-              font-size: 24px;
-              font-weight: bold;
-              color: #ffd700;
-              margin-bottom: 10px;
-            }
-            .date-time {
-              font-size: 14px;
-              color: rgba(255, 255, 255, 0.7);
-            }
-            /* 复制原始样式以确保显示一致 */
-            .share-content {
-              color: white;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            }
-            .category-header {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 10px;
-            }
-            .category-name {
-              font-size: 18px;
-              color: #ffd700;
-            }
-            .category-level {
-              padding: 2px 10px;
-              border-radius: 12px;
-              font-size: 14px;
-              background: linear-gradient(45deg, #6b6bff, #8e8eff);
-            }
-            .ssr {
-              background: linear-gradient(45deg, #FFD700, #FFA500);
-            }
-            .sr {
-              background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
-            }
-            .r {
-              background: linear-gradient(45deg, #CD7F32, #8B4513);
-            }
-            .n {
-              background: linear-gradient(45deg, #808080, #696969);
-            }
-            .fortune-display-grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 10px;
-              margin: 15px 0;
-            }
-            .fortune-item {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              background: rgba(0, 0, 0, 0.2);
-              padding: 10px;
-              border-radius: 8px;
-            }
-            .tags-container {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: center;
-              gap: 8px;
-              margin-top: 16px;
-            }
-            .tag {
-              background: rgba(255, 215, 0, 0.2);
-              color: #ffd700;
-              padding: 4px 12px;
-              border-radius: 16px;
-              font-size: 14px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="fortune-card">
-            <div class="header">
-              <div class="header-title">二次元占卜屋</div>
-              <div class="date-time">${formatDate()} ${dailyFortune ? '今日运势' : '塔罗牌占卜'}</div>
-            </div>
-            <div class="share-content">
-              ${contentElement.innerHTML}
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
-      
-      // 创建新窗口
-      const newWindow = window.open('', '_blank');
-      if (!newWindow) {
-        message.error('无法创建新窗口，请检查浏览器设置');
-        setIsSaving(false);
-        return;
-      }
-      
-      // 将HTML内容写入新窗口
-      newWindow.document.write(htmlContent);
-      newWindow.document.close();
-      
-      // 等待内容和样式完全加载
-      setTimeout(() => {
-        try {
-          // 使用新窗口的打印功能
-          newWindow.print();
-          message.success('运势分享已生成，您可以保存为图片或打印');
-        } catch (error) {
-          console.error('打印过程中出错:', error);
-          message.error('生成图片时出错');
-        } finally {
-          setIsSaving(false);
+      // 使用html2canvas直接将DOM元素转为图片 (类型转换以避免TS错误)
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: '#1a1a2e', // 实际上是正确的选项，但类型不匹配
+        useCORS: true, // 允许加载跨域图片
+        logging: false,
+        allowTaint: true,
+        onclone: (document) => {
+          // 简化克隆的文档内样式，以提高转换效率
+          const clonedContent = document.querySelector('.share-content');
+          if (clonedContent) {
+            clonedContent.style.boxShadow = 'none';
+          }
         }
-      }, 1000);
+      } as any);
+      
+      // 创建下载链接
+      const link = document.createElement('a');
+      const timestamp = String(new Date().getTime()).slice(-6);
+      const fileName = `运势占卜_${formatDate().replace(/\//g, '')}_${timestamp}.png`;
+      
+      // 将canvas转换为Blob并创建下载链接
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          message.error('生成图片失败');
+          setIsSaving(false);
+          return;
+        }
+        
+        // 创建URL并下载
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        
+        // 清理
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          setIsSaving(false);
+          message.success('运势图片已保存');
+        }, 100);
+      }, 'image/png', 0.95);
+      
     } catch (error) {
       console.error('保存图片过程中出错:', error);
       message.error('生成图片时出错');
       setIsSaving(false);
+    }
+  };
+
+  // 添加Web共享API功能
+  const handleShare = async () => {
+    try {
+      if (!shareCardRef.current) {
+        message.error('无法获取分享内容');
+        return;
+      }
+      
+      if (!navigator.share) {
+        message.info('您的浏览器不支持Web分享API，已切换到图片下载模式');
+        handleSaveImage();
+        return;
+      }
+      
+      // 将内容转换为图片
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: '#1a1a2e',
+        useCORS: true,
+        logging: false,
+        allowTaint: true
+      } as any); // 类型转换避免TS错误
+      
+      // 将Canvas转换为Blob
+      const blob = await new Promise<Blob | null>((resolve) => 
+        canvas.toBlob(resolve, 'image/png', 0.95)
+      );
+      
+      if (!blob) {
+        message.error('生成分享图片失败');
+        return;
+      }
+      
+      // 创建文件对象
+      const file = new File([blob], '二次元占卜运势.png', { type: 'image/png' });
+      
+      // 调用Web Share API
+      await navigator.share({
+        title: '二次元占卜屋 - 今日运势',
+        text: '来看看我今天的运势占卜结果吧！',
+        files: [file]
+      });
+      
+      message.success('分享成功！');
+    } catch (error) {
+      console.error('分享失败:', error);
+      
+      // 如果是用户取消分享，不显示错误
+      if (error instanceof Error && error.name !== 'AbortError') {
+        message.error('分享失败，已切换到图片下载模式');
+        handleSaveImage();
+      }
     }
   };
 
@@ -1920,6 +1862,14 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
         >
           保存图片
         </StyledButton>
+        {navigator.share && (
+          <StyledButton 
+            icon={<ShareAltOutlined />}
+            onClick={handleShare}
+          >
+            分享
+          </StyledButton>
+        )}
       </ButtonContainer>
     </Container>
   );
