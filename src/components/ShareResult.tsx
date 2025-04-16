@@ -854,33 +854,259 @@ const ShareResult: React.FC<ShareResultProps> = ({ dailyFortune, tarotResult, on
     
     setLoading(true);
     try {
-      // 创建一个临时的DIV元素用于渲染简化内容
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = simpleImageContent;
-      document.body.appendChild(tempDiv);
+      // 直接创建一个新的HTML页面，然后在新页面中生成图片
+      const newWindow = window.open('', '_blank');
+      if (!newWindow) {
+        message.error('无法创建新窗口，请检查浏览器设置');
+        setLoading(false);
+        return;
+      }
       
-      const options = {
-        backgroundColor: '#1a1a2e',
-        scale: 2,
-        logging: true,
-        width: 500,
-        height: tempDiv.firstChild ? (tempDiv.firstChild as HTMLElement).offsetHeight : 800,
-      };
+      // 为新窗口写入内容
+      newWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>二次元占卜屋 - 今日运势</title>
+          <meta charset="UTF-8">
+          <style>
+            body {
+              background: #1a1a2e;
+              color: white;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              margin: 0;
+              padding: 20px;
+              display: flex;
+              justify-content: center;
+            }
+            .fortune-card {
+              max-width: 600px;
+              background: #1a1a2e;
+              padding: 30px;
+              border-radius: 12px;
+              box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            }
+            .header {
+              text-align: center;
+              border-bottom: 1px solid rgba(255,215,0,0.3);
+              padding-bottom: 15px;
+              margin-bottom: 20px;
+            }
+            .title {
+              color: #ffd700;
+              font-size: 28px;
+              margin: 0 0 10px 0;
+            }
+            .date {
+              color: #e0e0e0;
+              font-size: 16px;
+            }
+            .section {
+              margin: 25px 0;
+            }
+            .section-title {
+              color: #ffd700;
+              font-size: 20px;
+              text-align: center;
+              margin-bottom: 15px;
+            }
+            .content {
+              background: rgba(0,0,0,0.3);
+              padding: 15px;
+              border-radius: 8px;
+              border: 1px solid rgba(255,215,0,0.3);
+              line-height: 1.6;
+            }
+            .grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 12px;
+              margin: 15px 0;
+            }
+            .grid-item {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              background: rgba(0,0,0,0.2);
+              padding: 12px;
+              border-radius: 8px;
+              border: 1px solid rgba(255,255,255,0.1);
+            }
+            .grid-icon {
+              font-size: 24px;
+              color: #ffd700;
+            }
+            .sign {
+              background: rgba(255,215,0,0.1);
+              padding: 15px;
+              border-radius: 8px;
+              border-left: 3px solid #ffd700;
+              margin: 20px 0;
+            }
+            .sign-title {
+              color: #ffd700;
+              margin-bottom: 10px;
+            }
+            .sign-content {
+              font-style: italic;
+              font-size: 18px;
+            }
+            .category-card {
+              margin: 15px 0;
+              padding: 15px;
+              background: rgba(255,255,255,0.05);
+              border: 1px solid rgba(255,215,0,0.3);
+              border-radius: 8px;
+            }
+            .category-header {
+              display: flex;
+              align-items: center;
+              margin-bottom: 10px;
+            }
+            .category-name {
+              color: #ffd700;
+              font-size: 18px;
+            }
+            .category-level {
+              margin-left: 10px;
+              padding: 2px 8px;
+              border-radius: 4px;
+              color: white;
+            }
+            .level-SSR { background: linear-gradient(45deg, #FFD700, #FFA500); }
+            .level-SR { background: linear-gradient(45deg, #C0C0C0, #A0A0A0); }
+            .level-R { background: linear-gradient(45deg, #CD7F32, #8B4513); }
+            .level-N { background: linear-gradient(45deg, #808080, #696969); }
+            .lucky-stars {
+              color: #ffd700;
+              font-size: 24px;
+              text-align: center;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 30px;
+              color: #a0a0a0;
+              font-size: 14px;
+              border-top: 1px solid rgba(255,215,0,0.2);
+              padding-top: 15px;
+            }
+            .print-btn {
+              display: block;
+              margin: 20px auto;
+              padding: 10px 20px;
+              background: #4a69bd;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 16px;
+            }
+            .print-btn:hover {
+              background: #1e3799;
+            }
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              .print-btn {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="fortune-card">
+            <!-- 头部 -->
+            <div class="header">
+              <h1 class="title">二次元占卜屋</h1>
+              <div class="date">${formatDate()} 今日运势</div>
+            </div>
+            
+            <!-- 运势标题 -->
+            <div style="text-align: center;">
+              <h2 style="color: #ffd700; margin: 0 0 10px 0;">今日运势占卜</h2>
+              <div style="color: #e0e0e0;">${dailyFortune?.date}</div>
+              <div style="margin: 15px 0;">
+                <div style="color: #ffd700; margin-bottom: 8px;">今日运势指数</div>
+                <div class="lucky-stars">${dailyFortune ? '★'.repeat(dailyFortune.luck) + '☆'.repeat(5 - dailyFortune.luck) : ''}</div>
+              </div>
+            </div>
+            
+            <!-- 总体运势 -->
+            <div class="section">
+              <div class="section-title">总体运势</div>
+              <div class="content">${dailyFortune?.content}</div>
+            </div>
+            
+            <!-- 运势概览 -->
+            <div class="section">
+              <div class="section-title">运势概览</div>
+              <div class="grid">
+                <div class="grid-item">
+                  <span class="grid-icon">🎮</span>
+                  <span>游戏运势：${dailyFortune?.categories.game?.level || 'N'}</span>
+                </div>
+                <div class="grid-item">
+                  <span class="grid-icon">👥</span>
+                  <span>社交运势：${dailyFortune?.categories.social?.level || 'N'}</span>
+                </div>
+                <div class="grid-item">
+                  <span class="grid-icon">✍️</span>
+                  <span>创作运势：${dailyFortune?.categories.create?.level || 'N'}</span>
+                </div>
+                <div class="grid-item">
+                  <span class="grid-icon">📺</span>
+                  <span>动画运势：${dailyFortune?.categories.anime?.level || 'N'}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 神秘签文 -->
+            <div class="sign">
+              <div class="sign-title">🔮 神秘签文</div>
+              <div class="sign-content">${dailyFortune?.mysticMessage}</div>
+            </div>
+            
+            <!-- 详细运势分析 -->
+            <div class="section">
+              <div class="section-title">详细运势分析</div>
+              ${dailyFortune ? Object.entries(dailyFortune.categories).map(([key, category]) => `
+                <div class="category-card">
+                  <div class="category-header">
+                    <span class="category-name">${category.name}</span>
+                    <span class="category-level level-${category.level}">${category.level}</span>
+                  </div>
+                  <div>${category.description}</div>
+                  <div style="color: #a0a0a0; margin-top: 8px;">建议：${category.advice}</div>
+                </div>
+              `).join('') : ''}
+            </div>
+            
+            <!-- 底部 -->
+            <div class="footer">
+              二次元占卜屋 · 每日运势<br>
+              长按图片或截图保存
+            </div>
+            
+            <button class="print-btn" onclick="window.print(); setTimeout(() => window.close(), 500);">
+              打印/保存图片
+            </button>
+          </div>
+          
+          <script>
+            // 自动调整窗口大小
+            document.addEventListener('DOMContentLoaded', () => {
+              // 通知用户
+              alert('页面已生成，您可以长按保存图片，或者点击"打印/保存图片"按钮以PNG格式保存');
+            });
+          </script>
+        </body>
+        </html>
+      `);
       
-      // 使用简化的DOM结构生成图片
-      const canvas = await html2canvas(tempDiv.firstChild as HTMLElement, options as any);
-      
-      // 清理临时DOM
-      document.body.removeChild(tempDiv);
-      
-      // 创建下载链接
-      const imgData = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = imgData;
-      link.download = `二次元占卜屋_${formatDate()}.png`;
-      link.click();
-      
-      message.success('图片保存成功！');
+      newWindow.document.close();
+      message.success('图片已在新标签页生成，请在新页面保存');
     } catch (error) {
       console.error('保存图片失败:', error);
       message.error('保存图片失败，请重试');
