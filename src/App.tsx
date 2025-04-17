@@ -8,8 +8,9 @@ import TarotReading from './components/TarotReading';
 import TarotResult from './components/TarotResult';
 import ShareResult from './components/ShareResult';
 import DailyFortune from './components/DailyFortune';
-import { HomeOutlined, StarOutlined, CalendarOutlined, UserOutlined, HistoryOutlined } from '@ant-design/icons';
+import { HomeOutlined, StarOutlined, CalendarOutlined, UserOutlined, HistoryOutlined, ExperimentOutlined } from '@ant-design/icons';
 import GlobalStyles from './styles/GlobalStyles';
+import JojoMbtiPage from './components/JojoMbtiPage';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -120,7 +121,8 @@ type Step =
   | 'tarot-result'
   | 'tarot-share'
   | 'profile'
-  | 'history';
+  | 'history'
+  | 'jojo-mbti';
 
 const positions = ['过去', '现在', '未来'];
 
@@ -215,6 +217,7 @@ const App: React.FC = () => {
               setState(prev => ({ ...prev, currentStep: 'tarot-reading' }));
             }}
             onStartDaily={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
+            onStartJojoMbti={() => setState(prev => ({ ...prev, currentStep: 'jojo-mbti' }))}
           />
         );
 
@@ -263,6 +266,11 @@ const App: React.FC = () => {
           />
         ) : null;
 
+      case 'jojo-mbti':
+        return (
+          <JojoMbtiPage />
+        );
+
       default:
         return null;
     }
@@ -290,6 +298,12 @@ const App: React.FC = () => {
             onClick={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
           >
             <CalendarOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep === 'jojo-mbti'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'jojo-mbti' }))}
+          >
+            <ExperimentOutlined />
           </SidebarItem>
           <SidebarItem 
             active={state.currentStep === 'profile'}

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { Button } from 'antd';
-import { StarOutlined, CalendarOutlined } from '@ant-design/icons';
+import { StarOutlined, CalendarOutlined, ExperimentOutlined } from '@ant-design/icons';
 
 const Container = styled.div`
   width: 100%;
@@ -132,72 +132,52 @@ const DisabledFunction = styled(FunctionCard)`
 interface HomeProps {
   onStartTarot: () => void;
   onStartDaily: () => void;
+  onStartJojoMbti: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily }) => {
+const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti }) => {
   return (
     <Container>
       <Title>二次元占卜屋</Title>
-      <Subtitle>来自JOJO的神秘力量</Subtitle>
-
+      <Subtitle>探索你的命运，揭示生活的奥秘</Subtitle>
+      
       <DailyFortune>
         <DailyTitle>
-          <CalendarOutlined /> 今日运势
+          <CalendarOutlined /> 每日运势
         </DailyTitle>
         <DailyContent>
-          <p>每日12:00更新</p>
-          <StyledButton 
-            type="primary"
-            onClick={onStartDaily}
-          >
-            查看今日运势
+          <p>每天一次的运势预测，让你了解今日的吉凶祸福</p>
+          <StyledButton type="primary" size="large" onClick={onStartDaily}>
+            开始占卜
           </StyledButton>
         </DailyContent>
       </DailyFortune>
-
+      
       <Sidebar>
         <FunctionCard onClick={onStartTarot}>
           <FunctionTitle>
             <StarOutlined /> 塔罗牌占卜
           </FunctionTitle>
           <FunctionDescription>
-            通过JOJO塔罗牌，探索你的命运轨迹
+            解读塔罗牌的神秘信息，指引未来方向
           </FunctionDescription>
         </FunctionCard>
-
-        <DisabledFunction>
+        
+        <FunctionCard onClick={onStartJojoMbti} isNew={true}>
           <FunctionTitle>
-            <StarOutlined /> 替身能力测试
+            <ExperimentOutlined /> JOJO MBTI测试
           </FunctionTitle>
           <FunctionDescription>
-            回答问题，发现你的替身能力
+            测试你是JOJO中的哪个角色，你的替身是什么
           </FunctionDescription>
-        </DisabledFunction>
-
+        </FunctionCard>
+        
         <DisabledFunction>
           <FunctionTitle>
-            <StarOutlined /> 新番放送提醒
+            更多功能
           </FunctionTitle>
           <FunctionDescription>
-            追踪你喜欢的动漫更新时间
-          </FunctionDescription>
-        </DisabledFunction>
-
-        <DisabledFunction>
-          <FunctionTitle>
-            <StarOutlined /> 游戏发售追踪
-          </FunctionTitle>
-          <FunctionDescription>
-            关注你期待的游戏发售信息
-          </FunctionDescription>
-        </DisabledFunction>
-
-        <DisabledFunction>
-          <FunctionTitle>
-            <StarOutlined /> 个性化资讯
-          </FunctionTitle>
-          <FunctionDescription>
-            定制你的二次元资讯推送
+            更多二次元占卜功能，敬请期待...
           </FunctionDescription>
         </DisabledFunction>
       </Sidebar>
