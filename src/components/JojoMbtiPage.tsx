@@ -549,6 +549,30 @@ const JojoMbtiPage: React.FC = () => {
   
   const shareCardRef = useRef<HTMLDivElement>(null);
   const shareContentRef = useRef<HTMLDivElement>(null);
+  
+  // 布加拉提图片尺寸引用
+  const bucciaratiDimensions = useRef({
+    height: 0,
+    width: 0,
+    loaded: false
+  });
+
+  // 预加载布加拉提图片以获取其尺寸
+  useEffect(() => {
+    if (result && !bucciaratiDimensions.current.loaded) {
+      const bucciaratiImagePath = `/images/jojo/${characterImageMap['布加拉提'] || 'Buccellati'}.webp`;
+      const img = new Image();
+      img.onload = () => {
+        bucciaratiDimensions.current = {
+          height: img.naturalHeight,
+          width: img.naturalWidth,
+          loaded: true
+        };
+        console.log('布加拉提图片尺寸加载完成:', bucciaratiDimensions.current);
+      };
+      img.src = bucciaratiImagePath;
+    }
+  }, [result]);
 
   // 检查是否有历史记录
   useEffect(() => {
@@ -621,6 +645,61 @@ const JojoMbtiPage: React.FC = () => {
   // 关闭分享卡片
   const handleCloseShareCard = () => {
     setShowShareCard(false);
+  };
+
+  // 增强的图片加载处理函数
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>, characterName: string) => {
+    const img = e.currentTarget;
+    const imgHeight = img.naturalHeight;
+    const imgWidth = img.naturalWidth;
+    
+    // 默认缩放系数
+    let scale = 1;
+    
+    // 如果布加拉提图片已加载，则使用其高度作为参考
+    if (bucciaratiDimensions.current.loaded) {
+      // 缩放系数 = 布加拉提高度 / 当前图片高度
+      scale = bucciaratiDimensions.current.height / imgHeight;
+      
+      // 对于特别宽的图片进行额外处理
+      if ((imgWidth / imgHeight) > 1.2) {
+        scale *= 0.85; // 略微缩小过宽的图片
+      }
+      
+      // 对于特别窄的图片进行额外处理
+      if ((imgHeight / imgWidth) > 2) {
+        scale *= 0.9; // 略微缩小过窄的图片
+      }
+      
+      // 特殊调整：吉良吉影、东方仗助等需要特殊缩放的角色
+      if (characterName === '吉良吉影' || characterName === '岸边露伴') {
+        scale *= 1.1; // 放大10%
+      } else if (characterName === '迪奥·布兰度' || characterName === '乔鲁诺·乔巴拿') {
+        scale *= 1.15; // 放大15%
+      }
+      
+      // 应用计算后的缩放
+      img.style.height = `${imgHeight * scale}px`;
+      img.style.width = `${imgWidth * scale}px`;
+      
+      // 控制台输出调试信息
+      console.log(`角色: ${characterName}, 原始尺寸: ${imgWidth}x${imgHeight}, 缩放系数: ${scale}`);
+    } else {
+      // 如果布加拉提图片未加载，则使用基于图片比例的默认调整
+      if (imgHeight > imgWidth * 2) {
+        // 特别瘦长的图片
+        img.style.maxHeight = '78vh';
+        img.style.maxWidth = '70%';
+      } else if (imgWidth > imgHeight * 1.5) {
+        // 特别宽的图片
+        img.style.maxHeight = '70vh';
+        img.style.maxWidth = '95%';
+      } else {
+        // 普通比例的图片
+        img.style.maxHeight = '78vh';
+        img.style.maxWidth = '95%';
+      }
+    }
   };
 
   // 修改handleSaveImage函数，添加更多优化参数
@@ -855,92 +934,12 @@ const JojoMbtiPage: React.FC = () => {
     </CardContainer>
   );
   
-  // 修改renderResult函数，添加更精确的图片尺寸控制
+  // 修改renderResult函数，使用组件顶层定义的hooks
   const renderResult = () => {
     if (!result) return null;
     
     const { character, mbtiType, description, dimensionScores } = result;
     const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
-
-    // 布加拉提的图片路径，用作参考标准
-    const bucciaratiImagePath = `/images/jojo/${characterImageMap['布加拉提'] || 'Buccellati'}.webp`;
-    
-    // 引用对象，用于存储布加拉提图片尺寸
-    const bucciaratiDimensions = useRef({
-      height: 0,
-      width: 0,
-      loaded: false
-    });
-    
-    // 预加载布加拉提图片以获取其尺寸
-    useEffect(() => {
-      if (!bucciaratiDimensions.current.loaded) {
-        const img = new Image();
-        img.onload = () => {
-          bucciaratiDimensions.current = {
-            height: img.naturalHeight,
-            width: img.naturalWidth,
-            loaded: true
-          };
-        };
-        img.src = bucciaratiImagePath;
-      }
-    }, [bucciaratiImagePath]);
-    
-    // 增强的图片加载处理函数
-    const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-      const img = e.currentTarget;
-      const imgHeight = img.naturalHeight;
-      const imgWidth = img.naturalWidth;
-      
-      // 默认缩放系数
-      let scale = 1;
-      
-      // 如果布加拉提图片已加载，则使用其高度作为参考
-      if (bucciaratiDimensions.current.loaded) {
-        // 缩放系数 = 布加拉提高度 / 当前图片高度
-        scale = bucciaratiDimensions.current.height / imgHeight;
-        
-        // 对于特别宽的图片进行额外处理
-        if ((imgWidth / imgHeight) > 1.2) {
-          scale *= 0.85; // 略微缩小过宽的图片
-        }
-        
-        // 对于特别窄的图片进行额外处理
-        if ((imgHeight / imgWidth) > 2) {
-          scale *= 0.9; // 略微缩小过窄的图片
-        }
-        
-        // 特殊调整：吉良吉影、东方仗助等需要特殊缩放的角色
-        if (character.name === '吉良吉影' || character.name === '岸边露伴') {
-          scale *= 1.1; // 放大10%
-        } else if (character.name === '迪奥·布兰度' || character.name === '乔鲁诺·乔巴拿') {
-          scale *= 1.15; // 放大15%
-        }
-        
-        // 应用计算后的缩放
-        img.style.height = `${imgHeight * scale}px`;
-        img.style.width = `${imgWidth * scale}px`;
-        
-        // 控制台输出调试信息
-        console.log(`角色: ${character.name}, 原始尺寸: ${imgWidth}x${imgHeight}, 缩放系数: ${scale}`);
-      } else {
-        // 如果布加拉提图片未加载，则使用基于图片比例的默认调整
-        if (imgHeight > imgWidth * 2) {
-          // 特别瘦长的图片
-          img.style.maxHeight = '78vh';
-          img.style.maxWidth = '70%';
-        } else if (imgWidth > imgHeight * 1.5) {
-          // 特别宽的图片
-          img.style.maxHeight = '70vh';
-          img.style.maxWidth = '95%';
-        } else {
-          // 普通比例的图片
-          img.style.maxHeight = '78vh';
-          img.style.maxWidth = '95%';
-        }
-      }
-    };
     
     // PC端结果页面
     const renderPCResult = () => (
@@ -1048,7 +1047,7 @@ const JojoMbtiPage: React.FC = () => {
       </ResultContentCard>
     );
     
-    // 移动端结果页面 - 保持原有卡片式设计但添加角色图片
+    // 移动端结果页面
     const renderMobileResult = () => (
       <MobileResultCard>
         <ResultPageWrapper characterImage={characterImagePath}>
@@ -1173,7 +1172,7 @@ const JojoMbtiPage: React.FC = () => {
           <PCCharacterImg 
             src={characterImagePath} 
             alt={character.name} 
-            onLoad={handleImageLoad}
+            onLoad={(e) => handleImageLoad(e, character.name)}
           />
         </PCCharacterContainer>
         {renderPCResult()}
