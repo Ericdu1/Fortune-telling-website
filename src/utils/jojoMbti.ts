@@ -8,16 +8,34 @@ export const characterImageMap: Record<string, string> = {
   '西撒·齐贝林': 'Caesar_Zeppeli',
   '空条承太郎': 'Jotaro_Kujo',
   '花京院典明': 'Noriaki_Kakyoin',
-  '东方仗助': 'Josuke_Higashikata',
-  '岸边露伴': 'Rohan_Kishibe',
+  '东方仗助': 'Josuke',
+  '岸边露伴': 'Rohank',
   '乔鲁诺·乔巴拿': 'Giorno_Giovanna',
-  '布加拉提': 'Bruno_Bucciarati',
-  '空条徐伦': 'Jolyne_Cujoh',
+  '布加拉提': 'Buccellati',
+  '空条徐伦': 'Jolyne (1)',
   '迪亚波罗': 'Diavolo',
-  '杰洛·齐贝林': 'Gyro_Zeppeli',
+  '杰洛·齐贝林': 'Gyro',
   '吉良吉影': 'Yoshikage_Kira',
-  '福葛': 'Pannacotta_Fugo',
-  '纳兰迦': 'Narancia_Ghirga'
+  '福葛': 'Fugo',
+  '纳兰迦': 'Narancia_ASBR',
+  '透龙': 'Tooru_Infobox_Manga',
+  '田最环': 'Tamaki Damo',
+  '乔尼·乔斯达': 'Johnny_Joestar',
+  '瓦姆乌': 'Wamuu',
+  '普奇神父': 'Pucci',
+  '法尼·瓦伦泰': 'Valentine',
+  '埃尔梅斯·科斯特洛': 'Ermes',
+  '威瑟·里波特': 'Weather Reporter',
+  '史比特·瓦根': 'Speed_Weed',
+  '迪埃哥·布兰度': 'Diego_ASBR',
+  '波可洛可': 'Pocoloco_Infobox_Manga',
+  '山地人': 'sandman',
+  '露西·斯蒂尔': 'Lucy_Steel_Infobox_Manga',
+  '纳尔齐索·安纳苏': 'Anasui',
+  '福·法特斯': 'Foo_Fighters',
+  '安波里欧': 'Emporio_Promotional',
+  '东方定助': 'Josuke_8',
+  '乔迪欧': 'Jodio'
 };
 
 // MBTI测试问题
@@ -313,6 +331,150 @@ export const jojoCharacters: JojoCharacter[] = [
     stand: '空气史密斯',
     ability: '缩小自己和物体',
     part: 5
+  },
+  {
+    name: '透龙',
+    mbtiType: 'INTP',
+    description: '冷静沉着，思维缜密，隐藏自己的真实目的',
+    stand: 'Wonder of U',
+    ability: '因果转移与灾厄制造',
+    part: 8
+  },
+  {
+    name: '田最环',
+    mbtiType: 'ISTJ',
+    description: '条理分明的完美主义者，做事有条不紊，对细节非常关注',
+    stand: 'Vitamin C',
+    ability: '使物体和人变软',
+    part: 8
+  },
+  {
+    name: '乔尼·乔斯达',
+    mbtiType: 'INFP',
+    description: '敏感内省的理想主义者，有坚定的个人信念，追求成长',
+    stand: 'Tusk',
+    ability: '旋转与指甲发射',
+    part: 7
+  },
+  {
+    name: '瓦姆乌',
+    mbtiType: 'ISFJ',
+    description: '忠诚尽责的战士，尊重传统和荣誉，遵守战斗规则',
+    stand: '无',
+    ability: '神圣的沙岚',
+    part: 2
+  },
+  {
+    name: '普奇神父',
+    mbtiType: 'INTJ',
+    description: '有远见的策略家，追求最终目标，不畏艰难',
+    stand: 'White Snake/C-Moon/Made in Heaven',
+    ability: '记忆与替身提取/重力操控/时间加速',
+    part: 6
+  },
+  {
+    name: '法尼·瓦伦泰',
+    mbtiType: 'ESTJ',
+    description: '果断的领导者，为国家利益不惜一切，遵循自己的道德准则',
+    stand: 'D4C',
+    ability: '穿越平行世界',
+    part: 7
+  },
+  {
+    name: '埃尔梅斯·科斯特洛',
+    mbtiType: 'ESFJ',
+    description: '外向关爱的保护者，重视人际关系，为家人复仇不惜一切',
+    stand: 'Kiss',
+    ability: '复制物体和伤害转移',
+    part: 6
+  },
+  {
+    name: '威瑟·里波特',
+    mbtiType: 'INFP',
+    description: '沉默但内心富有感情，寻找自我身份，富有同情心',
+    stand: 'Weather Report',
+    ability: '控制天气现象',
+    part: 6
+  },
+  {
+    name: '史比特·瓦根',
+    mbtiType: 'ESFJ',
+    description: '忠诚可靠的朋友，热情好客，致力于帮助乔斯达家族',
+    stand: '无',
+    ability: '敏锐的直觉',
+    part: 1
+  },
+  {
+    name: '迪埃哥·布兰度',
+    mbtiType: 'ENTP',
+    description: '机智灵活的策略家，适应力强，追求胜利不择手段',
+    stand: 'Scary Monsters',
+    ability: '恐龙变形与恐龙控制',
+    part: 7
+  },
+  {
+    name: '波可洛可',
+    mbtiType: 'ENFP',
+    description: '乐观开朗的赛马手，相信运气，随遇而安',
+    stand: 'Hey Ya!',
+    ability: '给予鼓励和信心',
+    part: 7
+  },
+  {
+    name: '山地人',
+    mbtiType: 'ISTP',
+    description: '独立冷静的战士，遵循自己的道路，精通追踪技巧',
+    stand: 'In a Silent Way',
+    ability: '声音实体化',
+    part: 7
+  },
+  {
+    name: '露西·斯蒂尔',
+    mbtiType: 'ISFJ',
+    description: '敏感谨慎的少女，忠诚勇敢，在危难中成长',
+    stand: '无',
+    ability: '策略与情报收集',
+    part: 7
+  },
+  {
+    name: '纳尔齐索·安纳苏',
+    mbtiType: 'ISTP',
+    description: '冷静而不按常理出牌，追求自己的目标，具有战术头脑',
+    stand: 'Diver Down',
+    ability: '物体内部穿越与储存能量',
+    part: 6
+  },
+  {
+    name: '福·法特斯',
+    mbtiType: 'INTP',
+    description: '好奇心旺盛，喜欢探索世界，学习能力强',
+    stand: 'Foo Fighters',
+    ability: '控制浮游生物与水',
+    part: 6
+  },
+  {
+    name: '安波里欧',
+    mbtiType: 'INTP',
+    description: '聪明机智的孩子，懂得利用有限资源，适应力强',
+    stand: 'Burning Down the House',
+    ability: '幽灵房间控制',
+    part: 6
+  },
+  {
+    name: '东方定助',
+    mbtiType: 'ISFP',
+    description: '内敛而坚定，寻找自我身份，有强烈的正义感',
+    stand: 'Soft & Wet',
+    ability: '泡泡与物质剥离',
+    part: 8
+  },
+  {
+    name: '乔迪欧',
+    mbtiType: 'ESTP',
+    description: '机智灵活的年轻人，热爱冒险，应变能力强',
+    stand: 'November Rain',
+    ability: '引导雨水攻击',
+    part: 9
   }
 ];
 
