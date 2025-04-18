@@ -278,16 +278,18 @@ const PageWithCharacterBackground = styled.div`
 // 修改PC端角色图片容器样式
 const PCCharacterContainer = styled.div`
   position: absolute;
-  right: 0; /* 修改右侧边距为0 */
+  right: 0; /* 保持右对齐 */
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   height: 85vh; /* 增加高度，确保足够显示高角色 */
-  width: 100%; /* 再次增加宽度到100% */
-  max-width: 1200px; /* 进一步增加最大宽度到1200px */
+  width: 65%; /* 减小宽度从100%到65%，避免过度占用空间 */
+  max-width: 1000px; /* 略微减小最大宽度 */
   z-index: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* 改为右对齐 */
+  padding-right: 5%; /* 添加右侧内边距 */
   overflow: hidden; /* 防止内容溢出 */
   
   @media (max-width: 768px) {
@@ -300,12 +302,18 @@ const PCCharacterImg = styled.img`
   width: auto;
   height: auto;
   max-height: 80vh; /* 保持最大高度 */
-  max-width: 85%; /* 稍微减小最大宽度比例，确保不会超出容器 */
+  max-width: 90%; /* 略微增加最大宽度比例 */
   object-fit: contain;
-  object-position: center;
+  object-position: center right; /* 调整为右对齐 */
   opacity: 0.95;
   pointer-events: none;
   filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6));
+`;
+
+// 为特殊角色(田最环)创建专用样式
+const TamakiDamoImg = styled(PCCharacterImg)`
+  max-width: 75%; /* 特殊处理较宽的角色图片 */
+  margin-right: 5%; /* 额外的右侧边距 */
 `;
 
 // 为乔纳森专门创建一个放大版的图片样式
@@ -1191,6 +1199,7 @@ const JojoMbtiPage: React.FC = () => {
     
     // 根据角色名判断使用哪个图片组件
     const isJonathan = character.name === '乔纳森·乔斯达';
+    const isTamakiDamo = character.name === '田最环';
     
     return (
       <PageWithCharacterBackground>
@@ -1199,6 +1208,11 @@ const JojoMbtiPage: React.FC = () => {
             <JonathanImg 
               src={characterImagePath} 
               alt={character.name} 
+            />
+          ) : isTamakiDamo ? (
+            <TamakiDamoImg
+              src={characterImagePath}
+              alt={character.name}
             />
           ) : (
             <PCCharacterImg 
