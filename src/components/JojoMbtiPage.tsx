@@ -309,11 +309,20 @@ const PCCharacterImg = styled.img`
 `;
 
 // 移动端专用角色图片样式
-const CharacterImg = styled.img`
+const CharacterImg = styled.img<{ characterName?: string }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 5%; // 将焦点上移至5%，确保最优先显示角色面部
+  object-position: ${props => {
+    // 为特定角色单独设置位置
+    switch(props.characterName) {
+      case '乔纳森·乔斯达':
+      case '布加拉提':
+        return 'center 25%'; // 为乔纳森和布加拉提设置更低的位置
+      default:
+        return 'center 5%'; // 其他角色保持5%位置
+    }
+  }};
 `;
 
 // 卡片式设计 - 为移动端优化
@@ -871,7 +880,7 @@ const JojoMbtiPage: React.FC = () => {
               
               {/* 添加单独的移动端角色图片显示 */}
               <MobileCharacterImage>
-                <CharacterImg src={characterImagePath} alt={character.name} />
+                <CharacterImg src={characterImagePath} alt={character.name} characterName={character.name} />
               </MobileCharacterImage>
               
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
