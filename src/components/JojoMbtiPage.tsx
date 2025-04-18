@@ -256,16 +256,40 @@ const BackgroundContainer = styled(motion.div)`
   }
 `;
 
-// 添加角色背景页面容器
+// 添加角色背景页面容器 - 简化版
 const PageWithCharacterBackground = styled.div`
   position: relative;
   min-height: 100vh;
   width: 100%;
-  overflow: hidden;
 `;
 
-// 渐变背景层
-const GradientOverlay = styled.div`
+// 角色图片容器 - 不可见边框
+const CharacterImageContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: -1;
+  
+  @media (max-width: 768px) {
+    display: none; 
+  }
+  
+  img {
+    max-height: 90vh;
+    max-width: 100%;
+    object-fit: contain;
+    opacity: 0.8; // 稍微透明一点
+  }
+`;
+
+// 紫色渐变遮罩
+const PurpleOverlay = styled.div`
   position: fixed;
   top: 0;
   right: 0;
@@ -274,38 +298,11 @@ const GradientOverlay = styled.div`
   background: linear-gradient(
     to right,
     rgba(40, 0, 60, 0.9) 0%,
-    rgba(40, 0, 60, 0.7) 50%,
+    rgba(40, 0, 60, 0.7) 40%,
     rgba(40, 0, 60, 0.5) 100%
   );
   z-index: -2;
-  
-  @media (max-width: 768px) {
-    display: none; // 移动端不显示渐变遮罩
-  }
-`;
-
-// 角色图片层
-const CharacterBackgroundImage = styled.div<{ src: string }>`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 60%;
-  z-index: -1;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  
-  img {
-    height: 90%;
-    max-width: 100%;
-    object-fit: contain;
-    object-position: right center;
-  }
-  
-  @media (max-width: 768px) {
-    display: none; // 移动端不显示大背景
-  }
+  pointer-events: none;
 `;
 
 // 结果内容卡片 - 为PC端优化
@@ -746,10 +743,10 @@ const JojoMbtiPage: React.FC = () => {
     
     return (
       <PageWithCharacterBackground>
-        <GradientOverlay />
-        <CharacterBackgroundImage src={characterImagePath}>
+        <PurpleOverlay />
+        <CharacterImageContainer>
           <img src={characterImagePath} alt={character.name} />
-        </CharacterBackgroundImage>
+        </CharacterImageContainer>
         {renderPCResult()}
         {renderMobileResult()}
       </PageWithCharacterBackground>
