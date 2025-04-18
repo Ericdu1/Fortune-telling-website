@@ -318,7 +318,7 @@ const CharacterImg = styled.img<{ characterName?: string }>`
     switch(props.characterName) {
       case '乔纳森·乔斯达':
       case '布加拉提':
-        return 'center 25%'; // 为乔纳森和布加拉提设置更低的位置
+        return 'center 0%'; // 为乔纳森和布加拉提设置更靠上的位置
       default:
         return 'center 5%'; // 其他角色保持5%位置
     }
