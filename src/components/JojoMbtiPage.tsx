@@ -296,31 +296,31 @@ const PCCharacterContainer = styled.div`
   right: 5%; /* 右侧边距 */
   top: 50%;
   transform: translateY(-50%);
-  height: 80vh; /* 固定高度 */
+  height: 85vh; /* 增加高度，确保足够显示高角色 */
   width: 40%; /* 固定宽度比例 */
   max-width: 500px;
   z-index: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* 改为hidden，防止内容溢出 */
+  overflow: hidden; /* 防止内容溢出 */
   
   @media (max-width: 768px) {
     display: none;
   }
 `;
 
-// 修改PC端角色图片样式
+// 修改PC端角色图片样式，基础样式
 const PCCharacterImg = styled.img`
-  max-height: 95%; /* 增加到95%，确保图片充分利用容器高度 */
-  max-width: 95%; /* 限制最大宽度，保持良好的比例 */
   width: auto;
-  height: auto; /* 自动调整高度 */
+  height: auto;
+  max-height: 78vh; /* 最大高度限制 */
+  max-width: 95%; /* 最大宽度限制 */
   object-fit: contain;
   object-position: center;
-  opacity: 0.95; /* 适当的不透明度 */
+  opacity: 0.95;
   pointer-events: none;
-  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6)); /* 增强阴影效果 */
+  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6));
 `;
 
 // 移动端专用角色图片样式
@@ -855,24 +855,90 @@ const JojoMbtiPage: React.FC = () => {
     </CardContainer>
   );
   
-  // 渲染结果页面
+  // 修改renderResult函数，添加更精确的图片尺寸控制
   const renderResult = () => {
     if (!result) return null;
     
     const { character, mbtiType, description, dimensionScores } = result;
     const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
+
+    // 布加拉提的图片路径，用作参考标准
+    const bucciaratiImagePath = `/images/jojo/${characterImageMap['布加拉提'] || 'Buccellati'}.webp`;
     
-    // 添加图片预加载处理函数
+    // 引用对象，用于存储布加拉提图片尺寸
+    const bucciaratiDimensions = useRef({
+      height: 0,
+      width: 0,
+      loaded: false
+    });
+    
+    // 预加载布加拉提图片以获取其尺寸
+    useEffect(() => {
+      if (!bucciaratiDimensions.current.loaded) {
+        const img = new Image();
+        img.onload = () => {
+          bucciaratiDimensions.current = {
+            height: img.naturalHeight,
+            width: img.naturalWidth,
+            loaded: true
+          };
+        };
+        img.src = bucciaratiImagePath;
+      }
+    }, [bucciaratiImagePath]);
+    
+    // 增强的图片加载处理函数
     const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
       const img = e.currentTarget;
-      if (img.naturalHeight > img.naturalWidth * 2) {
-        // 对于特别瘦长的图片，调整显示方式
-        img.style.maxHeight = '95%';
-        img.style.maxWidth = '70%';
-      } else if (img.naturalWidth > img.naturalHeight * 1.5) {
-        // 对于特别宽的图片，调整显示方式
-        img.style.maxHeight = '70%';
-        img.style.maxWidth = '95%';
+      const imgHeight = img.naturalHeight;
+      const imgWidth = img.naturalWidth;
+      
+      // 默认缩放系数
+      let scale = 1;
+      
+      // 如果布加拉提图片已加载，则使用其高度作为参考
+      if (bucciaratiDimensions.current.loaded) {
+        // 缩放系数 = 布加拉提高度 / 当前图片高度
+        scale = bucciaratiDimensions.current.height / imgHeight;
+        
+        // 对于特别宽的图片进行额外处理
+        if ((imgWidth / imgHeight) > 1.2) {
+          scale *= 0.85; // 略微缩小过宽的图片
+        }
+        
+        // 对于特别窄的图片进行额外处理
+        if ((imgHeight / imgWidth) > 2) {
+          scale *= 0.9; // 略微缩小过窄的图片
+        }
+        
+        // 特殊调整：吉良吉影、东方仗助等需要特殊缩放的角色
+        if (character.name === '吉良吉影' || character.name === '岸边露伴') {
+          scale *= 1.1; // 放大10%
+        } else if (character.name === '迪奥·布兰度' || character.name === '乔鲁诺·乔巴拿') {
+          scale *= 1.15; // 放大15%
+        }
+        
+        // 应用计算后的缩放
+        img.style.height = `${imgHeight * scale}px`;
+        img.style.width = `${imgWidth * scale}px`;
+        
+        // 控制台输出调试信息
+        console.log(`角色: ${character.name}, 原始尺寸: ${imgWidth}x${imgHeight}, 缩放系数: ${scale}`);
+      } else {
+        // 如果布加拉提图片未加载，则使用基于图片比例的默认调整
+        if (imgHeight > imgWidth * 2) {
+          // 特别瘦长的图片
+          img.style.maxHeight = '78vh';
+          img.style.maxWidth = '70%';
+        } else if (imgWidth > imgHeight * 1.5) {
+          // 特别宽的图片
+          img.style.maxHeight = '70vh';
+          img.style.maxWidth = '95%';
+        } else {
+          // 普通比例的图片
+          img.style.maxHeight = '78vh';
+          img.style.maxWidth = '95%';
+        }
       }
     };
     
