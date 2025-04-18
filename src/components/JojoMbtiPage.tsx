@@ -115,6 +115,7 @@ const ButtonContainer = styled.div<{ isMobileColumn?: boolean }>`
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
+  width: 100%;
   
   @media (max-width: 480px) {
     margin-top: 1.5rem;
@@ -371,6 +372,23 @@ const ResultRightColumn = styled.div`
   }
 `;
 
+// 添加移动端角色图片 - 新增
+const MobileCharacterImage = styled.div<{ backgroundImage: string }>`
+  display: none; // 默认隐藏
+  
+  @media (max-width: 768px) {
+    display: block;
+    width: 100%;
+    height: 200px; // 设置合适的高度
+    background-image: ${props => props.backgroundImage};
+    background-size: cover;
+    background-position: center 25%; // 聚焦于人物上半身/脸部
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+`;
+
 const JojoMbtiPage: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<MBTIDimension[]>([]);
@@ -605,7 +623,7 @@ const JojoMbtiPage: React.FC = () => {
       </ResultContentCard>
     );
     
-    // 移动端结果页面 - 保持原有卡片式设计
+    // 移动端结果页面 - 保持原有卡片式设计但添加角色图片
     const renderMobileResult = () => (
       <MobileResultCard>
         <ResultPageWrapper characterImage={characterImagePath}>
@@ -618,6 +636,35 @@ const JojoMbtiPage: React.FC = () => {
                 <MbtiType level={2}>{mbtiType}</MbtiType>
                 <Text style={{ color: '#b8b8b8' }}>{mbtiType.split('').join('-')}</Text>
               </MbtiBox>
+              
+              {/* 添加单独的移动端角色图片显示 */}
+              <MobileCharacterImage backgroundImage={`url(${characterImagePath})`} />
+              
+              <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                <Title level={4} style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</Title>
+                <Title level={2} style={{ color: '#ffd700' }}>
+                  {character.name}
+                </Title>
+              </div>
+              
+              <StandInfo style={{ width: '100%', maxWidth: '100%', marginBottom: '1.5rem' }}>
+                <Title level={5} style={{ color: '#ffd700', margin: 0 }}>
+                  替身：「{character.stand || '尚未觉醒'}」
+                </Title>
+                <Text style={{ color: '#b8b8b8' }}>
+                  能力：{character.ability}
+                </Text>
+                <Paragraph style={{ color: 'white', marginTop: '0.5rem' }}>
+                  {character.description}
+                </Paragraph>
+                <Badge 
+                  count={`第${character.part}部`} 
+                  style={{ 
+                    backgroundColor: '#6b6bff',
+                    color: 'white'
+                  }} 
+                />
+              </StandInfo>
               
               <Paragraph style={{ color: 'white', textAlign: 'left' }}>
                 {description}
@@ -675,6 +722,7 @@ const JojoMbtiPage: React.FC = () => {
                 <StyledButton 
                   icon={<RetweetOutlined />} 
                   onClick={handleRestartTest}
+                  style={{ marginBottom: '10px' }}
                 >
                   重新测试
                 </StyledButton>
@@ -687,35 +735,6 @@ const JojoMbtiPage: React.FC = () => {
                 </StyledButton>
               </ButtonContainer>
             </ResultLeftColumn>
-            
-            {/* 右侧角色信息 */}
-            <ResultRightColumn>
-              <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                <Title level={4} style={{ color: 'white', marginBottom: '1rem' }}>你最像的JOJO角色是</Title>
-                <Title level={2} style={{ color: '#ffd700' }}>
-                  {character.name}
-                </Title>
-              </div>
-              
-              <StandInfo style={{ width: '100%', maxWidth: '300px' }}>
-                <Title level={5} style={{ color: '#ffd700', margin: 0 }}>
-                  替身：「{character.stand || '尚未觉醒'}」
-                </Title>
-                <Text style={{ color: '#b8b8b8' }}>
-                  能力：{character.ability}
-                </Text>
-                <Paragraph style={{ color: 'white', marginTop: '0.5rem' }}>
-                  {character.description}
-                </Paragraph>
-                <Badge 
-                  count={`第${character.part}部`} 
-                  style={{ 
-                    backgroundColor: '#6b6bff',
-                    color: 'white'
-                  }} 
-                />
-              </StandInfo>
-            </ResultRightColumn>
           </ResultLayout>
         </ResultPageWrapper>
       </MobileResultCard>
@@ -723,7 +742,6 @@ const JojoMbtiPage: React.FC = () => {
     
     return (
       <PageWithCharacterBackground>
-        {/* 直接在这里放置角色图片，非常简单明了的方式 */}
         <CharacterImg src={characterImagePath} alt={character.name} />
         {renderPCResult()}
         {renderMobileResult()}
