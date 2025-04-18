@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { Button, Radio, Progress, Space, Divider, Badge, Typography, Card } from 'antd';
+import { Button, Radio, Progress, Space, Divider, Badge, Typography, Card, message } from 'antd';
 import { 
   ArrowLeftOutlined, 
   ArrowRightOutlined, 
   RetweetOutlined, 
   ShareAltOutlined,
-  HistoryOutlined
+  HistoryOutlined,
+  DownloadOutlined,
+  CopyOutlined
 } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
+import html2canvas from 'html2canvas';
+import { QRCodeSVG } from 'qrcode.react';
 import { 
   mbtiQuestions, 
   calculateMBTIResult, 
@@ -408,6 +412,8 @@ const MobileCharacterImage = styled.div<{ backgroundImage: string; characterName
         case '吉良吉影':
         case '迪奥·布兰度':
           return 'center 30%';
+        case '布加拉提': // 布加拉提头部位置较高
+          return 'center 35%';
         default:
           return 'center 25%'; // 默认值，进一步下移
       }
@@ -418,12 +424,99 @@ const MobileCharacterImage = styled.div<{ backgroundImage: string; characterName
   }
 `;
 
+// 添加分享卡片相关样式
+const ShareCardWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  padding: 20px;
+  overflow: auto;
+`;
+
+const ShareCardContent = styled.div`
+  background: #1a1a2e;
+  border-radius: 15px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  
+  @media (max-width: 480px) {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+`;
+
+const ShareCardHeader = styled.div`
+  text-align: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+  padding-bottom: 1rem;
+`;
+
+const ShareCardFooter = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+`;
+
+const QRCodeContainer = styled.div`
+  margin-right: 1rem;
+`;
+
+const Watermark = styled.div`
+  color: #a0a0a0;
+  font-size: 12px;
+`;
+
+const ShareActions = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #a0a0a0;
+  font-size: 20px;
+  cursor: pointer;
+  
+  &:hover {
+    color: white;
+  }
+`;
+
 const JojoMbtiPage: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<MBTIDimension[]>([]);
   const [result, setResult] = useState<MBTITestResult | null>(null);
   const [isTestCompleted, setIsTestCompleted] = useState<boolean>(false);
   const [showHistory, setShowHistory] = useState<boolean>(false);
+  const [showShareCard, setShowShareCard] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   // 检查是否有历史记录
   useEffect(() => {
@@ -480,14 +573,7 @@ const JojoMbtiPage: React.FC = () => {
   // 分享结果
   const handleShareResult = () => {
     if (result) {
-      // 复制到剪贴板
-      navigator.clipboard.writeText(generateShareText(result))
-        .then(() => {
-          alert('已复制分享文本到剪贴板');
-        })
-        .catch(err => {
-          console.error('复制失败:', err);
-        });
+      setShowShareCard(true);
     }
   };
 
@@ -497,6 +583,146 @@ const JojoMbtiPage: React.FC = () => {
     if (latestResult) {
       setResult(latestResult);
       setIsTestCompleted(true);
+    }
+  };
+
+  // 关闭分享卡片
+  const handleCloseShareCard = () => {
+    setShowShareCard(false);
+  };
+
+  // 保存分享图片
+  const handleSaveImage = async () => {
+    try {
+      setIsSaving(true);
+      
+      if (!shareCardRef.current) {
+        setIsSaving(false);
+        message.error('无法获取分享内容');
+        return;
+      }
+
+      // 使用html2canvas将DOM元素转为图片
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: '#1a1a2e',
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        scale: 2 // 提高图片质量
+      } as any);
+
+      // 创建下载链接
+      const link = document.createElement('a');
+      const timestamp = new Date().getTime().toString().slice(-6);
+      const fileName = `JOJO_MBTI_${result?.mbtiType || 'Result'}_${timestamp}.png`;
+      
+      // 将canvas转换为Blob并创建下载链接
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          message.error('生成图片失败');
+          setIsSaving(false);
+          return;
+        }
+        
+        // 创建URL并下载
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        
+        // 清理
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          setIsSaving(false);
+          message.success('MBTI结果图片已保存');
+        }, 100);
+      }, 'image/png', 0.95);
+      
+    } catch (error) {
+      console.error('保存图片过程中出错:', error);
+      message.error('生成图片时出错');
+      setIsSaving(false);
+    }
+  };
+
+  // 复制图片到剪贴板
+  const handleCopyToClipboard = async () => {
+    try {
+      setIsSaving(true);
+      
+      if (!shareCardRef.current) {
+        setIsSaving(false);
+        message.error('无法获取分享内容');
+        return;
+      }
+
+      // 使用html2canvas将DOM元素转为图片
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: '#1a1a2e',
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        scale: 2 // 提高图片质量
+      } as any);
+      
+      // 尝试使用现代方式复制到剪贴板
+      try {
+        // 转换为blob并创建ClipboardItem
+        const blob = await new Promise<Blob | null>((resolve) => 
+          canvas.toBlob(resolve, 'image/png', 1.0)
+        );
+        
+        if (!blob) {
+          throw new Error('无法创建图片');
+        }
+        
+        // 创建ClipboardItem并写入剪贴板
+        const data = [new ClipboardItem({ 'image/png': blob })];
+        await navigator.clipboard.write(data);
+        setIsSaving(false);
+        message.success('MBTI结果图片已复制到剪贴板');
+        return;
+      } catch (clipboardError) {
+        console.error('复制到剪贴板失败，尝试备用方法', clipboardError);
+        
+        // 备用方法：使用canvas.toDataURL创建图片
+        const dataUrl = canvas.toDataURL('image/png');
+        
+        // 创建一个临时的<img>元素
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        
+        // 创建一个临时div来容纳图片，并设置为可见但在屏幕外
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '-9999px';
+        container.appendChild(img);
+        document.body.appendChild(container);
+        
+        // 创建选区并复制
+        const range = document.createRange();
+        range.selectNode(img);
+        window.getSelection()?.removeAllRanges();
+        window.getSelection()?.addRange(range);
+        
+        const success = document.execCommand('copy');
+        if (!success) {
+          throw new Error('复制失败');
+        }
+        
+        // 清理
+        window.getSelection()?.removeAllRanges();
+        document.body.removeChild(container);
+        setIsSaving(false);
+        message.success('MBTI结果图片已复制到剪贴板');
+        return;
+      }
+    } catch (error) {
+      console.error('复制图片失败:', error);
+      message.error('复制图片失败，请尝试保存图片');
+      setIsSaving(false);
     }
   };
 
@@ -796,6 +1022,134 @@ const JojoMbtiPage: React.FC = () => {
     return null;
   };
 
+  // 渲染分享卡片
+  const renderShareCard = () => {
+    if (!result || !showShareCard) return null;
+    
+    const { character, mbtiType, description, dimensionScores } = result;
+    const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
+    
+    return (
+      <ShareCardWrapper>
+        <ShareCardContent ref={shareCardRef}>
+          <CloseButton onClick={handleCloseShareCard}>×</CloseButton>
+          
+          <ShareCardHeader>
+            <h2 style={{ color: '#ffd700', marginBottom: '8px', fontSize: '24px' }}>JOJO的奇妙冒险</h2>
+            <div style={{ color: '#e0e0e0', fontSize: '18px' }}>MBTI 人格测试结果</div>
+          </ShareCardHeader>
+          
+          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '0.5rem', borderRadius: '8px', marginBottom: '1rem' }}>
+              <h3 style={{ color: '#ffd700', margin: '0', fontSize: '28px' }}>{mbtiType}</h3>
+              <div style={{ color: '#b8b8b8' }}>{mbtiType.split('').join('-')}</div>
+            </div>
+            
+            <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</h4>
+            <h3 style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{character.name}</h3>
+            
+            <div style={{ width: '120px', height: '120px', margin: '0 auto 1rem', borderRadius: '8px', backgroundImage: `url(${characterImagePath})`, backgroundSize: 'cover', backgroundPosition: 'center 25%' }}></div>
+            
+            <div style={{ background: 'rgba(0, 0, 0, 0.2)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'left' }}>
+              <div style={{ color: '#ffd700', marginBottom: '0.3rem' }}>替身：「{character.stand || '尚未觉醒'}」</div>
+              <div style={{ color: '#b8b8b8', marginBottom: '0.3rem' }}>能力：{character.ability}</div>
+              <div style={{ color: 'white', fontSize: '12px' }}>{character.description}</div>
+              <div style={{ marginTop: '0.5rem' }}>
+                <span style={{ background: '#6b6bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>第{character.part}部</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style={{ fontSize: '12px', color: 'white', marginBottom: '1rem', textAlign: 'left' }}>
+            {description.length > 150 ? description.substring(0, 150) + '...' : description}
+          </div>
+          
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ fontSize: '14px', color: 'white', marginBottom: '0.5rem', textAlign: 'left' }}>MBTI 维度:</div>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem' }}>
+              <span style={{ color: '#b8b8b8' }}>内向 (I): {dimensionScores.I}</span>
+              <span style={{ color: '#b8b8b8' }}>外向 (E): {dimensionScores.E}</span>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.E / (dimensionScores.E + dimensionScores.I)) * 100)} 
+              strokeColor="#6b6bff"
+              size="small"
+            />
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
+              <span style={{ color: '#b8b8b8' }}>实感 (S): {dimensionScores.S}</span>
+              <span style={{ color: '#b8b8b8' }}>直觉 (N): {dimensionScores.N}</span>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.N / (dimensionScores.N + dimensionScores.S)) * 100)} 
+              strokeColor="#6b6bff"
+              size="small"
+            />
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
+              <span style={{ color: '#b8b8b8' }}>思考 (T): {dimensionScores.T}</span>
+              <span style={{ color: '#b8b8b8' }}>情感 (F): {dimensionScores.F}</span>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.F / (dimensionScores.F + dimensionScores.T)) * 100)} 
+              strokeColor="#6b6bff"
+              size="small"
+            />
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
+              <span style={{ color: '#b8b8b8' }}>判断 (J): {dimensionScores.J}</span>
+              <span style={{ color: '#b8b8b8' }}>认知 (P): {dimensionScores.P}</span>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.P / (dimensionScores.P + dimensionScores.J)) * 100)} 
+              strokeColor="#6b6bff"
+              size="small"
+            />
+          </div>
+          
+          <ShareCardFooter>
+            <QRCodeContainer>
+              <QRCodeSVG 
+                value={window.location.href}
+                size={60}
+                level="H"
+              />
+            </QRCodeContainer>
+            <Watermark>
+              二次元占卜屋 · JOJO MBTI测试
+              <br />
+              扫描二维码体验你的测试
+            </Watermark>
+          </ShareCardFooter>
+        </ShareCardContent>
+        
+        <ShareActions>
+          <StyledButton 
+            icon={<DownloadOutlined />} 
+            onClick={handleSaveImage}
+            disabled={isSaving}
+          >
+            保存图片
+          </StyledButton>
+          <StyledButton 
+            icon={<CopyOutlined />} 
+            onClick={handleCopyToClipboard}
+            disabled={isSaving}
+          >
+            复制图片
+          </StyledButton>
+          <StyledButton 
+            icon={<ArrowLeftOutlined />} 
+            onClick={handleCloseShareCard}
+          >
+            返回
+          </StyledButton>
+        </ShareActions>
+      </ShareCardWrapper>
+    );
+  };
+
   return (
     <BackgroundContainer
       initial={{ opacity: 0 }}
@@ -823,6 +1177,8 @@ const JojoMbtiPage: React.FC = () => {
         
         {!isTestCompleted ? renderQuestion() : renderResult()}
       </Container>
+      
+      {renderShareCard()}
     </BackgroundContainer>
   );
 };
