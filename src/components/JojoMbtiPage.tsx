@@ -276,9 +276,9 @@ const ResultContentCard = styled.div`
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  width: 45%;
-  max-width: 550px;
-  margin-left: 4rem; // 增加左侧边距
+  width: 48%; // 增加宽度
+  max-width: 580px; // 增加最大宽度
+  margin-left: 3.5rem; // 微调左侧边距
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
   z-index: 1;
@@ -292,14 +292,15 @@ const ResultContentCard = styled.div`
 // 角色图片样式 - 调整位置和大小
 const CharacterImg = styled.img`
   position: absolute;
-  right: 5%; // 向右移动一些，给左侧内容更多空间
+  right: 3%; // 向右移动一些，给左侧内容更多空间
   top: 50%;
   transform: translateY(-50%);
-  max-height: 85vh; // 稍微减小高度
-  max-width: 45%; // 减小宽度
+  max-height: 90vh; // 增加高度
+  max-width: 48%; // 增加宽度
   z-index: 0;
-  opacity: 0.9;
+  opacity: 0.85; // 增加透明度，使其更虚化
   pointer-events: none;
+  filter: blur(0.5px); // 添加轻微模糊效果
   
   @media (max-width: 768px) {
     display: none;
