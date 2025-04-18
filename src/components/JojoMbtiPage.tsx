@@ -266,15 +266,15 @@ const PageWithCharacterBackground = styled.div`
   background: transparent; 
 `;
 
-// 结果内容卡片 - 为PC端优化 - 调整透明度
+// 结果内容卡片 - 为PC端优化 - 调整透明度和位置
 const ResultContentCard = styled.div`
   background: rgba(30, 0, 45, 0.75); /* 稍微降低不透明度 */
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  width: 48%;
-  max-width: 580px;
-  margin-left: 3.5rem;
+  width: 46%; /* 略微缩小宽度 */
+  max-width: 560px;
+  margin-left: 5%; /* 增加左侧边距，让整体更居中 */
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
   z-index: 1;
@@ -285,14 +285,14 @@ const ResultContentCard = styled.div`
   }
 `;
 
-// 角色图片样式 - 加强对比度
+// 角色图片样式 - 调整位置
 const CharacterImg = styled.img`
   position: absolute;
-  right: 3%;
+  right: 5%; /* 增加右侧边距 */
   top: 50%;
   transform: translateY(-50%);
   max-height: 90vh;
-  max-width: 48%;
+  max-width: 44%; /* 稍微缩小图片宽度 */
   z-index: 0;
   opacity: 0.9; /* 增加不透明度以便在透明背景上更加突出 */
   pointer-events: none;
