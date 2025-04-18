@@ -278,8 +278,8 @@ const PCCharacterContainer = styled.div`
   top: 50%;
   transform: translateY(-50%);
   height: 85vh; /* 增加高度，确保足够显示高角色 */
-  width: 60%; /* 增加宽度从40%到60% */
-  max-width: 800px; /* 增加最大宽度从500px到800px */
+  width: 100%; /* 再次增加宽度到100% */
+  max-width: 1200px; /* 进一步增加最大宽度到1200px */
   z-index: 0;
   display: flex;
   align-items: center;
@@ -295,8 +295,8 @@ const PCCharacterContainer = styled.div`
 const PCCharacterImg = styled.img`
   width: auto;
   height: auto;
-  max-height: 80vh; /* 略微增加最大高度 */
-  max-width: 90%; /* 稍微减小最大宽度比例，确保不会超出容器 */
+  max-height: 80vh; /* 保持最大高度 */
+  max-width: 85%; /* 稍微减小最大宽度比例，确保不会超出容器 */
   object-fit: contain;
   object-position: center;
   opacity: 0.95;
@@ -333,12 +333,12 @@ const ResultContentCard = styled.div`
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  width: 40%; /* 略微缩小宽度 */
-  max-width: 500px;
-  margin-left: 5%; /* 增加左侧边距，让整体更居中 */
+  width: 35%; /* 进一步缩小宽度 */
+  max-width: 450px;
+  margin-left: 3%; /* 减少左侧边距 */
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
-  z-index: 1;
+  z-index: 2; /* 增加z-index确保内容卡片在图片上方 */
   align-self: center;
   
   @media (max-width: 768px) {
