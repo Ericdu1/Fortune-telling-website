@@ -257,46 +257,54 @@ const BackgroundContainer = styled(motion.div)`
 `;
 
 // 添加角色背景页面容器
-const PageWithCharacterBackground = styled.div<{ characterImage: string }>`
+const PageWithCharacterBackground = styled.div`
   position: relative;
   min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+`;
+
+// 渐变背景层
+const GradientOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    to right,
+    rgba(40, 0, 60, 0.9) 0%,
+    rgba(40, 0, 60, 0.7) 50%,
+    rgba(40, 0, 60, 0.5) 100%
+  );
+  z-index: -2;
   
-  &:before {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: linear-gradient(
-      to right,
-      rgba(40, 0, 60, 0.9) 0%,
-      rgba(40, 0, 60, 0.7) 50%,
-      rgba(40, 0, 60, 0.5) 100%
-    );
-    z-index: -2;
-    
-    @media (max-width: 768px) {
-      display: none; // 移动端不显示渐变遮罩
-    }
+  @media (max-width: 768px) {
+    display: none; // 移动端不显示渐变遮罩
+  }
+`;
+
+// 角色图片层
+const CharacterBackgroundImage = styled.div<{ src: string }>`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  z-index: -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  
+  img {
+    height: 90%;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: right center;
   }
   
-  &:after {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 60%;
-    background-image: url(${props => props.characterImage});
-    background-size: contain;
-    background-position: right center;
-    background-repeat: no-repeat;
-    z-index: -1;
-    
-    @media (max-width: 768px) {
-      display: none; // 移动端不显示大背景
-    }
+  @media (max-width: 768px) {
+    display: none; // 移动端不显示大背景
   }
 `;
 
@@ -737,7 +745,11 @@ const JojoMbtiPage: React.FC = () => {
     );
     
     return (
-      <PageWithCharacterBackground characterImage={characterImagePath}>
+      <PageWithCharacterBackground>
+        <GradientOverlay />
+        <CharacterBackgroundImage src={characterImagePath}>
+          <img src={characterImagePath} alt={character.name} />
+        </CharacterBackgroundImage>
         {renderPCResult()}
         {renderMobileResult()}
       </PageWithCharacterBackground>
