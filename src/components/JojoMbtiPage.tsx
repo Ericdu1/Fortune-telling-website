@@ -120,14 +120,16 @@ const ButtonContainer = styled.div<{ isMobileColumn?: boolean }>`
   justify-content: space-between;
   margin-top: 2rem;
   width: 100%;
+  gap: 1rem;
   
   @media (max-width: 480px) {
     margin-top: 1.5rem;
     flex-direction: ${props => props.isMobileColumn ? 'column' : 'row'};
-    gap: ${props => props.isMobileColumn ? '10px' : '0'};
+    gap: ${props => props.isMobileColumn ? '10px' : '1rem'};
     
     button {
       width: ${props => props.isMobileColumn ? '100%' : 'auto'};
+      min-width: ${props => props.isMobileColumn ? 'auto' : '110px'};
     }
   }
 `;
@@ -138,11 +140,13 @@ const StyledButton = styled(Button)`
   color: white;
   height: 40px;
   padding: 0 1.5rem;
+  min-width: 120px;
   
   @media (max-width: 480px) {
     padding: 0 1rem;
     height: 36px;
     font-size: 13px;
+    min-width: 100px;
   }
   
   &:hover {
@@ -325,6 +329,10 @@ const MobileResultCard = styled(CardContainer)`
   @media (min-width: 769px) {
     display: none; // 在PC端不显示
   }
+  
+  .ant-card-body {
+    padding: 1.5rem;
+  }
 `;
 
 // 修改PC端结果内容卡片位置，适应角色图片容器变宽
@@ -333,12 +341,12 @@ const ResultContentCard = styled.div`
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  width: 35%; /* 进一步缩小宽度 */
-  max-width: 450px;
-  margin-left: 3%; /* 减少左侧边距 */
+  width: 42%; /* 增加宽度从35%到42% */
+  max-width: 520px; /* 增加最大宽度 */
+  margin-left: 3%; /* 保持左侧边距 */
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
-  z-index: 2; /* 增加z-index确保内容卡片在图片上方 */
+  z-index: 2; /* 确保内容卡片在图片上方 */
   align-self: center;
   
   @media (max-width: 768px) {
