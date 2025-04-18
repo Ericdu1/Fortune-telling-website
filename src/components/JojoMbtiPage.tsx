@@ -256,6 +256,73 @@ const BackgroundContainer = styled(motion.div)`
   }
 `;
 
+// 添加角色背景页面容器
+const PageWithCharacterBackground = styled.div<{ characterImage: string }>`
+  position: relative;
+  min-height: 100vh;
+  
+  &:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 60%;
+    background-image: url(${props => props.characterImage});
+    background-size: contain;
+    background-position: right center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    
+    @media (max-width: 768px) {
+      display: none; // 移动端不显示大背景
+    }
+  }
+  
+  &:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(
+      to right,
+      rgba(40, 0, 60, 0.9) 0%,
+      rgba(40, 0, 60, 0.7) 50%,
+      rgba(40, 0, 60, 0.5) 100%
+    );
+    z-index: -1;
+    
+    @media (max-width: 768px) {
+      display: none; // 移动端不显示渐变遮罩
+    }
+  }
+`;
+
+// 结果内容卡片 - 为PC端优化
+const ResultContentCard = styled.div`
+  background: rgba(30, 0, 45, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  width: 50%;
+  max-width: 600px;
+  margin-left: 2rem;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  
+  @media (max-width: 768px) {
+    display: none; // 移动端不显示此卡片
+  }
+`;
+
+// 卡片式设计 - 为移动端优化
+const MobileResultCard = styled(CardContainer)`
+  @media (min-width: 769px) {
+    display: none; // 在PC端不显示
+  }
+`;
+
 // 添加结果页面的新组件
 const ResultPageWrapper = styled.div<{ characterImage: string }>`
   position: relative;
@@ -445,8 +512,115 @@ const JojoMbtiPage: React.FC = () => {
     const { character, mbtiType, description, dimensionScores } = result;
     const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
     
-    return (
-      <CardContainer style={{ padding: 0, overflow: 'hidden' }}>
+    // PC端结果页面
+    const renderPCResult = () => (
+      <ResultContentCard>
+        <Title level={3} style={{ color: 'white' }}>测试结果</Title>
+        
+        <MbtiBox>
+          <MbtiType level={2}>{mbtiType}</MbtiType>
+          <Text style={{ color: '#b8b8b8' }}>{mbtiType.split('').join('-')}</Text>
+        </MbtiBox>
+        
+        <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
+          <Title level={4} style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</Title>
+          <Title level={2} style={{ color: '#ffd700' }}>
+            {character.name}
+          </Title>
+        </div>
+        
+        <StandInfo style={{ marginBottom: '1.5rem' }}>
+          <Title level={5} style={{ color: '#ffd700', margin: 0 }}>
+            替身：「{character.stand || '尚未觉醒'}」
+          </Title>
+          <Text style={{ color: '#b8b8b8' }}>
+            能力：{character.ability}
+          </Text>
+          <Paragraph style={{ color: 'white', marginTop: '0.5rem' }}>
+            {character.description}
+          </Paragraph>
+          <Badge 
+            count={`第${character.part}部`} 
+            style={{ 
+              backgroundColor: '#6b6bff',
+              color: 'white'
+            }} 
+          />
+        </StandInfo>
+        
+        <Paragraph style={{ color: 'white', textAlign: 'left' }}>
+          {description}
+        </Paragraph>
+        
+        <ProgressContainer>
+          <Title level={5} style={{ color: 'white', textAlign: 'left' }}>MBTI 维度得分</Title>
+          
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Text style={{ color: '#b8b8b8' }}>内向 (I): {dimensionScores.I}</Text>
+              <Text style={{ color: '#b8b8b8' }}>外向 (E): {dimensionScores.E}</Text>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.E / (dimensionScores.E + dimensionScores.I)) * 100)} 
+              strokeColor={dimensionScores.E > dimensionScores.I ? "#6b6bff" : "#ff6b6b"}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Text style={{ color: '#b8b8b8' }}>实感 (S): {dimensionScores.S}</Text>
+              <Text style={{ color: '#b8b8b8' }}>直觉 (N): {dimensionScores.N}</Text>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.N / (dimensionScores.N + dimensionScores.S)) * 100)} 
+              strokeColor={dimensionScores.N > dimensionScores.S ? "#6b6bff" : "#ff6b6b"}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Text style={{ color: '#b8b8b8' }}>思考 (T): {dimensionScores.T}</Text>
+              <Text style={{ color: '#b8b8b8' }}>情感 (F): {dimensionScores.F}</Text>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.F / (dimensionScores.F + dimensionScores.T)) * 100)} 
+              strokeColor={dimensionScores.F > dimensionScores.T ? "#6b6bff" : "#ff6b6b"}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Text style={{ color: '#b8b8b8' }}>判断 (J): {dimensionScores.J}</Text>
+              <Text style={{ color: '#b8b8b8' }}>认知 (P): {dimensionScores.P}</Text>
+            </div>
+            <Progress 
+              percent={Math.round((dimensionScores.P / (dimensionScores.P + dimensionScores.J)) * 100)} 
+              strokeColor={dimensionScores.P > dimensionScores.J ? "#6b6bff" : "#ff6b6b"}
+            />
+          </div>
+        </ProgressContainer>
+        
+        <ButtonContainer isMobileColumn={false}>
+          <StyledButton 
+            icon={<RetweetOutlined />} 
+            onClick={handleRestartTest}
+          >
+            重新测试
+          </StyledButton>
+          <StyledButton 
+            type="primary"
+            icon={<ShareAltOutlined />} 
+            onClick={handleShareResult}
+          >
+            分享结果
+          </StyledButton>
+        </ButtonContainer>
+      </ResultContentCard>
+    );
+    
+    // 移动端结果页面 - 保持原有卡片式设计
+    const renderMobileResult = () => (
+      <MobileResultCard>
         <ResultPageWrapper characterImage={characterImagePath}>
           <ResultLayout>
             {/* 左侧信息栏 */}
@@ -557,7 +731,14 @@ const JojoMbtiPage: React.FC = () => {
             </ResultRightColumn>
           </ResultLayout>
         </ResultPageWrapper>
-      </CardContainer>
+      </MobileResultCard>
+    );
+    
+    return (
+      <PageWithCharacterBackground characterImage={characterImagePath}>
+        {renderPCResult()}
+        {renderMobileResult()}
+      </PageWithCharacterBackground>
     );
   };
 
