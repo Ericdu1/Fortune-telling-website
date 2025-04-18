@@ -396,15 +396,20 @@ const MobileCharacterImage = styled.div<{ backgroundImage: string; characterName
       // 针对特定角色调整背景位置
       switch(props.characterName) {
         case '天气预报': // 天气预报的头部可能在图片较上方
-          return 'center 5%';
+          return 'center 20%';
         case '安波里欧': // 小孩子角色身材矮小
-          return 'center 0%';
+          return 'center 15%';
         case '福·法特斯':
         case '透龙':
         case '田最环':
-          return 'center 8%';
+          return 'center 25%';
+        case '空条承太郎':
+        case '花京院典明':
+        case '吉良吉影':
+        case '迪奥·布兰度':
+          return 'center 30%';
         default:
-          return 'center 10%'; // 默认值
+          return 'center 25%'; // 默认值，进一步下移
       }
     }};
     margin-bottom: 1rem;
