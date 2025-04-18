@@ -256,29 +256,25 @@ const BackgroundContainer = styled(motion.div)`
   }
 `;
 
-// 添加角色背景页面容器 - 超简化版
+// 添加角色背景页面容器 - 透明版
 const PageWithCharacterBackground = styled.div`
   position: relative;
   min-height: 100vh;
   width: 100%;
   display: flex;
-  background: linear-gradient(
-    to right,
-    rgba(40, 0, 60, 0.9) 0%,
-    rgba(40, 0, 60, 0.7) 40%,
-    rgba(40, 0, 60, 0.5) 100%
-  );
+  /* 移除背景渐变，完全透明 */
+  background: transparent; 
 `;
 
-// 结果内容卡片 - 为PC端优化 - 调整宽度和边距
+// 结果内容卡片 - 为PC端优化 - 调整透明度
 const ResultContentCard = styled.div`
-  background: rgba(30, 0, 45, 0.8);
+  background: rgba(30, 0, 45, 0.75); /* 稍微降低不透明度 */
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  width: 48%; // 增加宽度
-  max-width: 580px; // 增加最大宽度
-  margin-left: 3.5rem; // 微调左侧边距
+  width: 48%;
+  max-width: 580px;
+  margin-left: 3.5rem;
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
   z-index: 1;
@@ -289,18 +285,18 @@ const ResultContentCard = styled.div`
   }
 `;
 
-// 角色图片样式 - 调整位置和大小
+// 角色图片样式 - 加强对比度
 const CharacterImg = styled.img`
   position: absolute;
-  right: 3%; // 向右移动一些，给左侧内容更多空间
+  right: 3%;
   top: 50%;
   transform: translateY(-50%);
-  max-height: 90vh; // 增加高度
-  max-width: 48%; // 增加宽度
+  max-height: 90vh;
+  max-width: 48%;
   z-index: 0;
-  opacity: 0.85; // 增加透明度，使其更虚化
+  opacity: 0.9; /* 增加不透明度以便在透明背景上更加突出 */
   pointer-events: none;
-  filter: blur(0.5px); // 添加轻微模糊效果
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); /* 添加阴影增强可见度 */
   
   @media (max-width: 768px) {
     display: none;
