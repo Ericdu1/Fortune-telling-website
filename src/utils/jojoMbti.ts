@@ -36,7 +36,7 @@ export const characterImageMap: Record<string, string> = {
   '安波里欧': 'Emporio_Promotional',
   '东方定助': 'Josuke_8',
   '乔迪欧': 'Jodio',
-  '山吹常秀': 'Yasuho_first_outfit',
+  '广濑康穗': 'Yasuho_first_outfit',
   '东方常敏': 'JoshuEoH',
   '林果·罗德岛': 'Ringo',
   '特里休·乌纳': 'Trish_Una',
@@ -494,7 +494,7 @@ export const jojoCharacters: JojoCharacter[] = [
     part: 9
   },
   {
-    name: '山吹常秀',
+    name: '广濑康穗',
     mbtiType: 'ENFJ',
     description: '温柔善良但坚定，直觉敏锐，关心他人的需求',
     stand: 'Paisley Park',
@@ -539,14 +539,6 @@ export const jojoCharacters: JojoCharacter[] = [
     description: '直率热情，重视友情，虽鲁莽但忠诚可靠',
     stand: 'The Hand',
     ability: '消除空间',
-    part: 4
-  },
-  {
-    name: '广濑康一',
-    mbtiType: 'ISFJ',
-    description: '谦逊忠诚的学生，随着历练变得更加勇敢，富有同情心',
-    stand: 'Echoes',
-    ability: '声音效果实体化',
     part: 4
   },
   {
@@ -677,10 +669,23 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
   // 获取最近匹配的角色以避免重复
   const recentCharacters = getRecentCharacters();
   
+  // Fisher-Yates洗牌算法，用于随机打乱数组
+  function shuffleArray<T>(array: T[]): T[] {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  }
+  
   // 尝试找完全匹配的角色
-  const exactMatches = jojoCharacters.filter(char => char.mbtiType === mbtiType);
+  let exactMatches = jojoCharacters.filter(char => char.mbtiType === mbtiType);
   
   if (exactMatches.length > 0) {
+    // 完全打乱匹配角色的顺序
+    exactMatches = shuffleArray(exactMatches);
+    
     // 过滤出未在最近显示过的角色
     const freshMatches = exactMatches.filter(char => 
       !recentCharacters.some(recent => 
@@ -688,23 +693,24 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
       )
     );
     
-    // 如果有未显示过的角色，随机选择一个
+    // 如果有未显示过的角色，选择其中一个
     if (freshMatches.length > 0) {
-      const selected = freshMatches[Math.floor(Math.random() * freshMatches.length)];
-      // 记录这个角色已被选择
+      // 随机添加小的时间延迟，进一步增加随机性
+      const randomIndex = Math.floor(Math.random() * freshMatches.length * (1 + Math.random() * 0.1));
+      const selected = freshMatches[randomIndex % freshMatches.length];
       addRecentCharacter(mbtiType, selected.name);
       return selected;
     }
     
-    // 如果所有角色都已显示过，或者只有一个角色，随机选择一个
-    const selected = exactMatches[Math.floor(Math.random() * exactMatches.length)];
-    // 记录这个角色已被选择
+    // 如果没有未显示过的角色，随机选择一个
+    const randomIndex = Math.floor(Math.random() * exactMatches.length * (1 + Math.random() * 0.1));
+    const selected = exactMatches[randomIndex % exactMatches.length];
     addRecentCharacter(mbtiType, selected.name);
     return selected;
   }
   
   // 如果没有完全匹配，找最接近的（至少3个字母相同）
-  const closeMatches = jojoCharacters.filter(char => {
+  let closeMatches = jojoCharacters.filter(char => {
     let matchCount = 0;
     for (let i = 0; i < 4; i++) {
       if (char.mbtiType[i] === mbtiType[i]) matchCount++;
@@ -713,6 +719,9 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
   });
   
   if (closeMatches.length > 0) {
+    // 完全打乱
+    closeMatches = shuffleArray(closeMatches);
+    
     // 过滤出未在最近显示过的角色
     const freshMatches = closeMatches.filter(char => 
       !recentCharacters.some(recent => 
@@ -720,20 +729,22 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
       )
     );
     
-    // 如果有未显示过的角色，随机选择一个
+    // 如果有未显示过的角色，选择其中一个
     if (freshMatches.length > 0) {
-      const selected = freshMatches[Math.floor(Math.random() * freshMatches.length)];
+      const randomIndex = Math.floor(Math.random() * freshMatches.length);
+      const selected = freshMatches[randomIndex];
       addRecentCharacter(mbtiType, selected.name);
       return selected;
     }
     
-    const selected = closeMatches[Math.floor(Math.random() * closeMatches.length)];
+    const randomIndex = Math.floor(Math.random() * closeMatches.length);
+    const selected = closeMatches[randomIndex];
     addRecentCharacter(mbtiType, selected.name);
     return selected;
   }
   
   // 如果没有接近的匹配，退化为找至少2个字母相同的
-  const looseMatches = jojoCharacters.filter(char => {
+  let looseMatches = jojoCharacters.filter(char => {
     let matchCount = 0;
     for (let i = 0; i < 4; i++) {
       if (char.mbtiType[i] === mbtiType[i]) matchCount++;
@@ -742,6 +753,9 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
   });
   
   if (looseMatches.length > 0) {
+    // 完全打乱
+    looseMatches = shuffleArray(looseMatches);
+    
     // 过滤出未在最近显示过的角色
     const freshMatches = looseMatches.filter(char => 
       !recentCharacters.some(recent => 
@@ -750,18 +764,21 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
     );
     
     if (freshMatches.length > 0) {
-      const selected = freshMatches[Math.floor(Math.random() * freshMatches.length)];
+      const randomIndex = Math.floor(Math.random() * freshMatches.length);
+      const selected = freshMatches[randomIndex];
       addRecentCharacter(mbtiType, selected.name);
       return selected;
     }
     
-    const selected = looseMatches[Math.floor(Math.random() * looseMatches.length)];
+    const randomIndex = Math.floor(Math.random() * looseMatches.length);
+    const selected = looseMatches[randomIndex];
     addRecentCharacter(mbtiType, selected.name);
     return selected;
   }
   
   // 最后的情况，随机返回一个角色
-  const selected = jojoCharacters[Math.floor(Math.random() * jojoCharacters.length)];
+  const shuffledCharacters = shuffleArray(jojoCharacters);
+  const selected = shuffledCharacters[Math.floor(Math.random() * shuffledCharacters.length)];
   addRecentCharacter(mbtiType, selected.name);
   return selected;
 }
@@ -800,7 +817,8 @@ function addRecentCharacter(mbtiType: MBTIType, characterName: string): void {
       timestamp: Date.now()
     });
     
-    // 对于每个MBTI类型，只保留最近的3个记录
+    // 对于每个MBTI类型，只保留最近的1个记录
+    // 这样可以允许更多的角色出现，提高随机性
     const typeCharacters: { [key: string]: RecentCharacter[] } = {};
     
     // 按类型分组
@@ -811,11 +829,11 @@ function addRecentCharacter(mbtiType: MBTIType, characterName: string): void {
       typeCharacters[char.mbtiType].push(char);
     });
     
-    // 对每个类型，按时间戳排序并只保留最近3个
+    // 对每个类型，按时间戳排序并只保留最近1个
     const filteredCharacters: RecentCharacter[] = [];
     Object.keys(typeCharacters).forEach(type => {
       const sorted = typeCharacters[type].sort((a, b) => b.timestamp - a.timestamp);
-      filteredCharacters.push(...sorted.slice(0, 3));
+      filteredCharacters.push(...sorted.slice(0, 1));
     });
     
     // 保存更新后的列表
