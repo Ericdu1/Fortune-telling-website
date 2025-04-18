@@ -500,15 +500,27 @@ const ShareContent = styled.div`
   box-sizing: border-box;
 `;
 
-// 添加一个专门用于角色图片的容器，确保纵横比正确
+// 改进角色图片容器样式，使用更适合的比例
 const CharacterImageContainer = styled.div`
   width: 120px;
-  height: 180px; // 设置为高于宽度的值，符合角色人物的站立比例
+  height: 240px; // 增加高度，提供更好的显示空间
   margin: 0 auto 1rem;
   border-radius: 8px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+// 添加专门的图片样式组件，确保比例正确
+const ShareCharacterImage = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 `;
 
 const JojoMbtiPage: React.FC = () => {
@@ -607,6 +619,19 @@ const JojoMbtiPage: React.FC = () => {
         return;
       }
 
+      // 先确保所有图片加载完成
+      const images = shareContentRef.current.querySelectorAll('img');
+      await Promise.all(Array.from(images).map(img => {
+        return new Promise<void>((resolve) => {
+          if (img.complete) {
+            resolve();
+          } else {
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // 即使加载失败也继续
+          }
+        });
+      }));
+
       // 使用html2canvas将DOM元素转为图片，添加更多配置参数
       const canvas = await html2canvas(shareContentRef.current, {
         backgroundColor: '#1a1a2e',
@@ -614,29 +639,18 @@ const JojoMbtiPage: React.FC = () => {
         logging: false,
         allowTaint: true,
         scale: 2, // 提高图片质量
-        width: shareContentRef.current.offsetWidth,
-        height: shareContentRef.current.offsetHeight,
-        windowWidth: shareContentRef.current.offsetWidth,
-        windowHeight: shareContentRef.current.offsetHeight,
-        foreignObjectRendering: false, // 禁用foreignObject渲染，提高兼容性
+        width: shareContentRef.current.scrollWidth,
+        height: shareContentRef.current.scrollHeight,
         imageTimeout: 15000, // 增加图片加载超时时间
-        ignoreElements: (element) => {
-          // 忽略掉不需要渲染的元素
-          return element.classList.contains('ignore-screenshot');
-        },
         onclone: (document, element) => {
-          // 确保克隆元素的样式
-          element.style.width = `${shareContentRef.current?.offsetWidth}px`;
-          element.style.height = `${shareContentRef.current?.offsetHeight}px`;
-          
-          // 尝试修复图片加载问题
-          const images = element.querySelectorAll('img');
-          Array.from(images).forEach((img: HTMLImageElement) => {
-            // 确保图片已完全加载
-            if (!img.complete) {
-              img.setAttribute('crossorigin', 'anonymous');
-              img.style.objectFit = 'contain';
-            }
+          // 调整克隆元素的样式，确保宽高比
+          const imgs = element.querySelectorAll('img');
+          Array.from(imgs).forEach((img: HTMLImageElement) => {
+            img.style.objectFit = 'contain';
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            img.style.width = 'auto';
+            img.style.height = 'auto';
           });
           
           return element;
@@ -679,7 +693,7 @@ const JojoMbtiPage: React.FC = () => {
     }
   };
 
-  // 修改handleCopyToClipboard函数，保持与handleSaveImage相同的配置
+  // 同样修改handleCopyToClipboard函数中的图片处理逻辑
   const handleCopyToClipboard = async () => {
     try {
       setIsSaving(true);
@@ -690,6 +704,19 @@ const JojoMbtiPage: React.FC = () => {
         return;
       }
 
+      // 先确保所有图片加载完成
+      const images = shareContentRef.current.querySelectorAll('img');
+      await Promise.all(Array.from(images).map(img => {
+        return new Promise<void>((resolve) => {
+          if (img.complete) {
+            resolve();
+          } else {
+            img.onload = () => resolve();
+            img.onerror = () => resolve(); // 即使加载失败也继续
+          }
+        });
+      }));
+
       // 使用与保存图片相同的配置
       const canvas = await html2canvas(shareContentRef.current, {
         backgroundColor: '#1a1a2e',
@@ -697,15 +724,20 @@ const JojoMbtiPage: React.FC = () => {
         logging: false,
         allowTaint: true,
         scale: 2,
-        width: shareContentRef.current.offsetWidth,
-        height: shareContentRef.current.offsetHeight,
-        windowWidth: shareContentRef.current.offsetWidth,
-        windowHeight: shareContentRef.current.offsetHeight,
-        foreignObjectRendering: false,
-        imageTimeout: 0,
+        width: shareContentRef.current.scrollWidth,
+        height: shareContentRef.current.scrollHeight,
+        imageTimeout: 15000,
         onclone: (document, element) => {
-          element.style.width = `${shareContentRef.current?.offsetWidth}px`;
-          element.style.height = `${shareContentRef.current?.offsetHeight}px`;
+          // 调整克隆元素的样式，确保宽高比
+          const imgs = element.querySelectorAll('img');
+          Array.from(imgs).forEach((img: HTMLImageElement) => {
+            img.style.objectFit = 'contain';
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            img.style.width = 'auto';
+            img.style.height = 'auto';
+          });
+          
           return element;
         }
       } as any);
@@ -1092,17 +1124,11 @@ const JojoMbtiPage: React.FC = () => {
               <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</h4>
               <h3 style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{character.name}</h3>
               
-              {/* 使用新的CharacterImageContainer组件替代原有的div */}
+              {/* 使用新的CharacterImageContainer组件和ShareCharacterImage组件 */}
               <CharacterImageContainer>
-                <img 
+                <ShareCharacterImage 
                   src={characterImagePath} 
                   alt={character.name} 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'contain', // 改用contain而非cover，保持图片原比例
-                    objectPosition: 'center center'
-                  }} 
                 />
               </CharacterImageContainer>
               
