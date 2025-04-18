@@ -270,15 +270,15 @@ const PageWithCharacterBackground = styled.div`
   );
 `;
 
-// 结果内容卡片 - 为PC端优化
+// 结果内容卡片 - 为PC端优化 - 调整宽度和边距
 const ResultContentCard = styled.div`
   background: rgba(30, 0, 45, 0.8);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  width: 50%;
-  max-width: 600px;
-  margin-left: 2rem;
+  width: 45%;
+  max-width: 550px;
+  margin-left: 4rem; // 增加左侧边距
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
   z-index: 1;
@@ -289,14 +289,14 @@ const ResultContentCard = styled.div`
   }
 `;
 
-// 角色图片样式
+// 角色图片样式 - 调整位置和大小
 const CharacterImg = styled.img`
   position: absolute;
-  right: 0;
+  right: 5%; // 向右移动一些，给左侧内容更多空间
   top: 50%;
   transform: translateY(-50%);
-  max-height: 90vh;
-  max-width: 50%;
+  max-height: 85vh; // 稍微减小高度
+  max-width: 45%; // 减小宽度
   z-index: 0;
   opacity: 0.9;
   pointer-events: none;
