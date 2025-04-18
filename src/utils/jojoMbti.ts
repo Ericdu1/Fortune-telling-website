@@ -389,7 +389,7 @@ export const jojoCharacters: JojoCharacter[] = [
     part: 6
   },
   {
-    name: '威瑟·里波特',
+    name: '天气预报',
     mbtiType: 'INFP',
     description: '沉默但内心富有感情，寻找自我身份，富有同情心',
     stand: 'Weather Report',

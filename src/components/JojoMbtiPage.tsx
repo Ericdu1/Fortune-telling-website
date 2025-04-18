@@ -296,7 +296,6 @@ const PCCharacterContainer = styled.div`
   right: 5%; /* 右侧边距 */
   top: 50%;
   transform: translateY(-50%);
-  max-height: 90vh;
   height: 80vh; /* 固定高度 */
   width: 40%; /* 固定宽度比例 */
   max-width: 500px;
@@ -313,14 +312,14 @@ const PCCharacterContainer = styled.div`
 
 // 修改PC端角色图片样式
 const PCCharacterImg = styled.img`
-  max-height: 100%;
-  max-width: 100%;
+  height: 100%;
   width: auto;
-  height: auto;
+  max-width: 100%;
   object-fit: contain;
-  opacity: 0.9; /* 适当的不透明度 */
+  object-position: center;
+  opacity: 0.95; /* 适当的不透明度 */
   pointer-events: none;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); /* 添加阴影增强可见度 */
+  filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6)); /* 增强阴影效果 */
 `;
 
 // 移动端专用角色图片样式
