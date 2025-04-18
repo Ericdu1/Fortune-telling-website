@@ -303,7 +303,7 @@ const PCCharacterContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: hidden; /* 改为hidden，防止内容溢出 */
   
   @media (max-width: 768px) {
     display: none;
@@ -312,9 +312,10 @@ const PCCharacterContainer = styled.div`
 
 // 修改PC端角色图片样式
 const PCCharacterImg = styled.img`
-  height: 100%;
+  max-height: 95%; /* 增加到95%，确保图片充分利用容器高度 */
+  max-width: 95%; /* 限制最大宽度，保持良好的比例 */
   width: auto;
-  max-width: 100%;
+  height: auto; /* 自动调整高度 */
   object-fit: contain;
   object-position: center;
   opacity: 0.95; /* 适当的不透明度 */
@@ -861,6 +862,20 @@ const JojoMbtiPage: React.FC = () => {
     const { character, mbtiType, description, dimensionScores } = result;
     const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
     
+    // 添加图片预加载处理函数
+    const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+      const img = e.currentTarget;
+      if (img.naturalHeight > img.naturalWidth * 2) {
+        // 对于特别瘦长的图片，调整显示方式
+        img.style.maxHeight = '95%';
+        img.style.maxWidth = '70%';
+      } else if (img.naturalWidth > img.naturalHeight * 1.5) {
+        // 对于特别宽的图片，调整显示方式
+        img.style.maxHeight = '70%';
+        img.style.maxWidth = '95%';
+      }
+    };
+    
     // PC端结果页面
     const renderPCResult = () => (
       <ResultContentCard>
@@ -1089,7 +1104,11 @@ const JojoMbtiPage: React.FC = () => {
     return (
       <PageWithCharacterBackground>
         <PCCharacterContainer>
-          <PCCharacterImg src={characterImagePath} alt={character.name} />
+          <PCCharacterImg 
+            src={characterImagePath} 
+            alt={character.name} 
+            onLoad={handleImageLoad}
+          />
         </PCCharacterContainer>
         {renderPCResult()}
         {renderMobileResult()}
