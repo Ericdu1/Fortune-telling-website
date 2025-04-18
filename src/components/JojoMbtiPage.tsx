@@ -290,22 +290,37 @@ const ResultContentCard = styled.div`
   }
 `;
 
-// 角色图片样式 - 调整位置
-const PCCharacterImg = styled.img`
+// 修改PC端角色图片容器样式
+const PCCharacterContainer = styled.div`
   position: absolute;
-  right: 5%; /* 增加右侧边距 */
+  right: 5%; /* 右侧边距 */
   top: 50%;
   transform: translateY(-50%);
   max-height: 90vh;
-  max-width: 44%; /* 稍微缩小图片宽度 */
+  height: 80vh; /* 固定高度 */
+  width: 40%; /* 固定宽度比例 */
+  max-width: 500px;
   z-index: 0;
-  opacity: 0.9; /* 增加不透明度以便在透明背景上更加突出 */
-  pointer-events: none;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); /* 添加阴影增强可见度 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   
   @media (max-width: 768px) {
     display: none;
   }
+`;
+
+// 修改PC端角色图片样式
+const PCCharacterImg = styled.img`
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.9; /* 适当的不透明度 */
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); /* 添加阴影增强可见度 */
 `;
 
 // 移动端专用角色图片样式
@@ -1074,7 +1089,9 @@ const JojoMbtiPage: React.FC = () => {
     
     return (
       <PageWithCharacterBackground>
-        <PCCharacterImg src={characterImagePath} alt={character.name} />
+        <PCCharacterContainer>
+          <PCCharacterImg src={characterImagePath} alt={character.name} />
+        </PCCharacterContainer>
         {renderPCResult()}
         {renderMobileResult()}
       </PageWithCharacterBackground>
