@@ -418,6 +418,7 @@ const ShareCardWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.85);
@@ -435,6 +436,7 @@ const ShareCardContent = styled.div`
   position: relative;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 215, 0, 0.3);
+  margin-bottom: 1rem;
   
   @media (max-width: 480px) {
     padding: 1rem;
@@ -471,6 +473,8 @@ const ShareActions = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
   
   @media (max-width: 480px) {
     flex-direction: column;
@@ -1033,7 +1037,26 @@ const JojoMbtiPage: React.FC = () => {
             <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</h4>
             <h3 style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{character.name}</h3>
             
-            <div style={{ width: '120px', height: '120px', margin: '0 auto 1rem', borderRadius: '8px', backgroundImage: `url(${characterImagePath})`, backgroundSize: 'cover', backgroundPosition: 'center 25%' }}></div>
+            {/* 改进角色图片显示 */}
+            <div style={{ 
+              width: '120px', 
+              height: '120px', 
+              margin: '0 auto 1rem', 
+              borderRadius: '8px', 
+              overflow: 'hidden',
+              background: 'rgba(0, 0, 0, 0.2)'
+            }}>
+              <img 
+                src={characterImagePath} 
+                alt={character.name} 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover', 
+                  objectPosition: character.name === '乔纳森·乔斯达' || character.name === '布加拉提' ? 'center 0%' : 'center 10%' 
+                }} 
+              />
+            </div>
             
             <div style={{ background: 'rgba(0, 0, 0, 0.2)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'left' }}>
               <div style={{ color: '#ffd700', marginBottom: '0.3rem' }}>替身：「{character.stand || '尚未觉醒'}」</div>
@@ -1107,30 +1130,31 @@ const JojoMbtiPage: React.FC = () => {
               扫描二维码体验你的测试
             </Watermark>
           </ShareCardFooter>
+          
+          {/* 将操作按钮移动到卡片内部底部 */}
+          <ShareActions>
+            <StyledButton 
+              icon={<DownloadOutlined />} 
+              onClick={handleSaveImage}
+              disabled={isSaving}
+            >
+              保存图片
+            </StyledButton>
+            <StyledButton 
+              icon={<CopyOutlined />} 
+              onClick={handleCopyToClipboard}
+              disabled={isSaving}
+            >
+              复制图片
+            </StyledButton>
+            <StyledButton 
+              icon={<ArrowLeftOutlined />} 
+              onClick={handleCloseShareCard}
+            >
+              返回
+            </StyledButton>
+          </ShareActions>
         </ShareCardContent>
-        
-        <ShareActions>
-          <StyledButton 
-            icon={<DownloadOutlined />} 
-            onClick={handleSaveImage}
-            disabled={isSaving}
-          >
-            保存图片
-          </StyledButton>
-          <StyledButton 
-            icon={<CopyOutlined />} 
-            onClick={handleCopyToClipboard}
-            disabled={isSaving}
-          >
-            复制图片
-          </StyledButton>
-          <StyledButton 
-            icon={<ArrowLeftOutlined />} 
-            onClick={handleCloseShareCard}
-          >
-            返回
-          </StyledButton>
-        </ShareActions>
       </ShareCardWrapper>
     );
   };
@@ -1168,4 +1192,4 @@ const JojoMbtiPage: React.FC = () => {
   );
 };
 
-export default JojoMbtiPage; 
+export default JojoMbtiPage;
