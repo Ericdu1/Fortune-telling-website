@@ -323,6 +323,14 @@ const PCCharacterImg = styled.img`
   filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.6));
 `;
 
+// 为乔纳森专门创建一个放大版的图片样式
+const JonathanImg = styled(PCCharacterImg)`
+  height: 85vh !important; /* 固定高度为视口高度的85% */
+  max-height: 85vh !important;
+  width: auto !important;
+  object-fit: contain;
+`;
+
 // 移动端专用角色图片样式
 const CharacterImg = styled.img`
   width: 100%;
@@ -1173,14 +1181,24 @@ const JojoMbtiPage: React.FC = () => {
       </MobileResultCard>
     );
     
+    // 根据角色名判断使用哪个图片组件
+    const isJonathan = character.name === '乔纳森·乔斯达';
+    
     return (
       <PageWithCharacterBackground>
         <PCCharacterContainer>
-          <PCCharacterImg 
-            src={characterImagePath} 
-            alt={character.name} 
-            onLoad={(e) => handleImageLoad(e, character.name)}
-          />
+          {isJonathan ? (
+            <JonathanImg 
+              src={characterImagePath} 
+              alt={character.name} 
+            />
+          ) : (
+            <PCCharacterImg 
+              src={characterImagePath} 
+              alt={character.name} 
+              onLoad={(e) => handleImageLoad(e, character.name)}
+            />
+          )}
         </PCCharacterContainer>
         {renderPCResult()}
         {renderMobileResult()}
