@@ -309,20 +309,11 @@ const PCCharacterImg = styled.img`
 `;
 
 // 移动端专用角色图片样式
-const CharacterImg = styled.img<{ characterName?: string }>`
+const CharacterImg = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: ${props => {
-    // 为特定角色单独设置位置
-    switch(props.characterName) {
-      case '乔纳森·乔斯达':
-      case '布加拉提':
-        return 'center 0%'; // 为乔纳森和布加拉提设置更靠上的位置
-      default:
-        return 'center 5%'; // 其他角色保持5%位置
-    }
-  }};
+  object-fit: contain; // 改用contain而非cover
+  object-position: center center; // 居中显示
 `;
 
 // 卡片式设计 - 为移动端优化
@@ -400,7 +391,7 @@ const MobileCharacterImage = styled.div`
   @media (max-width: 768px) {
     display: block;
     width: 100%;
-    height: 250px; // 统一高度
+    height: 300px; // 增加高度
     margin-bottom: 1rem;
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.3);
@@ -497,15 +488,27 @@ const CloseButton = styled.button`
   }
 `;
 
-// 调整分享内容样式，添加固定宽度
+// 调整分享内容样式，添加固定宽度和最小高度
 const ShareContent = styled.div`
   width: 100%;
   max-width: 450px;
+  min-height: 850px; // 添加最小高度确保足够显示内容
   background: #1a1a2e;
   border-radius: 12px;
   padding: 1.5rem;
   margin: 0 auto;
   box-sizing: border-box;
+`;
+
+// 添加一个专门用于角色图片的容器，确保纵横比正确
+const CharacterImageContainer = styled.div`
+  width: 120px;
+  height: 180px; // 设置为高于宽度的值，符合角色人物的站立比例
+  margin: 0 auto 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  position: relative;
 `;
 
 const JojoMbtiPage: React.FC = () => {
@@ -616,11 +619,26 @@ const JojoMbtiPage: React.FC = () => {
         windowWidth: shareContentRef.current.offsetWidth,
         windowHeight: shareContentRef.current.offsetHeight,
         foreignObjectRendering: false, // 禁用foreignObject渲染，提高兼容性
-        imageTimeout: 0, // 不限制图片加载时间
+        imageTimeout: 15000, // 增加图片加载超时时间
+        ignoreElements: (element) => {
+          // 忽略掉不需要渲染的元素
+          return element.classList.contains('ignore-screenshot');
+        },
         onclone: (document, element) => {
           // 确保克隆元素的样式
           element.style.width = `${shareContentRef.current?.offsetWidth}px`;
           element.style.height = `${shareContentRef.current?.offsetHeight}px`;
+          
+          // 尝试修复图片加载问题
+          const images = element.querySelectorAll('img');
+          Array.from(images).forEach((img: HTMLImageElement) => {
+            // 确保图片已完全加载
+            if (!img.complete) {
+              img.setAttribute('crossorigin', 'anonymous');
+              img.style.objectFit = 'contain';
+            }
+          });
+          
           return element;
         }
       } as any);
@@ -919,7 +937,7 @@ const JojoMbtiPage: React.FC = () => {
               
               {/* 添加单独的移动端角色图片显示 */}
               <MobileCharacterImage>
-                <CharacterImg src={characterImagePath} alt={character.name} characterName={character.name} />
+                <CharacterImg src={characterImagePath} alt={character.name} />
               </MobileCharacterImage>
               
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
@@ -1074,26 +1092,19 @@ const JojoMbtiPage: React.FC = () => {
               <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</h4>
               <h3 style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{character.name}</h3>
               
-              {/* 改进角色图片显示 */}
-              <div style={{ 
-                width: '120px', 
-                height: '120px', 
-                margin: '0 auto 1rem', 
-                borderRadius: '8px', 
-                overflow: 'hidden',
-                background: 'rgba(0, 0, 0, 0.2)'
-              }}>
+              {/* 使用新的CharacterImageContainer组件替代原有的div */}
+              <CharacterImageContainer>
                 <img 
                   src={characterImagePath} 
                   alt={character.name} 
                   style={{ 
                     width: '100%', 
                     height: '100%', 
-                    objectFit: 'cover', 
-                    objectPosition: character.name === '乔纳森·乔斯达' || character.name === '布加拉提' ? 'center 0%' : 'center 10%' 
+                    objectFit: 'contain', // 改用contain而非cover，保持图片原比例
+                    objectPosition: 'center center'
                   }} 
                 />
-              </div>
+              </CharacterImageContainer>
               
               <div style={{ background: 'rgba(0, 0, 0, 0.2)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'left' }}>
                 <div style={{ color: '#ffd700', marginBottom: '0.3rem' }}>替身：「{character.stand || '尚未觉醒'}」</div>
