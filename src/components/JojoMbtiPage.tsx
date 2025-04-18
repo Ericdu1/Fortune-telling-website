@@ -313,7 +313,7 @@ const CharacterImg = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%; // 将焦点上移至20%，确保优先显示角色面部
+  object-position: center 5%; // 将焦点上移至5%，确保最优先显示角色面部
 `;
 
 // 卡片式设计 - 为移动端优化
