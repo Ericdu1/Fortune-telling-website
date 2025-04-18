@@ -671,8 +671,11 @@ const JojoMbtiPage: React.FC = () => {
         scale *= 0.9; // 略微缩小过窄的图片
       }
       
-      // 特殊调整：吉良吉影、东方仗助等需要特殊缩放的角色
-      if (characterName === '吉良吉影' || characterName === '岸边露伴') {
+      // 特殊角色调整
+      if (characterName === '乔纳森·乔斯达') {
+        scale *= 2.0; // 为乔纳森特别增加尺寸
+        console.log('乔纳森特别调整，缩放系数加倍');
+      } else if (characterName === '吉良吉影' || characterName === '岸边露伴') {
         scale *= 1.1; // 放大10%
       } else if (characterName === '迪奥·布兰度' || characterName === '乔鲁诺·乔巴拿') {
         scale *= 1.15; // 放大15%
@@ -686,7 +689,11 @@ const JojoMbtiPage: React.FC = () => {
       console.log(`角色: ${characterName}, 原始尺寸: ${imgWidth}x${imgHeight}, 缩放系数: ${scale}`);
     } else {
       // 如果布加拉提图片未加载，则使用基于图片比例的默认调整
-      if (imgHeight > imgWidth * 2) {
+      if (characterName === '乔纳森·乔斯达') {
+        // 乔纳森特别处理，即使没有布加拉提图片也放大
+        img.style.maxHeight = '85vh';
+        img.style.maxWidth = '95%';
+      } else if (imgHeight > imgWidth * 2) {
         // 特别瘦长的图片
         img.style.maxHeight = '78vh';
         img.style.maxWidth = '70%';
