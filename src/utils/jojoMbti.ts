@@ -32,7 +32,7 @@ export const characterImageMap: Record<string, string> = {
   '沙男': 'sandman',
   '露西·斯蒂尔': 'Lucy_Steel_Infobox_Manga',
   '纳尔齐索·安纳苏': 'Anasui',
-  '福·法特斯': 'Foo_Fighters',
+  'FF': 'Foo_Fighters',
   '安波里欧': 'Emporio_Promotional',
   '东方定助': 'Josuke_8',
   '乔迪欧': 'Jodio'
@@ -445,7 +445,7 @@ export const jojoCharacters: JojoCharacter[] = [
     part: 6
   },
   {
-    name: '福·法特斯',
+    name: 'FF',
     mbtiType: 'INTP',
     description: '好奇心旺盛，喜欢探索世界，学习能力强',
     stand: 'Foo Fighters',
