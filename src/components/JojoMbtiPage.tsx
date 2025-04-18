@@ -497,6 +497,17 @@ const CloseButton = styled.button`
   }
 `;
 
+// 调整分享内容样式，添加固定宽度
+const ShareContent = styled.div`
+  width: 100%;
+  max-width: 450px;
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 0 auto;
+  box-sizing: border-box;
+`;
+
 const JojoMbtiPage: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<MBTIDimension[]>([]);
@@ -582,7 +593,7 @@ const JojoMbtiPage: React.FC = () => {
     setShowShareCard(false);
   };
 
-  // 保存分享图片
+  // 修改handleSaveImage函数，添加更多优化参数
   const handleSaveImage = async () => {
     try {
       setIsSaving(true);
@@ -593,13 +604,25 @@ const JojoMbtiPage: React.FC = () => {
         return;
       }
 
-      // 使用html2canvas将DOM元素转为图片
+      // 使用html2canvas将DOM元素转为图片，添加更多配置参数
       const canvas = await html2canvas(shareContentRef.current, {
         backgroundColor: '#1a1a2e',
         useCORS: true,
         logging: false,
         allowTaint: true,
-        scale: 2 // 提高图片质量
+        scale: 2, // 提高图片质量
+        width: shareContentRef.current.offsetWidth,
+        height: shareContentRef.current.offsetHeight,
+        windowWidth: shareContentRef.current.offsetWidth,
+        windowHeight: shareContentRef.current.offsetHeight,
+        foreignObjectRendering: false, // 禁用foreignObject渲染，提高兼容性
+        imageTimeout: 0, // 不限制图片加载时间
+        onclone: (document, element) => {
+          // 确保克隆元素的样式
+          element.style.width = `${shareContentRef.current?.offsetWidth}px`;
+          element.style.height = `${shareContentRef.current?.offsetHeight}px`;
+          return element;
+        }
       } as any);
 
       // 创建下载链接
@@ -629,7 +652,7 @@ const JojoMbtiPage: React.FC = () => {
           setIsSaving(false);
           message.success('MBTI结果图片已保存');
         }, 100);
-      }, 'image/png', 0.95);
+      }, 'image/png', 1.0); // 使用最高质量
       
     } catch (error) {
       console.error('保存图片过程中出错:', error);
@@ -638,7 +661,7 @@ const JojoMbtiPage: React.FC = () => {
     }
   };
 
-  // 复制图片到剪贴板
+  // 修改handleCopyToClipboard函数，保持与handleSaveImage相同的配置
   const handleCopyToClipboard = async () => {
     try {
       setIsSaving(true);
@@ -649,13 +672,24 @@ const JojoMbtiPage: React.FC = () => {
         return;
       }
 
-      // 使用html2canvas将DOM元素转为图片
+      // 使用与保存图片相同的配置
       const canvas = await html2canvas(shareContentRef.current, {
         backgroundColor: '#1a1a2e',
         useCORS: true,
         logging: false,
         allowTaint: true,
-        scale: 2 // 提高图片质量
+        scale: 2,
+        width: shareContentRef.current.offsetWidth,
+        height: shareContentRef.current.offsetHeight,
+        windowWidth: shareContentRef.current.offsetWidth,
+        windowHeight: shareContentRef.current.offsetHeight,
+        foreignObjectRendering: false,
+        imageTimeout: 0,
+        onclone: (document, element) => {
+          element.style.width = `${shareContentRef.current?.offsetWidth}px`;
+          element.style.height = `${shareContentRef.current?.offsetHeight}px`;
+          return element;
+        }
       } as any);
       
       // 尝试使用现代方式复制到剪贴板
@@ -679,7 +713,7 @@ const JojoMbtiPage: React.FC = () => {
         console.error('复制到剪贴板失败，尝试备用方法', clipboardError);
         
         // 备用方法：使用canvas.toDataURL创建图片
-        const dataUrl = canvas.toDataURL('image/png');
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
         
         // 创建一个临时的<img>元素
         const img = document.createElement('img');
@@ -1012,7 +1046,7 @@ const JojoMbtiPage: React.FC = () => {
     return null;
   };
 
-  // 渲染分享卡片
+  // 修改renderShareCard函数，使用新的ShareContent组件
   const renderShareCard = () => {
     if (!result || !showShareCard) return null;
     
@@ -1024,8 +1058,8 @@ const JojoMbtiPage: React.FC = () => {
         <ShareCardContent ref={shareCardRef}>
           <CloseButton onClick={handleCloseShareCard}>×</CloseButton>
           
-          {/* 使用单独的div包裹要截图的内容，并添加ref */}
-          <div ref={shareContentRef}>
+          {/* 使用新的ShareContent组件包裹要截图的内容 */}
+          <ShareContent ref={shareContentRef}>
             <ShareCardHeader>
               <h2 style={{ color: '#ffd700', marginBottom: '8px', fontSize: '24px' }}>JOJO的奇妙冒险</h2>
               <div style={{ color: '#e0e0e0', fontSize: '18px' }}>MBTI 人格测试结果</div>
@@ -1133,7 +1167,7 @@ const JojoMbtiPage: React.FC = () => {
                 扫描二维码体验你的测试
               </Watermark>
             </ShareCardFooter>
-          </div>
+          </ShareContent>
           
           {/* 将操作按钮放在截图内容之外 */}
           <ShareActions>
