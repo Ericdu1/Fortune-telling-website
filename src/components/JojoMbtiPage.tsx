@@ -327,7 +327,7 @@ const ResultPageWrapper = styled.div<{ characterImage: string }>`
     bottom: 0;
     background-image: url(${props => props.characterImage});
     background-size: cover;
-    background-position: right center;
+    background-position: center 15%; // 调整背景图像位置，确保头部可见
     opacity: 0.4;
     filter: blur(2px);
     z-index: 0;
@@ -335,7 +335,7 @@ const ResultPageWrapper = styled.div<{ characterImage: string }>`
   
   @media (max-width: 768px) {
     &:before {
-      background-position: center top;
+      background-position: center 15%; // 移动端也调整为向上移动焦点
     }
   }
 `;
@@ -379,10 +379,10 @@ const MobileCharacterImage = styled.div<{ backgroundImage: string }>`
   @media (max-width: 768px) {
     display: block;
     width: 100%;
-    height: 200px; // 设置合适的高度
+    height: 280px; // 增加高度以显示更多内容
     background-image: ${props => props.backgroundImage};
     background-size: cover;
-    background-position: center 25%; // 聚焦于人物上半身/脸部
+    background-position: center 10%; // 向上移动焦点，确保头部可见
     margin-bottom: 1rem;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
