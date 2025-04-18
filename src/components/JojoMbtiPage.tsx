@@ -267,15 +267,17 @@ const PageWithCharacterBackground = styled.div<{ characterImage: string }>`
     top: 0;
     right: 0;
     bottom: 0;
-    width: 60%;
-    background-image: url(${props => props.characterImage});
-    background-size: contain;
-    background-position: right center;
-    background-repeat: no-repeat;
-    z-index: -1;
+    left: 0;
+    background: linear-gradient(
+      to right,
+      rgba(40, 0, 60, 0.9) 0%,
+      rgba(40, 0, 60, 0.7) 50%,
+      rgba(40, 0, 60, 0.5) 100%
+    );
+    z-index: -2;
     
     @media (max-width: 768px) {
-      display: none; // 移动端不显示大背景
+      display: none; // 移动端不显示渐变遮罩
     }
   }
   
@@ -285,17 +287,15 @@ const PageWithCharacterBackground = styled.div<{ characterImage: string }>`
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
-    background: linear-gradient(
-      to right,
-      rgba(40, 0, 60, 0.9) 0%,
-      rgba(40, 0, 60, 0.7) 50%,
-      rgba(40, 0, 60, 0.5) 100%
-    );
+    width: 60%;
+    background-image: url(${props => props.characterImage});
+    background-size: contain;
+    background-position: right center;
+    background-repeat: no-repeat;
     z-index: -1;
     
     @media (max-width: 768px) {
-      display: none; // 移动端不显示渐变遮罩
+      display: none; // 移动端不显示大背景
     }
   }
 `;
@@ -310,6 +310,8 @@ const ResultContentCard = styled.div`
   max-width: 600px;
   margin-left: 2rem;
   border: 1px solid rgba(255, 215, 0, 0.3);
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 768px) {
     display: none; // 移动端不显示此卡片
