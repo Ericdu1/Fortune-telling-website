@@ -291,7 +291,7 @@ const ResultContentCard = styled.div`
 `;
 
 // 角色图片样式 - 调整位置
-const CharacterImg = styled.img`
+const PCCharacterImg = styled.img`
   position: absolute;
   right: 5%; /* 增加右侧边距 */
   top: 50%;
@@ -306,6 +306,14 @@ const CharacterImg = styled.img`
   @media (max-width: 768px) {
     display: none;
   }
+`;
+
+// 移动端专用角色图片样式
+const CharacterImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%; // 统一将焦点下移，确保所有角色的头部显示
 `;
 
 // 卡片式设计 - 为移动端优化
@@ -376,51 +384,20 @@ const ResultRightColumn = styled.div`
   }
 `;
 
-// 添加移动端角色图片 - 进一步优化显示
-const MobileCharacterImage = styled.div<{ backgroundImage: string; characterName: string }>`
+// 添加移动端角色图片 - 使用统一尺寸的图片容器
+const MobileCharacterImage = styled.div`
   display: none; // 默认隐藏
   
   @media (max-width: 768px) {
     display: block;
     width: 100%;
-    height: ${props => {
-      // 针对特定角色调整高度
-      switch(props.characterName) {
-        case '天气预报':
-        case '安波里欧':
-        case '福·法特斯':
-          return '320px'; // 为头部较小或位置较高的角色增加高度
-        default:
-          return '280px';
-      }
-    }};
-    background-image: ${props => props.backgroundImage};
-    background-size: cover;
-    background-position: ${props => {
-      // 针对特定角色调整背景位置
-      switch(props.characterName) {
-        case '天气预报': // 天气预报的头部可能在图片较上方
-          return 'center 20%';
-        case '安波里欧': // 小孩子角色身材矮小
-          return 'center 15%';
-        case '福·法特斯':
-        case '透龙':
-        case '田最环':
-          return 'center 25%';
-        case '空条承太郎':
-        case '花京院典明':
-        case '吉良吉影':
-        case '迪奥·布兰度':
-          return 'center 30%';
-        case '布加拉提': // 布加拉提头部位置较高
-          return 'center 35%';
-        default:
-          return 'center 25%'; // 默认值，进一步下移
-      }
-    }};
+    height: 250px; // 统一高度
     margin-bottom: 1rem;
     border-radius: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
   }
 `;
 
@@ -893,10 +870,9 @@ const JojoMbtiPage: React.FC = () => {
               </MbtiBox>
               
               {/* 添加单独的移动端角色图片显示 */}
-              <MobileCharacterImage 
-                backgroundImage={`url(${characterImagePath})`} 
-                characterName={character.name}
-              />
+              <MobileCharacterImage>
+                <CharacterImg src={characterImagePath} alt={character.name} />
+              </MobileCharacterImage>
               
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
                 <Title level={4} style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</Title>
@@ -1000,7 +976,7 @@ const JojoMbtiPage: React.FC = () => {
     
     return (
       <PageWithCharacterBackground>
-        <CharacterImg src={characterImagePath} alt={character.name} />
+        <PCCharacterImg src={characterImagePath} alt={character.name} />
         {renderPCResult()}
         {renderMobileResult()}
       </PageWithCharacterBackground>
