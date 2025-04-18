@@ -372,17 +372,41 @@ const ResultRightColumn = styled.div`
   }
 `;
 
-// 添加移动端角色图片 - 新增
-const MobileCharacterImage = styled.div<{ backgroundImage: string }>`
+// 添加移动端角色图片 - 进一步优化显示
+const MobileCharacterImage = styled.div<{ backgroundImage: string; characterName: string }>`
   display: none; // 默认隐藏
   
   @media (max-width: 768px) {
     display: block;
     width: 100%;
-    height: 280px; // 增加高度以显示更多内容
+    height: ${props => {
+      // 针对特定角色调整高度
+      switch(props.characterName) {
+        case '天气预报':
+        case '安波里欧':
+        case '福·法特斯':
+          return '320px'; // 为头部较小或位置较高的角色增加高度
+        default:
+          return '280px';
+      }
+    }};
     background-image: ${props => props.backgroundImage};
     background-size: cover;
-    background-position: center 10%; // 向上移动焦点，确保头部可见
+    background-position: ${props => {
+      // 针对特定角色调整背景位置
+      switch(props.characterName) {
+        case '天气预报': // 天气预报的头部可能在图片较上方
+          return 'center 5%';
+        case '安波里欧': // 小孩子角色身材矮小
+          return 'center 0%';
+        case '福·法特斯':
+        case '透龙':
+        case '田最环':
+          return 'center 8%';
+        default:
+          return 'center 10%'; // 默认值
+      }
+    }};
     margin-bottom: 1rem;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -638,7 +662,10 @@ const JojoMbtiPage: React.FC = () => {
               </MbtiBox>
               
               {/* 添加单独的移动端角色图片显示 */}
-              <MobileCharacterImage backgroundImage={`url(${characterImagePath})`} />
+              <MobileCharacterImage 
+                backgroundImage={`url(${characterImagePath})`} 
+                characterName={character.name}
+              />
               
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
                 <Title level={4} style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</Title>
