@@ -421,7 +421,7 @@ export const jojoCharacters: JojoCharacter[] = [
     part: 7
   },
   {
-    name: '山地人',
+    name: '沙男',
     mbtiType: 'ISTP',
     description: '独立冷静的战士，遵循自己的道路，精通追踪技巧',
     stand: 'In a Silent Way',
