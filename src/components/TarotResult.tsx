@@ -4,6 +4,23 @@ import { Button as AntdButton, message } from 'antd';
 import { ArrowLeftOutlined, ShareAltOutlined, CopyOutlined } from '@ant-design/icons';
 import { TarotCardResult } from '../types/tarot';
 
+// 添加与JOJO测试相同的背景页面容器
+const PageBackground = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  background-image: linear-gradient(
+    rgba(0, 0, 0, 0.8), 
+    rgba(0, 0, 0, 0.8)
+  ), url('/images/jojo/background.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  
+  @media (max-width: 768px) {
+    background-attachment: scroll;
+  }
+`;
+
 const Container = styled.div`
   max-width: 900px;
   margin: 0 auto;
@@ -390,6 +407,64 @@ const StyledButton = styled.button`
   }
 `;
 
+// 添加缺少的样式组件定义
+const TimeLabel = styled.div`
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+`;
+
+const KeywordTag = styled.div`
+  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  margin-bottom: 10px;
+  text-align: center;
+`;
+
+const Button = styled(AntdButton)`
+  margin: 0 8px;
+  height: auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .anticon {
+    margin-right: 6px;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  gap: 10px;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    width: 100%;
+    
+    ${Button} {
+      margin: 5px 0;
+      width: 100%;
+    }
+  }
+`;
+
+const InterpretationText = styled.p`
+  line-height: 1.7;
+  color: #e0e0e0;
+  font-size: 1.05rem;
+`;
+
 interface TarotResultProps {
   cards: TarotCardResult[];
   onBack: () => void;
@@ -397,7 +472,46 @@ interface TarotResultProps {
 }
 
 const TarotResult: React.FC<TarotResultProps> = ({ cards, onBack, onShare }) => {
-  // 生成各个方面的解读
+  const pastCard = cards[0];
+  const presentCard = cards[1];
+  const futureCard = cards[2];
+  
+  // 复制解读文本
+  const copyInterpretation = () => {
+    const text = generateTextToCopy();
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        message.success('解读已复制到剪贴板');
+      })
+      .catch(err => {
+        message.error('复制失败，请手动复制');
+        console.error('复制失败:', err);
+      });
+  };
+
+  // 生成用于复制的文本
+  const generateTextToCopy = () => {
+    return `🔮 我的塔罗牌占卜结果 🔮
+
+【过去】${pastCard.name}${pastCard.isReversed ? '（逆位）' : ''}
+${pastCard.isReversed ? pastCard.reversedMeaning : pastCard.meaning}
+
+【现在】${presentCard.name}${presentCard.isReversed ? '（逆位）' : ''}
+${presentCard.isReversed ? presentCard.reversedMeaning : presentCard.meaning}
+
+【未来】${futureCard.name}${futureCard.isReversed ? '（逆位）' : ''}
+${futureCard.isReversed ? futureCard.reversedMeaning : futureCard.meaning}
+
+🌟 综合解读:
+${generateDetailedInterpretation()}
+
+✨ 总结建议:
+${generateSummary()}
+
+来自命运预言网站的塔罗牌占卜。`;
+  };
+
+  // 生成详细解读
   const generateDetailedInterpretation = () => {
     const interpretations = {
       career: '',
@@ -424,7 +538,7 @@ const TarotResult: React.FC<TarotResultProps> = ({ cards, onBack, onShare }) => 
     return interpretations;
   };
 
-  // 生成总体建议
+  // 生成总结建议
   const generateSummary = () => {
     const pastCard = cards.find(card => card.position === '过去');
     const presentCard = cards.find(card => card.position === '现在');
@@ -445,119 +559,104 @@ const TarotResult: React.FC<TarotResultProps> = ({ cards, onBack, onShare }) => 
 建议您在这个时期保持内心的平静，相信自己的判断，同时也要适时寻求他人的建议和支持。机会总是青睐有准备的人，保持耐心和信心，您一定能够实现自己的目标。`;
   };
 
-  const interpretations = generateDetailedInterpretation();
-
-  const copyInterpretation = () => {
-    const pastCard = cards.find(card => card.position === '过去');
-    const presentCard = cards.find(card => card.position === '现在');
-    const futureCard = cards.find(card => card.position === '未来');
-
-    if (!pastCard || !presentCard || !futureCard) {
-      message.error('无法复制解读文本，卡片数据不完整');
-      return;
-    }
-
-    const textToCopy = `
-二次元占卜屋·JOJO塔罗牌占卜结果
-
-过去：${pastCard.name}${pastCard.isReversed ? '（逆位）' : ''}
-${pastCard.isReversed ? pastCard.reversedMeaning : pastCard.meaning}
-
-现在：${presentCard.name}${presentCard.isReversed ? '（逆位）' : ''}
-${presentCard.isReversed ? presentCard.reversedMeaning : presentCard.meaning}
-
-未来：${futureCard.name}${futureCard.isReversed ? '（逆位）' : ''}
-${futureCard.isReversed ? futureCard.reversedMeaning : futureCard.meaning}
-
-塔罗指引：
-${generateSummary()}
-    `;
-
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        message.success('解读文本已复制到剪贴板');
-      })
-      .catch(() => {
-        message.error('复制失败，请手动复制');
-      });
-  };
-
   return (
-    <Container>
-      <Title>塔罗牌解读</Title>
-
-      <ResultGrid>
-        {cards.map((card, index) => (
-          <CardContainer key={index}>
-            <Card isReversed={card.isReversed}>
-              <CardImage 
-                src={card.image} 
-                alt={card.name}
-                isReversed={card.isReversed}
-              />
-            </Card>
-            <CardName>
-              {card.name} ({card.position})
-              <br />
-              {card.isReversed ? '(逆位)' : '(正位)'}
-            </CardName>
-          </CardContainer>
-        ))}
-      </ResultGrid>
-
-      {cards.map((card, index) => (
-        <ResultCard key={index}>
-          <SectionTitle>{card.position}: {card.name} {card.isReversed ? '(逆位)' : '(正位)'}</SectionTitle>
-          <CardDescription>
-            {card.isReversed 
-              ? (card.reversedMeaning || `${card.name}逆位表示你可能面临一些挑战，需要重新审视自己的处境。`) 
-              : (card.meaning || `${card.name}牌代表了改变和转机，这可能影响你的决策和行动。`)}
-          </CardDescription>
+    <PageBackground>
+      <Container>
+        <Title>塔罗牌解读结果</Title>
+        
+        <ResultCard>
+          <CardSection>
+            <CardContainer>
+              <TimeLabel>过去</TimeLabel>
+              <Card isReversed={pastCard.isReversed}>
+                <CardImage 
+                  src={pastCard.image}
+                  alt={pastCard.name}
+                  isReversed={pastCard.isReversed}
+                />
+              </Card>
+              <CardInfo>
+                <CardName>{pastCard.name}{pastCard.isReversed ? ' (逆位)' : ''}</CardName>
+                <KeywordTag>
+                  {pastCard.keywords || "命运的指引"}
+                </KeywordTag>
+                <CardDescription>
+                  {pastCard.isReversed ? pastCard.reversedMeaning : pastCard.meaning}
+                </CardDescription>
+              </CardInfo>
+            </CardContainer>
+            
+            <CardContainer>
+              <TimeLabel>现在</TimeLabel>
+              <Card isReversed={presentCard.isReversed}>
+                <CardImage 
+                  src={presentCard.image}
+                  alt={presentCard.name}
+                  isReversed={presentCard.isReversed}
+                />
+              </Card>
+              <CardInfo>
+                <CardName>{presentCard.name}{presentCard.isReversed ? ' (逆位)' : ''}</CardName>
+                <KeywordTag>
+                  {presentCard.keywords || "当下的启示"}
+                </KeywordTag>
+                <CardDescription>
+                  {presentCard.isReversed ? presentCard.reversedMeaning : presentCard.meaning}
+                </CardDescription>
+              </CardInfo>
+            </CardContainer>
+            
+            <CardContainer>
+              <TimeLabel>未来</TimeLabel>
+              <Card isReversed={futureCard.isReversed}>
+                <CardImage 
+                  src={futureCard.image}
+                  alt={futureCard.name}
+                  isReversed={futureCard.isReversed}
+                />
+              </Card>
+              <CardInfo>
+                <CardName>{futureCard.name}{futureCard.isReversed ? ' (逆位)' : ''}</CardName>
+                <KeywordTag>
+                  {futureCard.keywords || "未来的预示"}
+                </KeywordTag>
+                <CardDescription>
+                  {futureCard.isReversed ? futureCard.reversedMeaning : futureCard.meaning}
+                </CardDescription>
+              </CardInfo>
+            </CardContainer>
+          </CardSection>
         </ResultCard>
-      ))}
-
-      <InterpretationSection>
-        <DetailSection>
-          <SectionTitle>事业发展</SectionTitle>
-          <Interpretation>{interpretations.career || '根据塔罗牌的指引，你的事业正在经历一个转变期。保持开放的心态，寻找新的机会和可能性。'}</Interpretation>
-
-          <SectionTitle>感情状况</SectionTitle>
-          <Interpretation>{interpretations.love || '在感情方面，塔罗牌显示你需要更多的自我认知和沟通。无论是否有伴侣，关键是保持真实和坦诚。'}</Interpretation>
-
-          <SectionTitle>心理指引</SectionTitle>
-          <Interpretation>{interpretations.mental || '在心理层面，塔罗牌建议你寻找内心的平静和平衡。通过冥想、反思或艺术创作来探索你的情感世界。'}</Interpretation>
-        </DetailSection>
-
-        <SummarySection>
-          <SectionTitle>塔罗指引</SectionTitle>
-          <Interpretation>
-            {generateSummary() || '塔罗牌的整体指引是关注当下，接受变化，并相信自己内心的指引。每张牌都代表你生命旅程中的一个阶段或面向，通过理解它们，你可以更好地掌握自己的命运。'}
-          </Interpretation>
-        </SummarySection>
-      </InterpretationSection>
-
-      <ButtonContainer>
-        <StyledButton 
-          onClick={onBack}
-        >
-          <ArrowLeftOutlined />
-          返回首页
-        </StyledButton>
-        <StyledButton 
-          onClick={copyInterpretation}
-        >
-          <CopyOutlined />
-          复制解读
-        </StyledButton>
-        <StyledButton 
-          onClick={onShare}
-          style={{ background: 'linear-gradient(45deg, #ff6b6b, #ff8e8e)' }}
-        >
-          <ShareAltOutlined />
-          分享结果
-        </StyledButton>
-      </ButtonContainer>
-    </Container>
+        
+        <InterpretationSection>
+          <DetailSection>
+            <SectionTitle>详细解读</SectionTitle>
+            <InterpretationText>
+              {generateDetailedInterpretation()}
+            </InterpretationText>
+          </DetailSection>
+          
+          <SummarySection>
+            <SectionTitle>总结建议</SectionTitle>
+            <InterpretationText>
+              {generateSummary()}
+            </InterpretationText>
+          </SummarySection>
+        </InterpretationSection>
+        
+        <ButtonGroup>
+          <Button onClick={onBack}>
+            <ArrowLeftOutlined /> 重新占卜
+          </Button>
+          <Button onClick={copyInterpretation}>
+            <CopyOutlined /> 复制解读
+          </Button>
+          <Button type="primary" onClick={onShare}>
+            <ShareAltOutlined /> 分享结果
+          </Button>
+        </ButtonGroup>
+      </Container>
+    </PageBackground>
   );
 };
 
