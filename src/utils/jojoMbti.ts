@@ -35,7 +35,24 @@ export const characterImageMap: Record<string, string> = {
   'FF': 'Foo_Fighters',
   '安波里欧': 'Emporio_Promotional',
   '东方定助': 'Josuke_8',
-  '乔迪欧': 'Jodio'
+  '乔迪欧': 'Jodio',
+  '山吹常秀': 'Yasuho_first_outfit',
+  '东方常敏': 'JoshuEoH',
+  '林果·罗德岛': 'Ringo',
+  '特里休·乌纳': 'Trish_Una',
+  '莱昂·阿帕基奥': 'Abbacchio',
+  '虹村亿泰': 'Okuyasu',
+  '广濑康一': 'Koichi Hirose',
+  '伊奇': 'Iggy',
+  '波尔那雷夫': 'Boneraff',
+  '阿布德尔': 'Avdol',
+  '老约瑟夫': 'Old_Joseph_Joestar',
+  '艾西迪西': 'Esidisi',
+  '施特罗海姆': '400px-Stroheim_EoH',
+  '卡兹': 'Kars_render.jpg.webp',
+  '丽莎丽莎': 'LisaLisa0',
+  '威尔·A·齐贝林': 'Zeppeli',
+  '艾莉娜': 'Erina'
 };
 
 // MBTI测试问题
@@ -475,6 +492,142 @@ export const jojoCharacters: JojoCharacter[] = [
     stand: 'November Rain',
     ability: '引导雨水攻击',
     part: 9
+  },
+  {
+    name: '山吹常秀',
+    mbtiType: 'ENFJ',
+    description: '温柔善良但坚定，直觉敏锐，关心他人的需求',
+    stand: 'Paisley Park',
+    ability: '控制电子设备和导航',
+    part: 8
+  },
+  {
+    name: '东方常敏',
+    mbtiType: 'ISTJ',
+    description: '沉着冷静，遵守规则，有责任感的土地测量师',
+    stand: 'Fun Fun Fun',
+    ability: '控制被伤痕标记的人',
+    part: 8
+  },
+  {
+    name: '林果·罗德岛',
+    mbtiType: 'INTJ',
+    description: '冷静沉着的枪手，崇尚决斗的哲学，战略思维强',
+    stand: 'Mandom',
+    ability: '将时间倒转6秒',
+    part: 7
+  },
+  {
+    name: '特里休·乌纳',
+    mbtiType: 'ISFP',
+    description: '独立坚强的少女，敏感且艺术感强，追求自我认同',
+    stand: 'Spice Girl',
+    ability: '使物体柔软有弹性',
+    part: 5
+  },
+  {
+    name: '莱昂·阿帕基奥',
+    mbtiType: 'ISTJ',
+    description: '严肃认真的前警察，重视忠诚和正义，追查真相不惜一切',
+    stand: 'Moody Blues',
+    ability: '重现过去的事件',
+    part: 5
+  },
+  {
+    name: '虹村亿泰',
+    mbtiType: 'ESFP',
+    description: '直率热情，重视友情，虽鲁莽但忠诚可靠',
+    stand: 'The Hand',
+    ability: '消除空间',
+    part: 4
+  },
+  {
+    name: '广濑康一',
+    mbtiType: 'ISFJ',
+    description: '谦逊忠诚的学生，随着历练变得更加勇敢，富有同情心',
+    stand: 'Echoes',
+    ability: '声音效果实体化',
+    part: 4
+  },
+  {
+    name: '伊奇',
+    mbtiType: 'ISTP',
+    description: '独立倔强的小狗，高傲自信，善于应变',
+    stand: 'The Fool',
+    ability: '操控沙子',
+    part: 3
+  },
+  {
+    name: '波尔那雷夫',
+    mbtiType: 'ESFP',
+    description: '热情勇敢的法国剑士，重视友情，为妹妹复仇不惜一切',
+    stand: '银色战车',
+    ability: '高速精准的剑术',
+    part: 3
+  },
+  {
+    name: '阿布德尔',
+    mbtiType: 'ESTJ',
+    description: '沉稳可靠的占卜师，富有责任感，重视秩序和传统',
+    stand: 'Magician\'s Red',
+    ability: '操控火焰',
+    part: 3
+  },
+  {
+    name: '老约瑟夫',
+    mbtiType: 'ESTP',
+    description: '年长但依然机智灵活，幽默风趣，擅长计谋',
+    stand: '隐者紫',
+    ability: '念写和远距离摄像',
+    part: 3
+  },
+  {
+    name: '艾西迪西',
+    mbtiType: 'ENTJ',
+    description: '高傲自信的战士，擅长战术分析，情绪偶尔激动',
+    stand: '无',
+    ability: '热能操控和血液沸腾',
+    part: 2
+  },
+  {
+    name: '施特罗海姆',
+    mbtiType: 'ENTJ',
+    description: '德国科技精英，自信而傲慢，最终为正义献身',
+    stand: '无',
+    ability: '机械改造身体',
+    part: 2
+  },
+  {
+    name: '卡兹',
+    mbtiType: 'INTJ',
+    description: '完美主义的究极生命体，追求力量与进化，傲慢自大',
+    stand: '无',
+    ability: '究极生命形态和光之模式',
+    part: 2
+  },
+  {
+    name: '丽莎丽莎',
+    mbtiType: 'ENFJ',
+    description: '温柔坚定的波纹教师，引导他人成长，充满魅力',
+    stand: '无',
+    ability: '波纹',
+    part: 2
+  },
+  {
+    name: '威尔·A·齐贝林',
+    mbtiType: 'ENFJ',
+    description: '优雅绅士的波纹战士，为理想献身，引导乔纳森成长',
+    stand: '无',
+    ability: '波纹',
+    part: 1
+  },
+  {
+    name: '艾莉娜',
+    mbtiType: 'ISFJ',
+    description: '温柔忠诚的贵族女性，坚强而有韧性，深爱乔纳森',
+    stand: '无',
+    ability: '坚强的生存意志',
+    part: 1
   }
 ];
 
