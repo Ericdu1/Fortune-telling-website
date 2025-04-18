@@ -507,6 +507,7 @@ const JojoMbtiPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   
   const shareCardRef = useRef<HTMLDivElement>(null);
+  const shareContentRef = useRef<HTMLDivElement>(null);
 
   // 检查是否有历史记录
   useEffect(() => {
@@ -586,14 +587,14 @@ const JojoMbtiPage: React.FC = () => {
     try {
       setIsSaving(true);
       
-      if (!shareCardRef.current) {
+      if (!shareContentRef.current) {
         setIsSaving(false);
         message.error('无法获取分享内容');
         return;
       }
 
       // 使用html2canvas将DOM元素转为图片
-      const canvas = await html2canvas(shareCardRef.current, {
+      const canvas = await html2canvas(shareContentRef.current, {
         backgroundColor: '#1a1a2e',
         useCORS: true,
         logging: false,
@@ -642,14 +643,14 @@ const JojoMbtiPage: React.FC = () => {
     try {
       setIsSaving(true);
       
-      if (!shareCardRef.current) {
+      if (!shareContentRef.current) {
         setIsSaving(false);
         message.error('无法获取分享内容');
         return;
       }
 
       // 使用html2canvas将DOM元素转为图片
-      const canvas = await html2canvas(shareCardRef.current, {
+      const canvas = await html2canvas(shareContentRef.current, {
         backgroundColor: '#1a1a2e',
         useCORS: true,
         logging: false,
@@ -1023,115 +1024,118 @@ const JojoMbtiPage: React.FC = () => {
         <ShareCardContent ref={shareCardRef}>
           <CloseButton onClick={handleCloseShareCard}>×</CloseButton>
           
-          <ShareCardHeader>
-            <h2 style={{ color: '#ffd700', marginBottom: '8px', fontSize: '24px' }}>JOJO的奇妙冒险</h2>
-            <div style={{ color: '#e0e0e0', fontSize: '18px' }}>MBTI 人格测试结果</div>
-          </ShareCardHeader>
-          
-          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '0.5rem', borderRadius: '8px', marginBottom: '1rem' }}>
-              <h3 style={{ color: '#ffd700', margin: '0', fontSize: '28px' }}>{mbtiType}</h3>
-              <div style={{ color: '#b8b8b8' }}>{mbtiType.split('').join('-')}</div>
-            </div>
+          {/* 使用单独的div包裹要截图的内容，并添加ref */}
+          <div ref={shareContentRef}>
+            <ShareCardHeader>
+              <h2 style={{ color: '#ffd700', marginBottom: '8px', fontSize: '24px' }}>JOJO的奇妙冒险</h2>
+              <div style={{ color: '#e0e0e0', fontSize: '18px' }}>MBTI 人格测试结果</div>
+            </ShareCardHeader>
             
-            <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</h4>
-            <h3 style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{character.name}</h3>
-            
-            {/* 改进角色图片显示 */}
-            <div style={{ 
-              width: '120px', 
-              height: '120px', 
-              margin: '0 auto 1rem', 
-              borderRadius: '8px', 
-              overflow: 'hidden',
-              background: 'rgba(0, 0, 0, 0.2)'
-            }}>
-              <img 
-                src={characterImagePath} 
-                alt={character.name} 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  objectFit: 'cover', 
-                  objectPosition: character.name === '乔纳森·乔斯达' || character.name === '布加拉提' ? 'center 0%' : 'center 10%' 
-                }} 
-              />
-            </div>
-            
-            <div style={{ background: 'rgba(0, 0, 0, 0.2)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'left' }}>
-              <div style={{ color: '#ffd700', marginBottom: '0.3rem' }}>替身：「{character.stand || '尚未觉醒'}」</div>
-              <div style={{ color: '#b8b8b8', marginBottom: '0.3rem' }}>能力：{character.ability}</div>
-              <div style={{ color: 'white', fontSize: '12px' }}>{character.description}</div>
-              <div style={{ marginTop: '0.5rem' }}>
-                <span style={{ background: '#6b6bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>第{character.part}部</span>
+            <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '0.5rem', borderRadius: '8px', marginBottom: '1rem' }}>
+                <h3 style={{ color: '#ffd700', margin: '0', fontSize: '28px' }}>{mbtiType}</h3>
+                <div style={{ color: '#b8b8b8' }}>{mbtiType.split('').join('-')}</div>
+              </div>
+              
+              <h4 style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</h4>
+              <h3 style={{ color: '#ffd700', marginBottom: '0.5rem' }}>{character.name}</h3>
+              
+              {/* 改进角色图片显示 */}
+              <div style={{ 
+                width: '120px', 
+                height: '120px', 
+                margin: '0 auto 1rem', 
+                borderRadius: '8px', 
+                overflow: 'hidden',
+                background: 'rgba(0, 0, 0, 0.2)'
+              }}>
+                <img 
+                  src={characterImagePath} 
+                  alt={character.name} 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover', 
+                    objectPosition: character.name === '乔纳森·乔斯达' || character.name === '布加拉提' ? 'center 0%' : 'center 10%' 
+                  }} 
+                />
+              </div>
+              
+              <div style={{ background: 'rgba(0, 0, 0, 0.2)', padding: '0.8rem', borderRadius: '8px', marginBottom: '1rem', textAlign: 'left' }}>
+                <div style={{ color: '#ffd700', marginBottom: '0.3rem' }}>替身：「{character.stand || '尚未觉醒'}」</div>
+                <div style={{ color: '#b8b8b8', marginBottom: '0.3rem' }}>能力：{character.ability}</div>
+                <div style={{ color: 'white', fontSize: '12px' }}>{character.description}</div>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <span style={{ background: '#6b6bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>第{character.part}部</span>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div style={{ fontSize: '12px', color: 'white', marginBottom: '1rem', textAlign: 'left' }}>
-            {description.length > 150 ? description.substring(0, 150) + '...' : description}
-          </div>
-          
-          <div style={{ marginBottom: '1rem' }}>
-            <div style={{ fontSize: '14px', color: 'white', marginBottom: '0.5rem', textAlign: 'left' }}>MBTI 维度:</div>
             
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem' }}>
-              <span style={{ color: '#b8b8b8' }}>内向 (I): {dimensionScores.I}</span>
-              <span style={{ color: '#b8b8b8' }}>外向 (E): {dimensionScores.E}</span>
+            <div style={{ fontSize: '12px', color: 'white', marginBottom: '1rem', textAlign: 'left' }}>
+              {description.length > 150 ? description.substring(0, 150) + '...' : description}
             </div>
-            <Progress 
-              percent={Math.round((dimensionScores.E / (dimensionScores.E + dimensionScores.I)) * 100)} 
-              strokeColor="#6b6bff"
-              size="small"
-            />
             
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
-              <span style={{ color: '#b8b8b8' }}>实感 (S): {dimensionScores.S}</span>
-              <span style={{ color: '#b8b8b8' }}>直觉 (N): {dimensionScores.N}</span>
-            </div>
-            <Progress 
-              percent={Math.round((dimensionScores.N / (dimensionScores.N + dimensionScores.S)) * 100)} 
-              strokeColor="#6b6bff"
-              size="small"
-            />
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
-              <span style={{ color: '#b8b8b8' }}>思考 (T): {dimensionScores.T}</span>
-              <span style={{ color: '#b8b8b8' }}>情感 (F): {dimensionScores.F}</span>
-            </div>
-            <Progress 
-              percent={Math.round((dimensionScores.F / (dimensionScores.F + dimensionScores.T)) * 100)} 
-              strokeColor="#6b6bff"
-              size="small"
-            />
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
-              <span style={{ color: '#b8b8b8' }}>判断 (J): {dimensionScores.J}</span>
-              <span style={{ color: '#b8b8b8' }}>认知 (P): {dimensionScores.P}</span>
-            </div>
-            <Progress 
-              percent={Math.round((dimensionScores.P / (dimensionScores.P + dimensionScores.J)) * 100)} 
-              strokeColor="#6b6bff"
-              size="small"
-            />
-          </div>
-          
-          <ShareCardFooter>
-            <QRCodeContainer>
-              <QRCodeSVG 
-                value={window.location.href}
-                size={60}
-                level="H"
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ fontSize: '14px', color: 'white', marginBottom: '0.5rem', textAlign: 'left' }}>MBTI 维度:</div>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem' }}>
+                <span style={{ color: '#b8b8b8' }}>内向 (I): {dimensionScores.I}</span>
+                <span style={{ color: '#b8b8b8' }}>外向 (E): {dimensionScores.E}</span>
+              </div>
+              <Progress 
+                percent={Math.round((dimensionScores.E / (dimensionScores.E + dimensionScores.I)) * 100)} 
+                strokeColor="#6b6bff"
+                size="small"
               />
-            </QRCodeContainer>
-            <Watermark>
-              二次元占卜屋 · JOJO MBTI测试
-              <br />
-              扫描二维码体验你的测试
-            </Watermark>
-          </ShareCardFooter>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
+                <span style={{ color: '#b8b8b8' }}>实感 (S): {dimensionScores.S}</span>
+                <span style={{ color: '#b8b8b8' }}>直觉 (N): {dimensionScores.N}</span>
+              </div>
+              <Progress 
+                percent={Math.round((dimensionScores.N / (dimensionScores.N + dimensionScores.S)) * 100)} 
+                strokeColor="#6b6bff"
+                size="small"
+              />
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
+                <span style={{ color: '#b8b8b8' }}>思考 (T): {dimensionScores.T}</span>
+                <span style={{ color: '#b8b8b8' }}>情感 (F): {dimensionScores.F}</span>
+              </div>
+              <Progress 
+                percent={Math.round((dimensionScores.F / (dimensionScores.F + dimensionScores.T)) * 100)} 
+                strokeColor="#6b6bff"
+                size="small"
+              />
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '0.3rem', marginTop: '0.5rem' }}>
+                <span style={{ color: '#b8b8b8' }}>判断 (J): {dimensionScores.J}</span>
+                <span style={{ color: '#b8b8b8' }}>认知 (P): {dimensionScores.P}</span>
+              </div>
+              <Progress 
+                percent={Math.round((dimensionScores.P / (dimensionScores.P + dimensionScores.J)) * 100)} 
+                strokeColor="#6b6bff"
+                size="small"
+              />
+            </div>
+            
+            <ShareCardFooter>
+              <QRCodeContainer>
+                <QRCodeSVG 
+                  value={window.location.href}
+                  size={60}
+                  level="H"
+                />
+              </QRCodeContainer>
+              <Watermark>
+                二次元占卜屋 · JOJO MBTI测试
+                <br />
+                扫描二维码体验你的测试
+              </Watermark>
+            </ShareCardFooter>
+          </div>
           
-          {/* 将操作按钮移动到卡片内部底部 */}
+          {/* 将操作按钮放在截图内容之外 */}
           <ShareActions>
             <StyledButton 
               icon={<DownloadOutlined />} 
