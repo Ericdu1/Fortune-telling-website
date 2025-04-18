@@ -304,7 +304,7 @@ const TarotReading: React.FC<TarotReadingProps> = ({ displayCards, onComplete })
                       )}
                       <CardBack>
                         <img 
-                          src={`./images/tarot/Tarot_Card_Back.png`} 
+                          src="/images/tarot/Tarot_Card_Back.png" 
                           alt="Card Back" 
                           style={{
                             width: '100%',

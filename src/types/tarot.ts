@@ -8,6 +8,7 @@ export interface TarotCard {
   interpretation: string;
   reversedMeaning: string;
   reversedInterpretation: string;
+  keywords?: string;
   position?: string;
   isReversed?: boolean;
 }

@@ -535,7 +535,14 @@ ${generateSummary()}
       }
     });
 
-    return interpretations;
+    // 返回字符串化的解读内容
+    return `
+      事业发展: ${interpretations.career}
+      
+      感情状况: ${interpretations.love}
+      
+      心理指引: ${interpretations.mental}
+    `;
   };
 
   // 生成总结建议
