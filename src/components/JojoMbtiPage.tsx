@@ -271,34 +271,15 @@ const PageWithCharacterBackground = styled.div`
   background: transparent; 
 `;
 
-// 结果内容卡片 - 为PC端优化 - 调整透明度和位置
-const ResultContentCard = styled.div`
-  background: rgba(30, 0, 45, 0.75); /* 稍微降低不透明度 */
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 2rem;
-  width: 46%; /* 略微缩小宽度 */
-  max-width: 560px;
-  margin-left: 5%; /* 增加左侧边距，让整体更居中 */
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  position: relative;
-  z-index: 1;
-  align-self: center;
-  
-  @media (max-width: 768px) {
-    display: none; // 移动端不显示此卡片
-  }
-`;
-
 // 修改PC端角色图片容器样式
 const PCCharacterContainer = styled.div`
   position: absolute;
-  right: 5%; /* 右侧边距 */
+  right: 0; /* 修改右侧边距为0 */
   top: 50%;
   transform: translateY(-50%);
   height: 85vh; /* 增加高度，确保足够显示高角色 */
-  width: 40%; /* 固定宽度比例 */
-  max-width: 500px;
+  width: 60%; /* 增加宽度从40%到60% */
+  max-width: 800px; /* 增加最大宽度从500px到800px */
   z-index: 0;
   display: flex;
   align-items: center;
@@ -314,8 +295,8 @@ const PCCharacterContainer = styled.div`
 const PCCharacterImg = styled.img`
   width: auto;
   height: auto;
-  max-height: 78vh; /* 最大高度限制 */
-  max-width: 95%; /* 最大宽度限制 */
+  max-height: 80vh; /* 略微增加最大高度 */
+  max-width: 90%; /* 稍微减小最大宽度比例，确保不会超出容器 */
   object-fit: contain;
   object-position: center;
   opacity: 0.95;
@@ -343,6 +324,25 @@ const CharacterImg = styled.img`
 const MobileResultCard = styled(CardContainer)`
   @media (min-width: 769px) {
     display: none; // 在PC端不显示
+  }
+`;
+
+// 修改PC端结果内容卡片位置，适应角色图片容器变宽
+const ResultContentCard = styled.div`
+  background: rgba(30, 0, 45, 0.75); /* 稍微降低不透明度 */
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  width: 40%; /* 略微缩小宽度 */
+  max-width: 500px;
+  margin-left: 5%; /* 增加左侧边距，让整体更居中 */
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  
+  @media (max-width: 768px) {
+    display: none; // 移动端不显示此卡片
   }
 `;
 
