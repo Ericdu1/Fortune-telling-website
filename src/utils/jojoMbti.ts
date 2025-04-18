@@ -5,7 +5,7 @@ export const characterImageMap: Record<string, string> = {
   '乔纳森·乔斯达': 'Jonathan_Joestar',
   '迪奥·布兰度': 'Dio',
   '约瑟夫·乔斯达': 'Joseph_Joestar',
-  '西撒·齐贝林': 'Caesar_Zeppeli',
+  '西撒·齐贝林': 'Ceaser_Zeppeli',
   '空条承太郎': 'Jotaro_Kujo',
   '花京院典明': 'Noriaki_Kakyoin',
   '东方仗助': 'Josuke',
@@ -478,6 +478,10 @@ export const jojoCharacters: JojoCharacter[] = [
   }
 ];
 
+// 添加本地存储键名常量
+const JOJO_MBTI_RESULTS = 'jojo-mbti-results';
+const JOJO_RECENT_CHARACTERS = 'jojo-recent-characters';
+
 // 计算MBTI测试结果
 export function calculateMBTIResult(answers: MBTIDimension[]): MBTITestResult {
   // 统计各维度得分
@@ -517,11 +521,33 @@ export function calculateMBTIResult(answers: MBTIDimension[]): MBTITestResult {
 
 // 查找匹配的JOJO角色
 function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
+  // 获取最近匹配的角色以避免重复
+  const recentCharacters = getRecentCharacters();
+  
   // 尝试找完全匹配的角色
   const exactMatches = jojoCharacters.filter(char => char.mbtiType === mbtiType);
+  
   if (exactMatches.length > 0) {
-    // 如果有多个匹配，随机选择一个
-    return exactMatches[Math.floor(Math.random() * exactMatches.length)];
+    // 过滤出未在最近显示过的角色
+    const freshMatches = exactMatches.filter(char => 
+      !recentCharacters.some(recent => 
+        recent.mbtiType === mbtiType && recent.characterName === char.name
+      )
+    );
+    
+    // 如果有未显示过的角色，随机选择一个
+    if (freshMatches.length > 0) {
+      const selected = freshMatches[Math.floor(Math.random() * freshMatches.length)];
+      // 记录这个角色已被选择
+      addRecentCharacter(mbtiType, selected.name);
+      return selected;
+    }
+    
+    // 如果所有角色都已显示过，或者只有一个角色，随机选择一个
+    const selected = exactMatches[Math.floor(Math.random() * exactMatches.length)];
+    // 记录这个角色已被选择
+    addRecentCharacter(mbtiType, selected.name);
+    return selected;
   }
   
   // 如果没有完全匹配，找最接近的（至少3个字母相同）
@@ -534,7 +560,23 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
   });
   
   if (closeMatches.length > 0) {
-    return closeMatches[Math.floor(Math.random() * closeMatches.length)];
+    // 过滤出未在最近显示过的角色
+    const freshMatches = closeMatches.filter(char => 
+      !recentCharacters.some(recent => 
+        recent.mbtiType === mbtiType && recent.characterName === char.name
+      )
+    );
+    
+    // 如果有未显示过的角色，随机选择一个
+    if (freshMatches.length > 0) {
+      const selected = freshMatches[Math.floor(Math.random() * freshMatches.length)];
+      addRecentCharacter(mbtiType, selected.name);
+      return selected;
+    }
+    
+    const selected = closeMatches[Math.floor(Math.random() * closeMatches.length)];
+    addRecentCharacter(mbtiType, selected.name);
+    return selected;
   }
   
   // 如果没有接近的匹配，退化为找至少2个字母相同的
@@ -547,11 +589,87 @@ function findMatchingCharacter(mbtiType: MBTIType): JojoCharacter {
   });
   
   if (looseMatches.length > 0) {
-    return looseMatches[Math.floor(Math.random() * looseMatches.length)];
+    // 过滤出未在最近显示过的角色
+    const freshMatches = looseMatches.filter(char => 
+      !recentCharacters.some(recent => 
+        recent.mbtiType === mbtiType && recent.characterName === char.name
+      )
+    );
+    
+    if (freshMatches.length > 0) {
+      const selected = freshMatches[Math.floor(Math.random() * freshMatches.length)];
+      addRecentCharacter(mbtiType, selected.name);
+      return selected;
+    }
+    
+    const selected = looseMatches[Math.floor(Math.random() * looseMatches.length)];
+    addRecentCharacter(mbtiType, selected.name);
+    return selected;
   }
   
   // 最后的情况，随机返回一个角色
-  return jojoCharacters[Math.floor(Math.random() * jojoCharacters.length)];
+  const selected = jojoCharacters[Math.floor(Math.random() * jojoCharacters.length)];
+  addRecentCharacter(mbtiType, selected.name);
+  return selected;
+}
+
+// 获取最近显示的角色列表
+interface RecentCharacter {
+  mbtiType: MBTIType;
+  characterName: string;
+  timestamp: number;
+}
+
+// 获取最近显示的角色
+function getRecentCharacters(): RecentCharacter[] {
+  try {
+    const stored = localStorage.getItem(JOJO_RECENT_CHARACTERS);
+    const characters = stored ? JSON.parse(stored) as RecentCharacter[] : [];
+    
+    // 只保留最近7天内的记录
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    return characters.filter(char => char.timestamp > sevenDaysAgo);
+  } catch (error) {
+    console.error('获取最近角色记录失败:', error);
+    return [];
+  }
+}
+
+// 添加一个角色到最近显示列表
+function addRecentCharacter(mbtiType: MBTIType, characterName: string): void {
+  try {
+    const characters = getRecentCharacters();
+    
+    // 添加新记录
+    characters.push({
+      mbtiType,
+      characterName,
+      timestamp: Date.now()
+    });
+    
+    // 对于每个MBTI类型，只保留最近的3个记录
+    const typeCharacters: { [key: string]: RecentCharacter[] } = {};
+    
+    // 按类型分组
+    characters.forEach(char => {
+      if (!typeCharacters[char.mbtiType]) {
+        typeCharacters[char.mbtiType] = [];
+      }
+      typeCharacters[char.mbtiType].push(char);
+    });
+    
+    // 对每个类型，按时间戳排序并只保留最近3个
+    const filteredCharacters: RecentCharacter[] = [];
+    Object.keys(typeCharacters).forEach(type => {
+      const sorted = typeCharacters[type].sort((a, b) => b.timestamp - a.timestamp);
+      filteredCharacters.push(...sorted.slice(0, 3));
+    });
+    
+    // 保存更新后的列表
+    localStorage.setItem(JOJO_RECENT_CHARACTERS, JSON.stringify(filteredCharacters));
+  } catch (error) {
+    console.error('保存最近角色记录失败:', error);
+  }
 }
 
 // 生成MBTI描述
@@ -592,7 +710,7 @@ export function saveTestResult(result: MBTITestResult): void {
       ...result,
       timestamp: new Date().toISOString()
     });
-    localStorage.setItem('jojo-mbti-results', JSON.stringify(results));
+    localStorage.setItem(JOJO_MBTI_RESULTS, JSON.stringify(results));
   } catch (error) {
     console.error('保存测试结果失败:', error);
   }
@@ -601,7 +719,7 @@ export function saveTestResult(result: MBTITestResult): void {
 // 获取存储的测试结果
 export function getStoredResults(): (MBTITestResult & { timestamp: string })[] {
   try {
-    const stored = localStorage.getItem('jojo-mbti-results');
+    const stored = localStorage.getItem(JOJO_MBTI_RESULTS);
     return stored ? JSON.parse(stored) : [];
   } catch (error) {
     console.error('获取测试结果失败:', error);
@@ -612,7 +730,7 @@ export function getStoredResults(): (MBTITestResult & { timestamp: string })[] {
 // 清除所有测试结果
 export function clearStoredResults(): void {
   try {
-    localStorage.removeItem('jojo-mbti-results');
+    localStorage.removeItem(JOJO_MBTI_RESULTS);
   } catch (error) {
     console.error('清除测试结果失败:', error);
   }
