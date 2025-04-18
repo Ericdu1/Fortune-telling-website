@@ -970,7 +970,10 @@ const JojoMbtiPage: React.FC = () => {
     if (!result) return null;
     
     const { character, mbtiType, description, dimensionScores } = result;
-    const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
+    // 为威尔·A·齐贝林使用Will_Zeppeli图片，其他角色正常显示
+    let characterImagePath = character.name === '威尔·A·齐贝林' 
+      ? '/images/jojo/Will_Zeppeli.webp' 
+      : `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
     
     // PC端结果页面
     const renderPCResult = () => (
@@ -1082,6 +1085,18 @@ const JojoMbtiPage: React.FC = () => {
     const renderMobileResult = () => (
       <MobileResultCard>
         <ResultPageWrapper characterImage={characterImagePath}>
+          <MobileCharacterImage>
+            <CharacterImg 
+              src={
+                character && characterImageMap[character.name]
+                  ? `/images/jojo/${characterImageMap[character.name]}`
+                  : character.name === '威尔·A·齐贝林'
+                    ? '/images/jojo/Will_Zeppeli.webp'
+                    : '/images/jojo/default.webp'
+              }
+              alt={character.name || ''}
+            />
+          </MobileCharacterImage>
           <ResultLayout>
             {/* 左侧信息栏 */}
             <ResultLeftColumn>
@@ -1091,11 +1106,6 @@ const JojoMbtiPage: React.FC = () => {
                 <MbtiType level={2}>{mbtiType}</MbtiType>
                 <Text style={{ color: '#b8b8b8' }}>{mbtiType.split('').join('-')}</Text>
               </MbtiBox>
-              
-              {/* 添加单独的移动端角色图片显示 */}
-              <MobileCharacterImage>
-                <CharacterImg src={characterImagePath} alt={character.name} />
-              </MobileCharacterImage>
               
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
                 <Title level={4} style={{ color: 'white', marginBottom: '0.5rem' }}>你最像的JOJO角色是</Title>
@@ -1200,6 +1210,7 @@ const JojoMbtiPage: React.FC = () => {
     // 根据角色名判断使用哪个图片组件
     const isJonathan = character.name === '乔纳森·乔斯达';
     const isTamakiDamo = character.name === '田最环';
+    const isWillZeppeli = character.name === '威尔·A·齐贝林';
     
     return (
       <PageWithCharacterBackground>
@@ -1214,10 +1225,27 @@ const JojoMbtiPage: React.FC = () => {
               src={characterImagePath}
               alt={character.name}
             />
+          ) : isWillZeppeli ? (
+            <PCCharacterImg 
+              src="/images/jojo/Will_Zeppeli.webp" 
+              alt={character.name}
+              style={{ 
+                height: '75vh', 
+                objectFit: 'contain', 
+                opacity: '0.9',
+                filter: 'brightness(1.1) contrast(1.1)'
+              }}
+            />
           ) : (
             <PCCharacterImg 
-              src={characterImagePath} 
-              alt={character.name} 
+              src={
+                character && characterImageMap[character.name]
+                  ? `/images/jojo/${characterImageMap[character.name]}`
+                  : character.name === '威尔·A·齐贝林'
+                    ? '/images/jojo/Will_Zeppeli.webp'
+                    : '/images/jojo/default.webp'
+              }
+              alt={character.name || ''}
               onLoad={(e) => handleImageLoad(e, character.name)}
             />
           )}
@@ -1248,7 +1276,10 @@ const JojoMbtiPage: React.FC = () => {
     if (!result || !showShareCard) return null;
     
     const { character, mbtiType, description, dimensionScores } = result;
-    const characterImagePath = `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
+    // 为威尔·A·齐贝林使用Will_Zeppeli图片，其他角色正常显示
+    let characterImagePath = character.name === '威尔·A·齐贝林' 
+      ? '/images/jojo/Will_Zeppeli.webp' 
+      : `/images/jojo/${characterImageMap[character.name] || 'default'}.webp`;
     
     return (
       <ShareCardWrapper>
@@ -1274,8 +1305,14 @@ const JojoMbtiPage: React.FC = () => {
               {/* 使用新的CharacterImageContainer组件和ShareCharacterImage组件 */}
               <CharacterImageContainer>
                 <ShareCharacterImage 
-                  src={characterImagePath} 
-                  alt={character.name} 
+                  src={
+                    character && characterImageMap[character.name]
+                      ? `/images/jojo/${characterImageMap[character.name]}`
+                      : character.name === '威尔·A·齐贝林'
+                        ? '/images/jojo/Will_Zeppeli.webp'
+                        : '/images/jojo/default.webp'
+                  }
+                  alt={character.name || ''}
                 />
               </CharacterImageContainer>
               
