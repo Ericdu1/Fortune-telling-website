@@ -256,53 +256,18 @@ const BackgroundContainer = styled(motion.div)`
   }
 `;
 
-// 添加角色背景页面容器 - 简化版
+// 添加角色背景页面容器 - 超简化版
 const PageWithCharacterBackground = styled.div`
   position: relative;
   min-height: 100vh;
   width: 100%;
-`;
-
-// 角色图片容器 - 不可见边框
-const CharacterImageContainer = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 60%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  pointer-events: none;
-  z-index: -1;
-  
-  @media (max-width: 768px) {
-    display: none; 
-  }
-  
-  img {
-    max-height: 90vh;
-    max-width: 100%;
-    object-fit: contain;
-    opacity: 0.8; // 稍微透明一点
-  }
-`;
-
-// 紫色渐变遮罩
-const PurpleOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
   background: linear-gradient(
     to right,
     rgba(40, 0, 60, 0.9) 0%,
     rgba(40, 0, 60, 0.7) 40%,
     rgba(40, 0, 60, 0.5) 100%
   );
-  z-index: -2;
-  pointer-events: none;
 `;
 
 // 结果内容卡片 - 为PC端优化
@@ -317,9 +282,27 @@ const ResultContentCard = styled.div`
   border: 1px solid rgba(255, 215, 0, 0.3);
   position: relative;
   z-index: 1;
+  align-self: center;
   
   @media (max-width: 768px) {
     display: none; // 移动端不显示此卡片
+  }
+`;
+
+// 角色图片样式
+const CharacterImg = styled.img`
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 90vh;
+  max-width: 50%;
+  z-index: 0;
+  opacity: 0.9;
+  pointer-events: none;
+  
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
@@ -743,10 +726,8 @@ const JojoMbtiPage: React.FC = () => {
     
     return (
       <PageWithCharacterBackground>
-        <PurpleOverlay />
-        <CharacterImageContainer>
-          <img src={characterImagePath} alt={character.name} />
-        </CharacterImageContainer>
+        {/* 直接在这里放置角色图片，非常简单明了的方式 */}
+        <CharacterImg src={characterImagePath} alt={character.name} />
         {renderPCResult()}
         {renderMobileResult()}
       </PageWithCharacterBackground>
