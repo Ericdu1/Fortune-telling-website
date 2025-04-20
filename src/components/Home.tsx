@@ -507,22 +507,23 @@ const containerVariants = {
   visible: { opacity: 1, transition: { duration: 0.8 } }
 };
 
-// 新功能标记
+// 新功能标记 - 修改样式，使其更加醒目
 const NewBadge = styled.div`
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -12px;
+  right: -12px;
   background: linear-gradient(135deg, #ff3a3a, #ff7676);
   color: white;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  padding: 0.35rem 0.8rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(255, 58, 58, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 58, 58, 0.5);
   z-index: 10;
   transform: rotate(5deg);
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  border: 2px solid rgba(255, 255, 255, 0.8);
   
   &::after {
     content: '';
@@ -532,7 +533,7 @@ const NewBadge = styled.div`
     background: inherit;
     border-radius: inherit;
     z-index: -1;
-    animation: pulse 2s infinite;
+    animation: pulse 1.5s infinite;
     top: 0;
     left: 0;
     opacity: 0.8;
@@ -544,7 +545,7 @@ const NewBadge = styled.div`
       opacity: 0.5;
     }
     50% {
-      transform: scale(1.1);
+      transform: scale(1.2);
       opacity: 0.2;
     }
     100% {
@@ -650,12 +651,14 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               <CardDecoration />
             </FeatureCard>
             
-            {/* 每日运势区域 */}
+            {/* 每日运势区域 - 添加整体点击事件 */}
             <FortuneCard
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 }}
               whileHover={{ y: -5 }}
+              onClick={onStartDaily}  // 添加点击事件处理函数
+              style={{ cursor: 'pointer' }} // 添加鼠标指针样式
             >
               <FortuneTitle>
                 <div className="icon-container">
@@ -668,7 +671,6 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
                 <ActionButton 
                   type="primary" 
                   size="large" 
-                  onClick={onStartDaily}
                   icon={<RightOutlined />}
                 >
                   开始占卜
