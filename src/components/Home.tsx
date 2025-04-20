@@ -507,20 +507,20 @@ const containerVariants = {
   visible: { opacity: 1, transition: { duration: 0.8 } }
 };
 
-// 新功能标记 - 缎带式设计，更大更明显
+// 新功能标记 - 缎带式设计，位置调整确保文字可见
 const NewBadge = styled.div`
   position: absolute;
-  top: -10px;
-  right: -70px;
-  width: 200px;
+  top: 15px;  // 下移标签位置
+  right: -60px;
+  width: 160px;
   background: linear-gradient(135deg, #FF416C, #FF4B2B);
   color: white;
   font-size: 0.85rem;
   font-weight: 700;
-  padding: 0.6rem 0 0.6rem 0;
+  padding: 0.5rem 0;
   z-index: 10;
   letter-spacing: 1px;
-  transform: rotate(45deg);
+  transform: rotate(35deg);  // 调整角度使文字更容易完全显示
   box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
   text-transform: uppercase;
   text-align: center;
@@ -581,11 +581,11 @@ const NewBadge = styled.div`
   
   @keyframes pulse {
     0%, 100% {
-      transform: rotate(45deg) scale(1);
+      transform: rotate(35deg) scale(1);
       box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
     }
     50% {
-      transform: rotate(45deg) scale(1.05);
+      transform: rotate(35deg) scale(1.05);
       box-shadow: 0 5px 25px rgba(255, 65, 108, 0.6);
     }
   }
