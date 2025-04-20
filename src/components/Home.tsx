@@ -507,53 +507,86 @@ const containerVariants = {
   visible: { opacity: 1, transition: { duration: 0.8 } }
 };
 
-// 新功能标记 - 设计为缎带风格，位于卡片外部
+// 新功能标记 - 缎带式设计，更大更明显
 const NewBadge = styled.div`
   position: absolute;
-  top: -5px;
-  right: -42px;
-  background: linear-gradient(135deg, #4776E6, #8E54E9);
+  top: -10px;
+  right: -70px;
+  width: 200px;
+  background: linear-gradient(135deg, #FF416C, #FF4B2B);
   color: white;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.4rem 1.8rem 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.6rem 0 0.6rem 0;
   z-index: 10;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   transform: rotate(45deg);
-  box-shadow: 0 4px 15px rgba(71, 118, 230, 0.3);
+  box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
   text-transform: uppercase;
+  text-align: center;
+  
+  /* 添加边框增强对比度 */
+  border-top: 1px solid rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
   
   /* 三角形切角效果 */
-  &::before {
+  &::before, &::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: -15px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 15px 15px 0;
-    border-color: transparent #4776E6 transparent transparent;
+    bottom: -5px;
+    width: 5px;
+    height: 5px;
+    background: rgba(150, 24, 24, 0.9);
+    z-index: -1;
   }
   
-  /* 添加闪光效果 */
-  &::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
+  &::before {
     left: 0;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: shine 2s infinite;
+    box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  &::after {
+    right: 0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* 添加闪光和脉动效果 */
+  span {
+    position: relative;
+    display: inline-block;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
+      animation: shine 3s infinite;
+    }
   }
   
   @keyframes shine {
     0% {
       transform: translateX(-100%);
     }
-    60%, 100% {
+    20%, 100% {
       transform: translateX(100%);
+    }
+  }
+  
+  /* 整体缎带的脉动效果 */
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: rotate(45deg) scale(1);
+      box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
+    }
+    50% {
+      transform: rotate(45deg) scale(1.05);
+      box-shadow: 0 5px 25px rgba(255, 65, 108, 0.6);
     }
   }
 `;
@@ -637,7 +670,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               whileTap={{ scale: 0.98 }}
               style={{ position: 'relative', overflow: 'hidden' }}
             >
-              <NewBadge>New</NewBadge>
+              <NewBadge><span>New</span></NewBadge>
               <FeatureTitle>
                 <div className="icon-container" style={{ background: 'linear-gradient(135deg, #1e90ff, #70a1ff)' }}>
                   <UserOutlined />
