@@ -507,6 +507,53 @@ const containerVariants = {
   visible: { opacity: 1, transition: { duration: 0.8 } }
 };
 
+// 新功能标记
+const NewBadge = styled.div`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: linear-gradient(135deg, #ff3a3a, #ff7676);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(255, 58, 58, 0.3);
+  z-index: 10;
+  transform: rotate(5deg);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    z-index: -1;
+    animation: pulse 2s infinite;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.2;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+  }
+`;
+
 interface HomeProps {
   onStartTarot: () => void;
   onStartDaily: () => void;
@@ -549,13 +596,9 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
         initial="hidden" 
         animate={isLoaded ? "visible" : "hidden"}
       >
-        {/* 标题区域 */}
-        <Header initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <MainTitle level={1}>二次元占卜屋</MainTitle>
-          <MainSubtitle>探索你的命运，揭示生活的奥秘</MainSubtitle>
-        </Header>
+        {/* 删除原有的标题区域，不再显示 "二次元占卜屋" 标题 */}
         
-        {/* Banner区域 */}
+        {/* Banner区域 - 轮播展示主要功能 */}
         <BannerSection
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -577,6 +620,36 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
         <ContentLayout>
           {/* 左侧内容 */}
           <LeftContent>
+            {/* JOJO MBTI测试 - 新功能置顶 */}
+            <FeatureCard
+              gradientStart="30, 144, 255"
+              gradientEnd="112, 161, 255"
+              onClick={onStartJojoMbti}
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              custom={0}
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ position: 'relative' }}
+            >
+              <NewBadge>NEW</NewBadge>
+              <FeatureTitle>
+                <div className="icon-container" style={{ background: 'linear-gradient(135deg, #1e90ff, #70a1ff)' }}>
+                  <UserOutlined />
+                </div>
+                <h3>JOJO MBTI测试</h3>
+              </FeatureTitle>
+              <FeatureDescription>
+                测试你是JOJO中的哪个角色，发现你的替身能力与性格特点，探索你的潜能与命运
+              </FeatureDescription>
+              <CardFooter>
+                <NewTag><ThunderboltOutlined /> 新功能</NewTag>
+                <CardAction>开始测试 <RightOutlined /></CardAction>
+              </CardFooter>
+              <CardDecoration />
+            </FeatureCard>
+            
             {/* 每日运势区域 */}
             <FortuneCard
               initial={{ opacity: 0, y: 30 }}
@@ -603,34 +676,6 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               </FortuneContent>
               <CardDecoration />
             </FortuneCard>
-            
-            {/* JOJO MBTI测试 */}
-            <FeatureCard
-              gradientStart="30, 144, 255"
-              gradientEnd="112, 161, 255"
-              onClick={onStartJojoMbti}
-              variants={cardVariants}
-              initial="hidden"
-              animate="visible"
-              custom={1}
-              whileHover={{ y: -5 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FeatureTitle>
-                <div className="icon-container" style={{ background: 'linear-gradient(135deg, #1e90ff, #70a1ff)' }}>
-                  <UserOutlined />
-                </div>
-                <h3>JOJO MBTI测试</h3>
-              </FeatureTitle>
-              <FeatureDescription>
-                测试你是JOJO中的哪个角色，发现你的替身能力与性格特点，探索你的潜能与命运
-              </FeatureDescription>
-              <CardFooter>
-                <NewTag><ThunderboltOutlined /> 新功能</NewTag>
-                <CardAction>开始测试 <RightOutlined /></CardAction>
-              </CardFooter>
-              <CardDecoration />
-            </FeatureCard>
           </LeftContent>
           
           {/* 右侧内容 */}
@@ -643,7 +688,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               variants={cardVariants}
               initial="hidden"
               animate="visible"
-              custom={0}
+              custom={1}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
             >
