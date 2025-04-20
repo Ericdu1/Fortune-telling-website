@@ -507,10 +507,10 @@ const containerVariants = {
   visible: { opacity: 1, transition: { duration: 0.8 } }
 };
 
-// 新功能标记 - 缎带式设计，位置调整确保文字可见
+// 新功能标记 - 缎带式设计，位置微调至最佳位置
 const NewBadge = styled.div`
   position: absolute;
-  top: 15px;  // 下移标签位置
+  top: 3px;  // 上调位置，找到一个平衡点
   right: -60px;
   width: 160px;
   background: linear-gradient(135deg, #FF416C, #FF4B2B);
@@ -520,7 +520,7 @@ const NewBadge = styled.div`
   padding: 0.5rem 0;
   z-index: 10;
   letter-spacing: 1px;
-  transform: rotate(35deg);  // 调整角度使文字更容易完全显示
+  transform: rotate(35deg);
   box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
   text-transform: uppercase;
   text-align: center;
