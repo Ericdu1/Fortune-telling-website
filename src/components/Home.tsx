@@ -317,8 +317,8 @@ const ActionButton = styled(Button)`
   }
 `;
 
-// 功能卡片
-const FeatureCard = styled(motion.div)<{ gradientStart: string; gradientEnd: string; isNew?: boolean }>`
+// 功能卡片 - 增强辨识度和视觉效果
+const FeatureCard = styled(motion.div)<{ gradientStart: string; gradientEnd: string; isNew?: boolean; theme: string }>`
   background: linear-gradient(135deg, 
     rgba(${props => props.gradientStart}, 0.2), 
     rgba(${props => props.gradientEnd}, 0.1)
@@ -336,6 +336,7 @@ const FeatureCard = styled(motion.div)<{ gradientStart: string; gradientEnd: str
   display: flex;
   flex-direction: column;
   
+  /* 主题背景图案 */
   &::before {
     content: '';
     position: absolute;
@@ -343,18 +344,63 @@ const FeatureCard = styled(motion.div)<{ gradientStart: string; gradientEnd: str
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at bottom left, rgba(${props => props.gradientStart}, 0.15), transparent 70%);
+    background: ${props => {
+      switch(props.theme) {
+        case 'jojo':
+          return `
+            radial-gradient(circle at top left, rgba(${props.gradientStart}, 0.15), transparent 70%),
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e90ff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          `;
+        case 'tarot':
+          return `
+            radial-gradient(circle at bottom right, rgba(${props.gradientStart}, 0.15), transparent 70%),
+            url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239c88ff' fill-opacity='0.1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          `;
+        case 'fortune':
+          return `
+            radial-gradient(circle at bottom left, rgba(${props.gradientStart}, 0.15), transparent 70%),
+            url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffa502' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")
+          `;
+        default:
+          return `radial-gradient(circle at bottom left, rgba(${props.gradientStart}, 0.15), transparent 70%)`;
+      }
+    }};
+    background-position: center;
     z-index: 0;
   }
   
+  /* 增强悬停效果 */
   &:hover {
     transform: translateY(-7px);
     border-color: rgba(${props => props.gradientStart}, 0.4);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    
+    &::after {
+      opacity: 0.6;
+      transform: scale(1.05);
+    }
+  }
+  
+  /* 添加光晕效果 */
+  &::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(
+      circle at center,
+      rgba(${props => props.gradientStart}, 0.1) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.8s ease, transform 0.8s ease;
   }
 `;
 
-// 功能标题
+// 功能标题 - 增强图标区域样式
 const FeatureTitle = styled.div`
   display: flex;
   align-items: center;
@@ -364,8 +410,8 @@ const FeatureTitle = styled.div`
   z-index: 1;
   
   .icon-container {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
     border-radius: 16px;
     display: flex;
     justify-content: center;
@@ -374,11 +420,48 @@ const FeatureTitle = styled.div`
     color: white;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transform: rotate(-5deg);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    
+    /* 图标背景效果 */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      opacity: 0.7;
+      z-index: -1;
+    }
+    
+    /* 图标闪光效果 */
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: -100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: 0.5s;
+    }
   }
 
   ${FeatureCard}:hover & .icon-container {
-    transform: rotate(0deg) scale(1.05);
+    transform: rotate(0deg) scale(1.1);
+    
+    &::after {
+      left: 100%;
+      transition: 0.5s;
+    }
   }
   
   h3 {
@@ -669,6 +752,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
               style={{ position: 'relative', overflow: 'hidden' }}
+              theme="jojo"
             >
               <NewBadge><span>New</span></NewBadge>
               <FeatureTitle>
@@ -729,6 +813,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               custom={1}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
+              theme="tarot"
             >
               <FeatureTitle>
                 <div className="icon-container" style={{ background: 'linear-gradient(135deg, #9c88ff, #8c7ae6)' }}>
@@ -754,6 +839,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               initial="hidden"
               animate="visible"
               custom={2}
+              theme="fortune"
             >
               <FeatureTitle>
                 <div className="icon-container" style={{ background: 'linear-gradient(135deg, #6c5ce7, #5a4eae)' }}>
