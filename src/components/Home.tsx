@@ -507,61 +507,54 @@ const containerVariants = {
   visible: { opacity: 1, transition: { duration: 0.8 } }
 };
 
-// 新功能标记 - 完全重新设计，更加精美现代
+// 新功能标记 - 设计为缎带风格，位于卡片外部
 const NewBadge = styled.div`
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: linear-gradient(135deg, #0496ff, #5f2eea);
+  top: -5px;
+  right: -42px;
+  background: linear-gradient(135deg, #4776E6, #8E54E9);
   color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.3rem 0.6rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(95, 46, 234, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.15);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.4rem 1.8rem 0.4rem 0.8rem;
   z-index: 10;
-  transform: rotate(0deg);
   letter-spacing: 0.5px;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 15px rgba(71, 118, 230, 0.3);
   text-transform: uppercase;
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(5px);
   
-  /* 添加发光效果 */
+  /* 三角形切角效果 */
   &::before {
     content: '';
     position: absolute;
-    inset: -2px;
-    background: linear-gradient(135deg, #0496ff, #5f2eea);
-    z-index: -2;
-    filter: blur(6px);
-    opacity: 0.5;
-    border-radius: inherit;
+    top: 0;
+    left: -15px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 15px 15px 0;
+    border-color: transparent #4776E6 transparent transparent;
   }
   
-  /* 添加闪烁效果 */
+  /* 添加闪光效果 */
   &::after {
     content: '';
     position: absolute;
-    width: 5px;
-    height: 5px;
-    background: white;
-    border-radius: 50%;
-    top: 25%;
-    right: 12%;
-    animation: sparkle 2s infinite;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shine 2s infinite;
   }
   
-  @keyframes sparkle {
-    0%, 100% { opacity: 0.2; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
-  }
-  
-  /* 脉动动画 */
-  animation: float 3s ease-in-out infinite;
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-3px) rotate(0deg); }
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%);
+    }
+    60%, 100% {
+      transform: translateX(100%);
+    }
   }
 `;
 
@@ -642,7 +635,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               custom={0}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
-              style={{ position: 'relative' }}
+              style={{ position: 'relative', overflow: 'hidden' }}
             >
               <NewBadge>New</NewBadge>
               <FeatureTitle>
