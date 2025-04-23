@@ -674,6 +674,95 @@ const NewBadge = styled.div`
   }
 `;
 
+// 虚影标志组件 - 修正图片路径
+const JojoSilhouette = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 150px;
+  height: 200px;
+  background-image: url('/images/jojo/Jotaro_Kujo.webp');
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  transform: rotate(-5deg);
+  filter: contrast(200%) brightness(15%) saturate(0%);
+  z-index: 0;
+  transition: all 0.5s ease;
+
+  ${FeatureCard}:hover & {
+    opacity: 0.25;
+    transform: rotate(0deg) scale(1.05);
+  }
+`;
+
+const TarotSilhouette = styled.div`
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  width: 100px;
+  height: 180px;
+  background-image: url('/images/tarot/17_OVATarot_TheStar.png');
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.2;
+  transform: rotate(5deg);
+  filter: brightness(120%) contrast(120%);
+  z-index: 0;
+  transition: all 0.5s ease;
+  
+  ${FeatureCard}:hover & {
+    opacity: 0.3;
+    transform: rotate(10deg) scale(1.1);
+  }
+`;
+
+const FortuneSilhouette = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 120px;
+  height: 120px;
+  background-image: url('/images/icons/zodiac-wheel.svg');
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  transform: rotate(0deg);
+  filter: brightness(150%);
+  z-index: 0;
+  transition: all 0.5s ease;
+  
+  ${FortuneCard}:hover & {
+    opacity: 0.25;
+    transform: rotate(-10deg) scale(1.1);
+  }
+`;
+
+const MoreSilhouette = styled.div`
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  width: 100px;
+  height: 100px;
+  background-image: url('/images/icons/crystal-ball.svg'); 
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.12;
+  transform: rotate(0deg);
+  filter: brightness(130%);
+  z-index: 0;
+  transition: all 0.5s ease;
+  
+  ${FeatureCard}:hover & {
+    opacity: 0.2;
+    transform: rotate(5deg) scale(1.1);
+  }
+`;
+
 interface HomeProps {
   onStartTarot: () => void;
   onStartDaily: () => void;
@@ -769,6 +858,8 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
                 <CardAction>开始测试 <RightOutlined /></CardAction>
               </CardFooter>
               <CardDecoration />
+              {/* 添加JOJO虚影 */}
+              <JojoSilhouette />
             </FeatureCard>
             
             {/* 每日运势区域 - 添加整体点击事件 */}
@@ -797,6 +888,8 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
                 </ActionButton>
               </FortuneContent>
               <CardDecoration />
+              {/* 添加星座轮盘虚影 */}
+              <FortuneSilhouette />
             </FortuneCard>
           </LeftContent>
           
@@ -829,6 +922,8 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
                 <CardAction>开始占卜 <RightOutlined /></CardAction>
               </CardFooter>
               <CardDecoration />
+              {/* 添加塔罗牌虚影 */}
+              <TarotSilhouette />
             </FeatureCard>
             
             {/* 更多功能（禁用） */}
@@ -854,6 +949,8 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
                 <Badge count="即将上线" style={{ backgroundColor: '#6c5ce7', fontWeight: 'bold', padding: '0 10px' }} />
               </CardFooter>
               <CardDecoration />
+              {/* 添加水晶球虚影 */}
+              <MoreSilhouette />
             </DisabledCard>
           </RightContent>
         </ContentLayout>
