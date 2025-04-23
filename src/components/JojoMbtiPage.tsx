@@ -585,7 +585,7 @@ const JojoMbtiPage: React.FC = () => {
   // 预加载布加拉提图片以获取其尺寸
   useEffect(() => {
     if (result && !bucciaratiDimensions.current.loaded) {
-      const bucciaratiImagePath = `/images/jojo/${characterImageMap['布加拉提'] || 'Buccellati'}.webp`;
+      const bucciaratiImagePath = `/images/jojo/${characterImageMap['布加拉提']}`;
       const img = new Image();
       img.onload = () => {
         bucciaratiDimensions.current = {
