@@ -1,0 +1,107 @@
+.App {
+  text-align: center;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.fantasy-theme {
+  font-family: 'Cinzel', serif;
+  background-color: #292524;
+  color: #fef3c7;
+}
+
+.scifi-theme {
+  font-family: 'Orbitron', sans-serif;
+  background-color: #0f172a;
+  color: #a5f3fc;
+}
+
+.horror-theme {
+  font-family: 'Creepster', cursive;
+  background-color: #1c1917;
+  color: #fecdd3;
+}
+
+.ancient-theme {
+  font-family: 'Noto Serif', serif;
+  background-color: #292524;
+  color: #d1d5db;
+}
+
+.modern-theme {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.test-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.result-card {
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.animated-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.2;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.option-button {
+  padding: 1rem 2rem;
+  margin: 0.5rem;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+}
+
+.option-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+} 
