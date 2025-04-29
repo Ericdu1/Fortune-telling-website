@@ -76,34 +76,19 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [remainingImages, setRemainingImages] = useState<number | null>(null);
 
   useEffect(() => {
     let mounted = true;
-    
-    // 重置状态
     setLoading(true);
     setError(null);
-    
-    // 生成图像
     const generateImage = async () => {
       try {
         const response = await fetch(API_ENDPOINT, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            sceneType,
-            worldType,
-            talent,
-            event,
-            userId
-          }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sceneType, worldType, talent, event, userId }),
         });
-
         const data = await response.json();
-
         if (!response.ok) {
           if (mounted) {
             setError(data.message || data.error || '生成图像失败');
@@ -111,10 +96,8 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
           }
           return;
         }
-
         if (mounted) {
           setImageUrl(data.url);
-          setRemainingImages(data.remainingImages || null);
           setLoading(false);
         }
       } catch (err) {
@@ -124,13 +107,8 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({
         }
       }
     };
-
     generateImage();
-
-    // 清理函数
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [sceneType, worldType, talent, event, userId]);
 
   // 生成加载消息
