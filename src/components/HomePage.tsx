@@ -445,27 +445,27 @@ const cardVariants = {
 };
 
 interface HomeProps {
-  onStartFortune: () => void;
-  onStartMBTI: () => void;
-  onStartTarot: () => void;
-  onStartAI: () => void;
-  onViewHistory: () => void;
-  onViewProfile: () => void;
-  isLoggedIn: boolean;
-  username: string;
-  email: string;
+  onStartFortune?: () => void;
+  onStartMBTI?: () => void;
+  onStartTarot?: () => void;
+  onStartAI?: () => void;
+  onViewHistory?: () => void;
+  onViewProfile?: () => void;
+  isLoggedIn?: boolean;
+  username?: string;
+  email?: string;
 }
 
 const HomePage: React.FC<HomeProps> = ({
-  onStartFortune,
-  onStartMBTI,
-  onStartTarot,
-  onStartAI,
-  onViewHistory,
-  onViewProfile,
-  isLoggedIn,
-  username,
-  email
+  onStartFortune = () => {},
+  onStartMBTI = () => {},
+  onStartTarot = () => {},
+  onStartAI = () => {},
+  onViewHistory = () => {},
+  onViewProfile = () => {},
+  isLoggedIn = false,
+  username = "访客",
+  email = ""
 }) => {
   // 模拟一个推荐功能的状态
   const [recommended] = useState({
