@@ -387,128 +387,8 @@ const generateLifeEvents = (result: ResultType) => {
   ];
 };
 
-// 根据用户回答生成结果
-const generateResultFromAnswers = (answers: AnswersType) => {
-  // 根据世界问题回答确定穿越世界
-  const worldTypes = [
-    {
-      name: '魔法奇幻世界',
-      features: ['魔法盛行', '种族多样', '魔物横行'],
-      talents: ['元素掌控', '时空魔法', '魔法强化', '秘术召唤']
-    },
-    {
-      name: '未来科技世界',
-      features: ['高度发达', '虚拟现实', '人工智能'],
-      talents: ['机械改造', '数据分析', '纳米技术', '生物编程']
-    },
-    {
-      name: '修真/仙侠世界',
-      features: ['高武', '宗门林立', '灵气充沛'],
-      talents: ['天地灵气', '剑气御空', '磁场转动', '五行控制']
-    },
-    {
-      name: '诡异灵异世界',
-      features: ['超自然现象', '灵异事件', '诡谲神秘'],
-      talents: ['通灵能力', '鬼域掌控', '诅咒之力', '因果转换']
-    }
-  ];
-
-  // 根据用户的回答确定世界类型
-  const worldSum = answers.world.reduce((sum, val) => sum + val, 0);
-  const worldIndex = Math.min(Math.floor(worldSum / (answers.world.length * 0.75)), 3);
-  const selectedWorld = worldTypes[worldIndex];
-
-  // 根据个性和能力问题确定特殊能力
-  const personalityScore = answers.personality.reduce((sum, val) => sum + val, 0);
-  const talentScore = answers.talent.reduce((sum, val) => sum + val, 0);
-  const talentIndex = Math.min(Math.floor((personalityScore + talentScore) / 4) % 4, 3);
-  const selectedTalent = selectedWorld.talents[talentIndex];
-
-  // 能力稀有度和级别
-  const talentLevels = ['C级', 'B级', 'A级', 'S级'];
-  const talentRarities = ['较为常见的能力', '稀有能力', '非常罕见的能力', '极度罕见的异端能力'];
-  const destinySum = answers.destiny.reduce((sum, val) => sum + val, 0);
-  const levelIndex = Math.min(Math.floor(destinySum / answers.destiny.length), 3);
-  
-  // 生成事件
-  const eventTypes = [
-    [
-      `在${selectedWorld.name}的冒险初期意外觉醒${selectedTalent}能力`,
-      `因能力独特引来强者注意`,
-      `获得神秘传承，${selectedTalent}得到强化`,
-      `能力突破至中阶水平`,
-      `与${selectedWorld.name}的大能对决，实力得到认可`
-    ],
-    [
-      `研究古老遗迹时发现${selectedTalent}的奥秘`,
-      `被神秘组织追捕，因其觊觎你的${selectedTalent}`,
-      `在巨大危机中领悟${selectedTalent}的进阶使用方法`,
-      `能力提升至高级水平`,
-      `成功破解${selectedWorld.name}的重大危机，成为传奇`
-    ],
-    [
-      `在神秘事件中突然觉醒${selectedTalent}`,
-      `被传统势力排斥，踏上独行之路`,
-      `探索禁地，获得远古强者对${selectedTalent}的理解`,
-      `经历生死考验，能力达到巅峰`,
-      `创立新的流派，改变${selectedWorld.name}的力量格局`
-    ],
-    [
-      `在意外事故中获得${selectedTalent}能力`,
-      `被视为异端遭遇追杀`,
-      `寻找到能力源头，完全掌握${selectedTalent}`,
-      `打破常规限制，实现能力质变`,
-      `最终成为${selectedWorld.name}新一代的顶尖强者`
-    ]
-  ];
-  
-  // 根据命运问题选择事件线
-  const eventIndex = Math.min(Math.floor(destinySum / (answers.destiny.length * 0.75)), 3);
-  const selectedEvents = eventTypes[eventIndex];
-
-  // 生成故事
-  const storyBeginnings = [
-    `你原本只是${selectedWorld.name}中的一名普通人，过着平凡的生活。某天，你在探索一处废弃的古迹时，接触到了一个神秘的遗物，从那一刻起，你感到体内有什么东西被唤醒了。`,
-    `作为${selectedWorld.name}一个小家族的后代，你从小就表现出与众不同的天赋。在一次家族试炼中，你意外触发了沉睡在血脉中的${selectedTalent}能力，令所有人惊讶。`,
-    `你曾是${selectedWorld.name}的一名学徒，跟随导师学习基础知识。一次意外的实验事故中，你被神秘能量击中，昏迷不醒。醒来后，你发现自己能够使用${selectedTalent}的力量。`,
-    `你原本是地球上的普通人，某天一场意外将你传送到了${selectedWorld.name}。为了在这个陌生的世界生存，你开始探索自己的潜能，最终发现并掌握了${selectedTalent}。`
-  ];
-  
-  const storyMiddles = [
-    `随着对${selectedTalent}的不断掌握，你的能力日益精进。然而，这也引来了不少觊觎者的注意。你被迫踏上流浪之路，在旅途中不断提升自己，并结识了志同道合的伙伴。你们一起经历了无数险境，每一次危机都让你对能力有了新的理解和突破。`,
-    `你的${selectedTalent}能力引起了${selectedWorld.name}主流势力的警惕，他们视你为潜在威胁。为了证明自己，你开始参与各种挑战和竞争，逐渐在这个世界站稳脚跟。在一次关键的历练中，你发现了能力的进阶秘密，实力大幅提升。`,
-    `为了更好地掌控${selectedTalent}，你踏上了寻找古老传承的旅程。这条路充满了危险，但也带来了丰厚的回报。你在一处隐秘的遗迹中获得了完整的修炼法，使得你的能力有了质的飞跃。同时，你也逐渐了解到这个世界的真相和自己的使命。`,
-    `被视为异端的你，选择了隐居深山修炼${selectedTalent}。多年后，当一场席卷${selectedWorld.name}的危机爆发，你选择出山相助。在连续的战斗中，你的实力得到了极大的锤炼，并且因为特殊的能力而成为解决危机的关键人物。`
-  ];
-  
-  const storyEndings = [
-    `经过多年的历练，你的${selectedTalent}能力已经达到了前所未有的高度。在最终的决战中，你凭借独特的能力和坚定的意志，成功击败了威胁${selectedWorld.name}的最强敌人。你的名字被载入史册，成为后人传颂的传奇。然而，你并未就此停止，而是继续探索能力的更多可能，寻找新的挑战。`,
-    `你成功将${selectedTalent}发展出了全新的流派，改变了${selectedWorld.name}的力量格局。你建立了自己的组织，培养了许多拥有相似能力的后继者。在你的带领下，这个组织成为了世界的重要力量，为维护和平作出了巨大贡献。你的传奇故事激励了无数人追求自己的道路。`,
-    `当你的${selectedTalent}达到巅峰时，你获得了前所未有的洞察力。你发现了${selectedWorld.name}隐藏的终极秘密，并利用自己的能力为这个世界开创了新的纪元。你被尊为开拓者和先驱，但你知道，真正的冒险才刚刚开始，更广阔的多元宇宙等待着你去探索。`,
-    `你最终成为了${selectedWorld.name}的守护者，你的${selectedTalent}能力不仅仅是战斗的工具，更是维护世界平衡的关键。你建立了新的秩序，将知识和力量传授给值得信任的继承者。当你完成使命后，你选择了隐退，但你的传说永远流传在这个世界的每个角落。`
-  ];
-
-  // 根据用户选择的综合得分选择故事
-  const totalScore = [...answers.personality, ...answers.world, ...answers.talent, ...answers.destiny].reduce((sum, val) => sum + val, 0);
-  const storyIndex = Math.min(Math.floor(totalScore / 12) % 4, 3);
-
-  return {
-    world: selectedWorld.name,
-    worldFeatures: selectedWorld.features,
-    talent: selectedTalent,
-    talentLevel: talentLevels[levelIndex],
-    talentRarity: talentRarities[levelIndex],
-    events: selectedEvents,
-    story: {
-      beginning: storyBeginnings[storyIndex],
-      middle: storyMiddles[storyIndex],
-      ending: storyEndings[storyIndex]
-    }
-  };
-};
-
 const IsekaiPage: React.FC = () => {
-  // 测试阶段状态 - 直接从问题开始
+  // 测试阶段状态 - 直接从问题页面开始
   const [stage, setStage] = useState<TestStage>(TestStage.PERSONALITY);
   
   // 当前问题索引
@@ -533,7 +413,13 @@ const IsekaiPage: React.FC = () => {
   
   // 当前正在显示的生命历程索引
   const [currentLifeEventIndex, setCurrentLifeEventIndex] = useState(-1);
-
+  
+  // 处理开始测试
+  const handleStart = () => {
+    setCurrentSection('personality');
+    setCurrentQuestionIndex(0);
+  };
+  
   // 处理问题回答
   const handleAnswer = (answerIndex: number) => {
     // 更新回答
@@ -563,47 +449,174 @@ const IsekaiPage: React.FC = () => {
           setStage(TestStage.DESTINY);
           break;
         case 'destiny':
-          // 所有问题已回答完毕，生成结果并直接进入故事页面
+          // 所有问题已回答完毕，生成结果
           generateResult();
           break;
       }
     }
   };
   
-  // 生成结果
+  // 生成结果 - 根据用户选择生成不同的结果
   const generateResult = () => {
-    // 根据用户回答生成个性化结果
-    setTimeout(() => {
-      // 使用基于用户选择的生成函数
-      const personalizedResult = generateResultFromAnswers(answers);
-      setResult(personalizedResult);
+    // 收集用户回答
+    const personalityAnswers = answers.personality;
+    const worldAnswers = answers.world;
+    const talentAnswers = answers.talent;
+    const destinyAnswers = answers.destiny;
+    
+    // 根据world问题的选择确定世界类型
+    let worldType = '';
+    let worldFeatures: string[] = [];
+    
+    if (worldAnswers.includes(0)) {
+      worldType = '魔法奇幻世界';
+      worldFeatures = ['魔法', '精灵', '魔法学院'];
+    } else if (worldAnswers.includes(1)) {
+      worldType = '未来科技世界';
+      worldFeatures = ['AI', '太空旅行', '基因改造'];
+    } else if (worldAnswers.includes(2)) {
+      worldType = '修真/仙侠世界';
+      worldFeatures = ['高武', '战乱', '宗门林立'];
+    } else {
+      worldType = '诡异神秘世界';
+      worldFeatures = ['诡谲', '灵异', '神秘规则'];
+    }
+    
+    // 根据talent问题的选择确定能力类型
+    let talentType = '';
+    let talentLevel = '';
+    let talentRarity = '';
+    
+    if (talentAnswers.includes(0)) {
+      talentType = '元素操控';
+      talentLevel = 'S级';
+      talentRarity = '稀有的自然之力';
+    } else if (talentAnswers.includes(1)) {
+      talentType = '精神力量';
+      talentLevel = 'A级';
+      talentRarity = '罕见的心灵能力';
+    } else if (talentAnswers.includes(2)) {
+      talentType = '身体强化';
+      talentLevel = 'SS级';
+      talentRarity = '超稀有的体质';
+    } else {
+      talentType = '时空掌控';
+      talentLevel = 'SSS级';
+      talentRarity = '传说中的能力';
+    }
+    
+    // 根据destiny问题的选择确定事件和故事
+    let events: string[] = [];
+    let story: StoryType = {
+      beginning: '',
+      middle: '',
+      ending: ''
+    };
+    
+    // 基于世界和能力生成不同的事件
+    if (worldType === '魔法奇幻世界') {
+      events = [
+        `在魔法学院中发现自己的${talentType}天赋`,
+        '被神秘组织盯上并追杀',
+        '找到远古魔法典籍，掌握失传魔法',
+        '在魔法竞技场上战胜高等法师',
+        '与黑暗魔王对决'
+      ];
       
-      // 生成人生历程事件
-      const events = generateLifeEvents(personalizedResult);
-      setLifeEvents(events);
+      story = {
+        beginning: `你出生在${worldType}的一个普通家庭，父母都是微弱的魔法使用者。在10岁那年，你被送入魔法学院学习，原本表现平平，但在一次意外中，你突然觉醒了${talentType}能力，这让所有导师都惊讶不已。`,
+        middle: `随着你的能力不断提升，你引起了神秘魔法组织的注意，他们认为你的能力与古老预言有关。在逃亡途中，你偶然发现了一本远古魔法典籍，掌握了失传已久的魔法。通过不断修炼，你在魔法竞技场上战胜了多位高等法师，成为令人畏惧的存在。`,
+        ending: `最终，你发现那个追杀你的组织背后站着黑暗魔王，他企图利用你的力量打开世界间的屏障。在激烈的决战中，你完全掌握了${talentType}的奥秘，成功击败了黑暗魔王，并被魔法议会封为守护者，负责维护世界和平。`
+      };
       
-      // 直接进入故事页面
-      setStage(TestStage.STORY);
-      // 开始逐步显示生命历程
-      setCurrentLifeEventIndex(0);
+    } else if (worldType === '未来科技世界') {
+      events = [
+        `通过前沿科技实验获得${talentType}能力`,
+        '被政府特殊部门追踪',
+        '加入反抗军组织',
+        '黑入中央数据库揭露阴谋',
+        '改变世界科技格局'
+      ];
       
-      // 设置定时器，每2秒显示下一个事件
-      const interval = setInterval(() => {
-        setCurrentLifeEventIndex(prev => {
-          if (prev < events.length - 1) {
-            return prev + 1;
-          } else {
-            clearInterval(interval);
-            return prev;
-          }
-        });
-      }, 2000);
-    }, 1500);
+      story = {
+        beginning: `你生活在${worldType}的低层区域，梦想成为一名科学家。在参与一个秘密科技实验时，意外事故使你获得了${talentType}能力，这在纯科技的世界中被视为异常现象。`,
+        middle: `政府特殊部门发现了你的存在，将你列为研究对象。在逃亡途中，你遇到了一群反抗军，他们正在对抗控制世界的AI系统。利用你的特殊能力，你成功黑入了中央数据库，揭露了统治者利用公民数据控制社会的阴谋。`,
+        ending: `在最终的对抗中，你将${talentType}与高科技完美结合，创造出全新的技术体系。你的发明打破了大公司对技术的垄断，让所有人都能平等地享受科技的便利。你成为了新时代的科技先驱，引领世界进入更加开放的未来。`
+      };
+      
+    } else if (worldType === '修真/仙侠世界') {
+      events = [
+        `在宗门试炼中意外觉醒${talentType}能力`,
+        '被视为异端遭受追杀',
+        '发现远古遗迹中的神秘传承',
+        '修为突破至超凡境界',
+        '与修真界最强者对决'
+      ];
+      
+      story = {
+        beginning: `你本是青山派外门弟子，资质平庸，被同门嘲笑。一次门派试炼中，你偶然跌入古井，发现神秘石碑，触碰后昏迷三日。醒来时，你体内流动着奇特的${talentType}能量。`,
+        middle: `被师门视为异端的你被迫逃亡，期间偶入一处远古遗迹，发现完整的${talentType}修炼法。随着修为不断提升，你引来更多修真界强者的觊觎。你的能力对传统修真体系有天然压制作用，开始在修真界闯出名声，被称为"异能修士"。当你的修为突破至超凡境界时，终于引起了传说中的"仙道联盟"注意。`,
+        ending: `当仙道联盟围攻你时，你发现${talentType}与传统灵力激烈碰撞产生共鸣，意外领悟到两种力量的融合之法。经过艰苦修炼，你创造出新的修真体系，将截然不同的力量融合，实力飙升至前所未有的境界。最终，你成为了这个世界的新型力量开创者，建立自己的宗门，打破了修真界千年不变的力量格局。`
+      };
+      
+    } else {
+      events = [
+        `发现自己能看到常人看不到的${talentType}现象`,
+        '被神秘组织盯上',
+        '解开家族隐藏的诅咒之谜',
+        '穿越到隐秘的次元空间',
+        '与古老存在进行交易'
+      ];
+      
+      story = {
+        beginning: `从小你就能感知到一些奇怪的现象，但没人相信你的话。在一次意外中，你完全觉醒了${talentType}能力，能够看到隐藏在现实之下的诡异世界。你发现这个世界运行着常人无法理解的规则。`,
+        middle: `一个神秘组织发现了你的能力，开始对你进行监视。同时，你发现自己的家族似乎与某种古老的诅咒有关。在探寻真相的过程中，你学会了利用${talentType}能力穿梭于现实与诡异空间之间，揭开了一个个惊人的秘密。`,
+        ending: `最终，你发现这个世界被某种古老存在所控制，而你的能力正是打破这种控制的关键。通过与古老存在进行一场危险的交易，你获得了更强大的力量，同时也承担了守护世界平衡的责任。你成为了现实与诡异之间的行者，在常人不知道的阴影中守护着这个世界的秩序。`
+      };
+    }
+    
+    // 综合生成最终结果
+    const mockResult: ResultType = {
+      world: worldType,
+      worldFeatures: worldFeatures,
+      talent: talentType,
+      talentLevel: talentLevel,
+      talentRarity: talentRarity,
+      events: events,
+      story: story
+    };
+    
+    setResult(mockResult);
+    
+    // 直接进入人生故事页面，跳过结果概览
+    setStage(TestStage.STORY);
+    
+    // 生成人生历程事件
+    const lifeEvents = generateLifeEvents(mockResult);
+    setLifeEvents(lifeEvents);
+    
+    // 开始逐步显示生命历程
+    setCurrentLifeEventIndex(0);
+    
+    // 设置定时器，每2秒显示下一个事件
+    const interval = setInterval(() => {
+      setCurrentLifeEventIndex(prev => {
+        if (prev < lifeEvents.length - 1) {
+          return prev + 1;
+        } else {
+          clearInterval(interval);
+          return prev;
+        }
+      });
+    }, 2000);
+    
+    // 清理函数
+    return () => clearInterval(interval);
   };
   
   // 重新开始测试
   const restartTest = () => {
-    setStage(TestStage.PERSONALITY);
+    setStage(TestStage.INTRO);
     setCurrentSection('personality');
     setCurrentQuestionIndex(0);
     setAnswers({
@@ -619,7 +632,11 @@ const IsekaiPage: React.FC = () => {
   
   // 返回上一步
   const goBack = () => {
-    restartTest();
+    if (stage === TestStage.STORY) {
+      setStage(TestStage.RESULT);
+    } else {
+      restartTest();
+    }
   };
   
   // 计算测试进度
@@ -643,6 +660,39 @@ const IsekaiPage: React.FC = () => {
     
     return Math.floor((answeredQuestions / totalQuestions) * 100);
   };
+  
+  // 渲染介绍页面
+  const renderIntroPage = () => (
+    <IntroContainer
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <Title level={2} style={{ color: '#ba68c8', marginBottom: '1.5rem' }}>
+        多维世界穿越测试
+      </Title>
+      
+      <Paragraph style={{ color: 'white', fontSize: '1.1rem', marginBottom: '2rem' }}>
+        探索你专属的穿越故事，测试你在异世界会觉醒什么能力，面临怎样的命运挑战！
+        完成所有问题后，我们将为你生成完整的异世界人生轨迹。
+      </Paragraph>
+      
+      <Button 
+        type="primary" 
+        size="large"
+        onClick={handleStart}
+        style={{ 
+          background: 'linear-gradient(to right, #9c27b0, #673ab7)',
+          border: 'none',
+          height: '50px',
+          fontSize: '1.1rem',
+          padding: '0 3rem'
+        }}
+      >
+        开始测试
+      </Button>
+    </IntroContainer>
+  );
   
   // 渲染问题页面
   const renderQuestionPage = () => {
@@ -702,6 +752,101 @@ const IsekaiPage: React.FC = () => {
     );
   };
   
+  // 渲染结果页面
+  const renderResultPage = () => {
+    if (!result) {
+      return (
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <Spin size="large" />
+          <Paragraph style={{ color: 'white', marginTop: '1rem' }}>
+            正在生成你的异世界命运...
+          </Paragraph>
+        </div>
+      );
+    }
+    
+    return (
+      <ResultContainer>
+        <Title level={2} style={{ color: '#ba68c8', textAlign: 'center', marginBottom: '2rem' }}>
+          你的异世界穿越结果
+        </Title>
+        
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <Title level={3} style={{ color: 'white' }}>
+            {result.world}
+          </Title>
+          
+          <div style={{ margin: '1rem 0' }}>
+            {result.worldFeatures.map((feature, index) => (
+              <FeatureTile key={index}>{feature}</FeatureTile>
+            ))}
+          </div>
+        </div>
+        
+        <Divider style={{ borderColor: 'rgba(186, 104, 200, 0.3)' }} />
+        
+        <div style={{ marginBottom: '2rem' }}>
+          <Title level={4} style={{ color: '#ba68c8' }}>
+            你的能力：{result.talent}
+          </Title>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+            <Text style={{ color: 'white' }}>能力等级：<span style={{ color: '#ba68c8', fontWeight: 'bold' }}>{result.talentLevel}</span></Text>
+            <Text style={{ color: 'white' }}>稀有度：<span style={{ color: '#ba68c8', fontWeight: 'bold' }}>{result.talentRarity}</span></Text>
+          </div>
+        </div>
+        
+        <div style={{ marginBottom: '2rem' }}>
+          <Title level={4} style={{ color: '#ba68c8' }}>关键事件预览</Title>
+          
+          {result.events.map((event, index) => (
+            <EventItem key={index}>
+              {event}
+            </EventItem>
+          ))}
+        </div>
+        
+        <Divider style={{ borderColor: 'rgba(186, 104, 200, 0.3)' }} />
+        
+        <div style={{ textAlign: 'center', margin: '2rem 0' }}>
+          <Title level={4} style={{ color: 'white' }}>
+            想了解你在异世界的完整人生历程吗？
+          </Title>
+          
+          <Button 
+            type="primary"
+            onClick={handleStart}
+            style={{ 
+              background: 'linear-gradient(to right, #9c27b0, #673ab7)',
+              border: 'none',
+              height: '46px',
+              fontSize: '1rem',
+              marginTop: '1rem'
+            }}
+          >
+            查看详细人生故事
+          </Button>
+        </div>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
+          <BackButton 
+            icon={<ArrowLeftOutlined />}
+            onClick={goBack}
+          >
+            返回
+          </BackButton>
+          
+          <Button 
+            icon={<QuestionOutlined />}
+            onClick={restartTest}
+          >
+            重新测试
+          </Button>
+        </div>
+      </ResultContainer>
+    );
+  };
+  
   // 渲染人生故事页面
   const renderStoryPage = () => {
     if (!result) return null;
@@ -753,7 +898,7 @@ const IsekaiPage: React.FC = () => {
             icon={<ArrowLeftOutlined />}
             onClick={goBack}
           >
-            返回
+            返回结果
           </BackButton>
           
           <Button 
@@ -771,20 +916,18 @@ const IsekaiPage: React.FC = () => {
   const renderCurrentStage = () => {
     switch (stage) {
       case TestStage.INTRO:
-        // 不再使用介绍页面
-        return renderQuestionPage();
+        return renderIntroPage();
       case TestStage.PERSONALITY:
       case TestStage.WORLD:
       case TestStage.TALENT:
       case TestStage.DESTINY:
         return renderQuestionPage();
       case TestStage.RESULT:
-        // 不再单独显示结果页面，直接进入故事页面
-        return renderStoryPage();
+        return renderResultPage();
       case TestStage.STORY:
         return renderStoryPage();
       default:
-        return renderQuestionPage();
+        return renderQuestionPage(); // 默认显示问题页面
     }
   };
   
