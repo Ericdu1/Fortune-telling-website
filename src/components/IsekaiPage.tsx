@@ -237,21 +237,36 @@ const FinalImageContainer = styled.div`
 const initialQuestions: Question[] = [
   {
     id: 'q1', text: '你的出身似乎是？', answers: [
-      { text: '普通城市家庭', attributeChanges: { wealth: 5, intelligence: 4, charisma: 4 } },
-      { text: '乡村农家', attributeChanges: { wealth: 2, strength: 6, intelligence: 3 } },
-      { text: '富裕商贾之家', attributeChanges: { wealth: 8, intelligence: 5, charisma: 5 } },
-      { text: '书香门第', attributeChanges: { wealth: 6, intelligence: 7, strength: 2 } }
+      { text: '普通城市家庭', attributeChanges: { wealth: 5, intelligence: 4, charisma: 4, strength: 4, luck: 3 } }, // 平衡
+      { text: '乡村农家', attributeChanges: { wealth: 2, strength: 6, intelligence: 3, charisma: 3, luck: 4 } }, // 体力好
+      { text: '富裕商贾之家', attributeChanges: { wealth: 8, intelligence: 5, charisma: 5, strength: 3, luck: 2 } }, // 有钱
+      { text: '书香门第', attributeChanges: { wealth: 6, intelligence: 7, strength: 2, charisma: 4, luck: 4 } } // 聪明
     ]
   },
   {
     id: 'q2', text: '你童年最大的爱好是？', answers: [
-      { text: '读书学习', attributeChanges: { intelligence: 2 } },
-      { text: '户外运动', attributeChanges: { strength: 2 } },
+      { text: '读书学习', attributeChanges: { intelligence: 2, strength: -1 } },
+      { text: '户外运动', attributeChanges: { strength: 2, intelligence: -1 } },
       { text: '和朋友玩耍', attributeChanges: { charisma: 1, luck: 1 } },
-      { text: '宅家幻想', attributeChanges: { luck: 2 } }
+      { text: '宅家幻想', attributeChanges: { luck: 2, charisma: -1 } }
     ]
   },
-  // ... 更多问题以确定初始属性 ...
+  {
+      id: 'q3', text: '面对困难时，你倾向于？', answers: [
+          { text: '独立解决', attributeChanges: { strength: 1, intelligence: 1, luck: -1 } },
+          { text: '寻求帮助', attributeChanges: { charisma: 1 } },
+          { text: '看运气', attributeChanges: { luck: 2, strength: -1, intelligence: -1 } },
+          { text: '逃避', attributeChanges: { luck: -2 } }
+      ]
+  },
+  {
+      id: 'q4', text: '你认为什么最重要？', answers: [
+          { text: '知识与智慧', attributeChanges: { intelligence: 2 } },
+          { text: '财富与地位', attributeChanges: { wealth: 2 } },
+          { text: '健康与力量', attributeChanges: { strength: 2 } },
+          { text: '人缘与魅力', attributeChanges: { charisma: 2 } }
+      ]
+  },
 ];
 
 const choiceNodes: Record<string, ChoiceNode> = {
@@ -319,19 +334,39 @@ const IsekaiPage: React.FC = () => {
     setCurrentChoiceData(null);
   }, [currentTimeoutId]);
 
-  // 生成初始人生事件链 (模拟)
+  // 生成初始人生事件链 (实现基础逻辑)
   const generateLifeEvents = useCallback((initialAttrs: Attributes) => {
-    // TODO: 基于 initialAttrs 和随机性生成更复杂的事件链
-    const events: LifeEvent[] = [
-      { age: 0, description: '你出生了。' },
-      { age: 5, description: '开始上幼儿园。' },
-      { age: 7, description: '小学一年级，认识了新朋友。' },
-      { age: 10, description: '沉迷于某种爱好。' },
-      { age: 12, description: '青春期的小烦恼。' },
-      { age: 15, description: '中考结束，进入高中。' },
-      { age: 18, description: '高考结束，面临重要选择。' , isChoiceNode: true, choiceNodeId: 'choice_age_18_study'}
-      // 后续事件依赖选择
-    ];
+    // 简单示例逻辑：根据初始属性生成几条基础事件
+    const events: LifeEvent[] = [];
+    events.push({ age: 0, description: '在一个平凡的世界，你出生了。' });
+
+    if (initialAttrs.wealth >= 7) {
+      events.push({ age: 3, description: '家境优渥，你从小衣食无忧。' });
+    } else if (initialAttrs.wealth <= 3) {
+      events.push({ age: 3, description: '家境贫寒，童年生活比较拮据。' });
+    }
+
+    events.push({ age: 6, description: '你开始上小学了。' });
+
+    if (initialAttrs.intelligence >= 7) {
+      events.push({ age: 8, description: '你在学习上展现出过人的天赋。' });
+    } else if (initialAttrs.intelligence <= 3) {
+      events.push({ age: 8, description: '学习似乎对你来说有点困难。' });
+    }
+
+    if (initialAttrs.strength >= 7) {
+      events.push({ age: 10, description: '你精力充沛，是学校里的运动健将。' });
+    }
+
+    if (initialAttrs.charisma >= 7) {
+      events.push({ age: 12, description: '你很受欢迎，身边总围绕着一群朋友。' });
+    }
+
+    events.push({ age: 15, description: '初中毕业，面临第一次重要的升学选择。' });
+
+    // 添加触发关键选择节点的事件
+    events.push({ age: 18, description: '高考结束，你站在人生的第一个重要岔路口。' , isChoiceNode: true, choiceNodeId: 'choice_age_18_study'});
+
     setLifeEvents(events);
     setIsAutoPlaying(true); // 开始自动播放
     setStage(Stage.SIMULATION);
