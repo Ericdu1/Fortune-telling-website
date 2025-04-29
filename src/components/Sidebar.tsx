@@ -10,14 +10,14 @@ import { ReactComponent as IsekaiIcon } from '../assets/isekai-icon.svg';
 const Sidebar = () => {
   return (
     <motion.div 
-      className="fixed left-0 top-0 h-full w-16 bg-slate-800 text-white flex flex-col items-center py-4 shadow-lg"
+      className="fixed left-0 top-0 h-full w-16 bg-slate-800 text-white flex flex-col items-center py-4 shadow-lg z-50"
       initial={{ x: -50 }}
       animate={{ x: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div className="mb-8">
         <NavLink to="/" className="flex items-center justify-center">
-          <SiteIcon className="w-10 h-10 text-blue-400" />
+          <SiteIcon width="40" height="40" className="text-blue-400" />
         </NavLink>
       </div>
       
@@ -29,7 +29,9 @@ const Sidebar = () => {
              ${isActive ? 'bg-blue-900' : ''}`
           }
         >
-          <JojoIcon className="w-6 h-6 text-blue-400" />
+          <div className="w-6 h-6 flex items-center justify-center">
+            <JojoIcon width="24" height="24" className="text-blue-400" />
+          </div>
         </NavLink>
         
         <NavLink 
@@ -39,7 +41,9 @@ const Sidebar = () => {
              ${isActive ? 'bg-purple-900' : ''}`
           }
         >
-          <TarotIcon className="w-6 h-6 text-purple-400" />
+          <div className="w-6 h-6 flex items-center justify-center">
+            <TarotIcon width="24" height="24" className="text-purple-400" />
+          </div>
         </NavLink>
         
         <NavLink 
@@ -49,7 +53,9 @@ const Sidebar = () => {
              ${isActive ? 'bg-orange-900' : ''}`
           }
         >
-          <FortuneIcon className="w-6 h-6 text-orange-400" />
+          <div className="w-6 h-6 flex items-center justify-center">
+            <FortuneIcon width="24" height="24" className="text-orange-400" />
+          </div>
         </NavLink>
         
         <NavLink 
@@ -59,7 +65,9 @@ const Sidebar = () => {
              ${isActive ? 'bg-emerald-900' : ''}`
           }
         >
-          <IsekaiIcon className="w-6 h-6 text-emerald-400" />
+          <div className="w-6 h-6 flex items-center justify-center">
+            <IsekaiIcon width="24" height="24" className="text-emerald-400" />
+          </div>
         </NavLink>
       </nav>
       
