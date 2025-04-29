@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import jojoIcon from '../assets/jojo-icon.png';
-import tarotIcon from '../assets/tarot-icon.png';
-import fortuneIcon from '../assets/fortune-icon.png';
-import isekaiIcon from '../assets/isekai-icon.png';
-import moreIcon from '../assets/more-icon.png';
+import jojoIcon from '../assets/jojo-icon.svg';
+import tarotIcon from '../assets/tarot-icon.svg';
+import fortuneIcon from '../assets/fortune-icon.svg';
+import isekaiIcon from '../assets/isekai-icon.svg';
+import moreIcon from '../assets/more-icon.svg';
 
 interface HomeCardProps {
   title: string;
