@@ -334,6 +334,30 @@ const choiceNodes: Record<string, ChoiceNode> = {
   }
 };
 
+// 添加新的事件类型和结局
+const additionalEvents: LifeEvent[] = [
+  { age: 3, description: '你开始展现出与众不同的天赋。' },
+  { age: 6, description: '你遇到了人生中的第一个重要选择。' },
+  { age: 9, description: '你的特殊能力开始觉醒。' },
+  { age: 12, description: '你遇到了改变命运的重要人物。' },
+  { age: 15, description: '你开始探索这个世界的奥秘。' },
+  { age: 18, description: '你面临着人生的重要转折点。' },
+  { age: 21, description: '你的能力得到了显著提升。' },
+  { age: 24, description: '你开始建立自己的势力。' },
+  { age: 27, description: '你遇到了强大的对手。' },
+  { age: 30, description: '你开始思考人生的意义。' }
+];
+
+const endings: LifeEvent[] = [
+  { age: "结局", description: '你成为了这个世界的传奇，被后人传颂。' },
+  { age: "结局", description: '你找到了回家的路，带着异世界的记忆回到现实。' },
+  { age: "结局", description: '你建立了自己的王国，成为一代明君。' },
+  { age: "结局", description: '你领悟了世界的真理，选择隐居山林。' },
+  { age: "结局", description: '你与挚爱之人携手共度余生。' },
+  { age: "结局", description: '你成为了世界最强的存在，但感到孤独。' },
+  { age: "结局", description: '你选择回到平凡的生活，珍惜当下。' }
+];
+
 // --- Component Logic ---
 
 const IsekaiPage: React.FC = () => {
@@ -383,19 +407,32 @@ const IsekaiPage: React.FC = () => {
     setCurrentChoiceData(null);
   }, [currentTimeoutId]);
 
-  // 生成初始人生事件链 (极简化 + 调试日志)
+  // 修改 generateLifeEvents 函数
   const generateLifeEvents = useCallback((initialAttrs: Attributes) => {
     console.log("[Debug] Generating life events with initial attributes:", initialAttrs);
-    // 确保基于最终的 initialAttrs 生成事件
-    const events: LifeEvent[] = [
-        { age: 0, description: '前世的记忆消散，你在新的世界睁开了双眼。' },
-        { age: 5, description: `基于你的出身(${initialAttrs.wealth > 6 ? '优渥' : '普通'})，你的早期教育开始了。` },
-        { age: 7, description: `童年爱好(${initialAttrs.intelligence > initialAttrs.strength ? '偏静' : '偏动'})塑造了你的性格。` },
-        { age: 10, description: '你开始思考人生的意义，也许是前世遗憾的影响？' },
-        { age: 12, description: `你在${initialAttrs.luck > 5 ? '好运' : '一般运气'}的伴随下度过了少年时光。` },
-        { age: 15, description: '第一次面临重大考验，你凭借智慧或力量度过。' },
-        { age: 18, description: '成年之际，你必须为自己的未来做出关键抉择。' , isChoiceNode: true, choiceNodeId: 'choice_age_18_study'} // 使用之前的18岁选择节点
+    
+    // 根据属性生成基础事件
+    const baseEvents: LifeEvent[] = [
+      { age: 0, description: '前世的记忆消散，你在新的世界睁开了双眼。' },
+      { age: 5, description: `基于你的出身(${initialAttrs.wealth > 6 ? '优渥' : '普通'})，你的早期教育开始了。` },
+      { age: 7, description: `童年爱好(${initialAttrs.intelligence > initialAttrs.strength ? '偏静' : '偏动'})塑造了你的性格。` },
+      { age: 10, description: '你开始思考人生的意义，也许是前世遗憾的影响？' },
+      { age: 12, description: `你在${initialAttrs.luck > 5 ? '好运' : '一般运气'}的伴随下度过了少年时光。` },
+      { age: 15, description: '第一次面临重大考验，你凭借智慧或力量度过。' },
+      { age: 18, description: '成年之际，你必须为自己的未来做出关键抉择。', isChoiceNode: true, choiceNodeId: 'choice_age_18_study' }
     ];
+
+    // 随机选择一些额外事件
+    const randomEvents = [...additionalEvents]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+
+    // 随机选择一个结局
+    const randomEnding = endings[Math.floor(Math.random() * endings.length)];
+
+    // 合并所有事件
+    const events = [...baseEvents, ...randomEvents, randomEnding];
+    
     console.log("[Debug] Generated events:", events);
     setLifeEvents(events);
     setIsAutoPlaying(true);
@@ -508,7 +545,7 @@ const IsekaiPage: React.FC = () => {
     }
   }, [displayedEvents]);
 
-  // 修改后的 handleMakeChoice
+  // 修改 handleMakeChoice 函数
   const handleMakeChoice = useCallback((optionIndex: number) => {
     if (!currentChoiceData) {
       console.error("[Debug] No choice data available");
@@ -550,10 +587,10 @@ const IsekaiPage: React.FC = () => {
     const newEvents = selectedOption.nextEvents;
     const lastEvent = newEvents[newEvents.length - 1];
     if (lastEvent.age !== "结局" && !lastEvent.isChoiceNode) {
-      newEvents.push({
-        age: "结局",
-        description: "你的故事暂时告一段落..."
-      });
+      // 根据当前属性选择一个合适的结局
+      const totalScore = Object.values(attributes).reduce((sum, val) => sum + val, 0);
+      const endingIndex = Math.min(Math.floor(totalScore / 10), endings.length - 1);
+      newEvents.push(endings[endingIndex]);
     }
 
     const newLifePath = [...baseEvents, outcomeEvent, ...newEvents];
@@ -564,7 +601,7 @@ const IsekaiPage: React.FC = () => {
     setCurrentChoiceData(null);
     setIsAutoPlaying(true);
 
-  }, [currentChoiceData, displayedEvents, lifeEvents, applyAttributeChanges]);
+  }, [currentChoiceData, displayedEvents, lifeEvents, applyAttributeChanges, attributes]);
 
   // -- Render Functions --
 
