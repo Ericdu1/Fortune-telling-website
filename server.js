@@ -15,6 +15,9 @@ if (!fs.existsSync(cacheDir)) {
   fs.mkdirSync(cacheDir);
 }
 
+// 导入图像生成功能
+const generateImage = require('./api/generate-image');
+
 // 二次元API源列表
 const ANIME_API_SOURCES = [
   {
@@ -368,6 +371,27 @@ function cleanupCache() {
 
 // 每6小时清理一次缓存
 setInterval(cleanupCache, 6 * 60 * 60 * 1000);
+
+// 添加图像生成API路由
+app.post('/api/generate-image', async (req, res) => {
+  try {
+    // 设置CORS头
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'POST');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // 确保环境变量存在
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'API key not configured' });
+    }
+    
+    // 调用图像生成函数
+    await generateImage(req, res);
+  } catch (error) {
+    console.error('Image generation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // 启动服务器
 const PORT = process.env.PORT || 3005;

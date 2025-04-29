@@ -27,6 +27,7 @@
     "framer-motion": "^10.0.1",
     "html2canvas": "^1.4.1",
     "http-proxy-middleware": "^3.0.3",
+    "node-fetch": "^2.6.7",
     "pixiv-app-api": "^1.2.1",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
