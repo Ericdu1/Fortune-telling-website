@@ -220,8 +220,8 @@ const App: React.FC = () => {
             onStartDaily={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
             onStartJojoMbti={() => setState(prev => ({ ...prev, currentStep: 'jojo-mbti' }))}
             onStartIsekai={() => {
-              // 打开异世界测试页面，使用相对路径
-              window.open('/isekai-test', '_blank');
+              // 打开异世界测试页面，使用完整URL
+              window.open('http://mira-note.com/isekai-test', '_blank');
             }}
           />
         );
@@ -316,7 +316,7 @@ const App: React.FC = () => {
           </SidebarItem>
           <SidebarItem 
             onClick={() => {
-              window.open('/isekai-test', '_blank');
+              window.open('http://mira-note.com/isekai-test', '_blank');
             }}
           >
             <ExperimentOutlined />

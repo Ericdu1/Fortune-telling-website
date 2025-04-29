@@ -870,7 +870,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               custom={0}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
-              style={{ position: 'relative', overflow: 'hidden' }}
+              style={{ position: 'relative', overflow: 'hidden', height: 'auto', maxHeight: '350px' }}
               theme="jojo"
             >
               <NewBadge><span>New</span></NewBadge>
