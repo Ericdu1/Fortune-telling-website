@@ -11,6 +11,7 @@ import DailyFortune from './components/DailyFortune';
 import { HomeOutlined, StarOutlined, CalendarOutlined, UserOutlined, HistoryOutlined, ExperimentOutlined } from '@ant-design/icons';
 import GlobalStyles from './styles/GlobalStyles';
 import JojoMbtiPage from './components/JojoMbtiPage';
+import IsekaiPage from './components/IsekaiPage';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -220,8 +221,8 @@ const App: React.FC = () => {
             onStartDaily={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
             onStartJojoMbti={() => setState(prev => ({ ...prev, currentStep: 'jojo-mbti' }))}
             onStartIsekai={() => {
-              // 打开异世界测试页面，使用完整URL
-              window.open('http://mira-note.com/isekai-test', '_blank');
+              // 直接在应用内打开异世界测试
+              setState(prev => ({ ...prev, currentStep: 'isekai-test' }));
             }}
           />
         );
@@ -277,8 +278,10 @@ const App: React.FC = () => {
         );
 
       case 'isekai-test':
-        // 异世界测试是独立应用，这里只是为了类型安全
-        return null;
+        // 异世界测试直接集成到主应用
+        return (
+          <IsekaiPage />
+        );
 
       default:
         return null;
@@ -315,8 +318,9 @@ const App: React.FC = () => {
             <ExperimentOutlined />
           </SidebarItem>
           <SidebarItem 
+            active={state.currentStep === 'isekai-test'}
             onClick={() => {
-              window.open('http://mira-note.com/isekai-test', '_blank');
+              setState(prev => ({ ...prev, currentStep: 'isekai-test' }));
             }}
           >
             <ExperimentOutlined />
