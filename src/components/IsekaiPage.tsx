@@ -358,10 +358,129 @@ const endings: LifeEvent[] = [
   { age: "结局", description: '你选择回到平凡的生活，珍惜当下。' }
 ];
 
+// 世界观与寿命基础设定
+const worldSettings = {
+  normal: { maxAge: 90, ageStep: 10, label: '普通世界' },
+  magic: { maxAge: 100, ageStep: 10, label: '魔法世界' },
+  cyber: { maxAge: 110, ageStep: 10, label: '赛博世界' },
+  xiuxian: { maxAge: 500, ageStep: 50, label: '修仙世界' },
+  magnet: { maxAge: 300, ageStep: 50, label: '磁场世界' },
+  elf: { maxAge: 1200, ageStep: 100, label: '精灵世界' }
+};
+
+// 能力觉醒对寿命和属性的影响
+const abilityEffects = {
+  magnet: { lifespan: 200, attributes: { strength: 2 }, label: '磁场力量' },
+  xiuxian: { lifespan: 500, attributes: { luck: 2 }, label: '修仙体质' },
+  stand: { lifespan: 50, attributes: { charisma: 2 }, label: '替身能力' },
+  curse: { lifespan: -50, attributes: { luck: -2 }, label: '诅咒' }
+};
+
+// 穿越类型增加世界观字段
+const transmigrationTypes = [
+  {
+    key: 'normal',
+    label: '正常穿越',
+    desc: '你以常规方式穿越到异世界，开启新人生。',
+    world: 'normal',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你在异世界诞生，开启新的人生。' }
+    ]
+  },
+  {
+    key: 'rebirth',
+    label: '重生到年轻时',
+    desc: '你回到自己年轻时代，拥有前世记忆，可以逆天改命。',
+    world: 'normal',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你重生回到少年时代，脑海中有着未来的记忆。' },
+      { age: 6, description: '你开始用前世的经验影响人生。' }
+    ]
+  },
+  {
+    key: 'soul',
+    label: '魂穿他人',
+    desc: '你的灵魂进入了另一个人的身体，需要隐藏身份。',
+    world: 'normal',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你睁开眼，发现自己在陌生的身体里，记忆混乱。' },
+      { age: 3, description: '你努力适应新身体，隐藏身份。' }
+    ]
+  },
+  {
+    key: 'fail',
+    label: '穿越失败/副作用',
+    desc: '穿越过程中出现意外，身体或灵魂受损。',
+    world: 'normal',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '穿越过程中灵魂受损，你失去了部分记忆。', attributeChanges: { intelligence: -2, luck: -2 } },
+      { age: 2, description: '你发现身体有异变，寿命大幅缩短。', attributeChanges: { strength: -2 } }
+    ]
+  },
+  {
+    key: 'hunter',
+    label: '穿越到猎杀穿越者世界',
+    desc: '你穿越到一个痛恨穿越者的世界，危机四伏。',
+    world: 'normal',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你刚穿越过来，便被世界意志锁定，危机四伏。', attributeChanges: { luck: -3 } },
+      { age: 5, description: '穿越者猎人正在追捕你，你必须伪装成原住民。' }
+    ]
+  },
+  // 新增特殊世界观开局
+  {
+    key: 'magic',
+    label: '魔法世界穿越',
+    desc: '你穿越到魔法世界，拥有魔法天赋。',
+    world: 'magic',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你在魔法世界诞生，天生拥有魔法亲和力。' }
+    ]
+  },
+  {
+    key: 'cyber',
+    label: '赛博世界穿越',
+    desc: '你穿越到高科技赛博世界，科技与身体融合。',
+    world: 'cyber',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你在赛博世界出生，身体与科技高度融合。' }
+    ]
+  },
+  {
+    key: 'xiuxian',
+    label: '修仙世界穿越',
+    desc: '你穿越到修仙世界，获得修仙体质。',
+    world: 'xiuxian',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你在修仙世界出生，拥有灵根。' }
+    ]
+  },
+  {
+    key: 'magnet',
+    label: '磁场世界穿越',
+    desc: '你穿越到磁场力量为尊的世界。',
+    world: 'magnet',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你在磁场世界出生，体内蕴含磁场力量。' }
+    ]
+  },
+  {
+    key: 'elf',
+    label: '精灵世界穿越',
+    desc: '你穿越为精灵族，天生长寿。',
+    world: 'elf',
+    getInitialEvents: (attrs: Attributes): LifeEvent[] => [
+      { age: 0, description: '你在精灵世界出生，拥有千年寿命。' }
+    ]
+  }
+];
+
 // --- Component Logic ---
 
+type StageType = Stage | 'transTypeSelect';
+
 const IsekaiPage: React.FC = () => {
-  const [stage, setStage] = useState<Stage>(Stage.QUESTIONS);
+  const [stage, setStage] = useState<StageType>(Stage.QUESTIONS);
   const [questionsList] = useState<Question[]>(initialQuestions); // 问题列表
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [attributes, setAttributes] = useState<Attributes>({ strength: 3, intelligence: 3, charisma: 3, luck: 3, wealth: 3 }); // 重置初始属性为一个基准值，问题会在此基础上修改
@@ -377,6 +496,13 @@ const IsekaiPage: React.FC = () => {
 
   const eventLogRef = useRef<HTMLDivElement>(null); // 用于自动滚动
   const [userId] = useState<string>(`user-${Math.random().toString(36).substring(2, 9)}`);
+
+  const [transType, setTransType] = useState<string | null>(null);
+
+  const [currentWorld, setCurrentWorld] = useState<string>('normal');
+  const [lifespan, setLifespan] = useState<number>(90);
+  const [ageStep, setAgeStep] = useState<number>(10);
+  const [awakenedAbilities, setAwakenedAbilities] = useState<string[]>([]);
 
   // -- Helper Functions --
 
@@ -405,56 +531,92 @@ const IsekaiPage: React.FC = () => {
     setCurrentTimeoutId(null);
     setIsAtChoice(false);
     setCurrentChoiceData(null);
+    setCurrentWorld('normal');
+    setLifespan(90);
+    setAgeStep(10);
+    setAwakenedAbilities([]);
   }, [currentTimeoutId]);
 
-  // 修改 generateLifeEvents 函数
-  const generateLifeEvents = useCallback((initialAttrs: Attributes) => {
-    console.log("[Debug] Generating life events with initial attributes:", initialAttrs);
-    
-    // 根据属性生成基础事件
-    const baseEvents: LifeEvent[] = [
-      { age: 0, description: '前世的记忆消散，你在新的世界睁开了双眼。' },
-      { age: 5, description: `基于你的出身(${initialAttrs.wealth > 6 ? '优渥' : '普通'})，你的早期教育开始了。` },
-      { age: 7, description: `童年爱好(${initialAttrs.intelligence > initialAttrs.strength ? '偏静' : '偏动'})塑造了你的性格。` },
-      { age: 10, description: '你开始思考人生的意义，也许是前世遗憾的影响？' },
-      { age: 12, description: `你在${initialAttrs.luck > 5 ? '好运' : '一般运气'}的伴随下度过了少年时光。` },
-      { age: 15, description: '第一次面临重大考验，你凭借智慧或力量度过。' },
-      { age: 18, description: '成年之际，你必须为自己的未来做出关键抉择。', isChoiceNode: true, choiceNodeId: 'choice_age_18_study' }
-    ];
+  // 修改 generateLifeEvents 函数，支持世界观与寿命、能力觉醒
+  const generateLifeEvents = useCallback((initialAttrs: Attributes, typeKey?: string) => {
+    let initialEvents: LifeEvent[] = [];
+    const type = transmigrationTypes.find(t => t.key === (typeKey || transType));
+    const worldKey = type?.world || 'normal';
+    setCurrentWorld(worldKey);
+    const worldConf = worldSettings[worldKey];
+    setLifespan(worldConf.maxAge);
+    setAgeStep(worldConf.ageStep);
+    let maxAge = worldConf.maxAge;
+    let step = worldConf.ageStep;
+    let abilities: string[] = [];
 
-    // 随机选择一些额外事件
-    const randomEvents = [...additionalEvents]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
+    if (type) {
+      initialEvents = type.getInitialEvents(initialAttrs);
+    } else {
+      initialEvents = [{ age: 0, description: '你在异世界开启新的人生。' }];
+    }
+
+    // 负面特殊开局处理
+    if (typeKey === 'hunter') {
+      if (Math.random() < 0.3) {
+        setLifeEvents([...initialEvents, { age: '终结', description: '你被发现是穿越者，直接被处决，人生终结。' }]);
+        setIsAutoPlaying(true);
+        setStage(Stage.SIMULATION);
+        setAwakenedAbilities([]);
+        return;
+      }
+    }
+    if (typeKey === 'fail') {
+      if (Math.random() < 0.2) {
+        initialEvents.push({ age: 5, description: '穿越副作用爆发，你英年早逝。', attributeChanges: { strength: -5 } });
+        setLifeEvents([...initialEvents, { age: '终结', description: '你因穿越副作用过世。' }]);
+        setIsAutoPlaying(true);
+        setStage(Stage.SIMULATION);
+        setAwakenedAbilities([]);
+        return;
+      }
+    }
+
+    // 随机能力觉醒事件
+    let awakenEvents: LifeEvent[] = [];
+    if (Math.random() < 0.3) { // 30%概率觉醒其他世界观能力
+      const keys = Object.keys(abilityEffects);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      const effect = abilityEffects[randomKey];
+      abilities.push(randomKey);
+      maxAge += effect.lifespan;
+      awakenEvents.push({
+        age: 20,
+        description: `你在成长过程中觉醒了${effect.label}，寿命提升${effect.lifespan > 0 ? '+' : ''}${effect.lifespan}年，能力增强！`,
+        attributeChanges: effect.attributes
+      });
+    }
+    setAwakenedAbilities(abilities);
+    setLifespan(maxAge);
+
+    // 生成阶段性事件
+    let stageEvents: LifeEvent[] = [];
+    for (let age = 10; age < maxAge; age += step) {
+      stageEvents.push({ age, description: `${age}岁：你在${worldConf.label}继续成长，经历了人生新阶段。` });
+    }
 
     // 随机选择一个结局
     const randomEnding = endings[Math.floor(Math.random() * endings.length)];
-
-    // 合并所有事件
-    const events = [...baseEvents, ...randomEvents, randomEnding];
-    
-    console.log("[Debug] Generated events:", events);
+    const events = [...initialEvents, ...awakenEvents, ...stageEvents, randomEnding];
     setLifeEvents(events);
     setIsAutoPlaying(true);
     setStage(Stage.SIMULATION);
-    console.log("[Debug] Simulation stage set, auto play started.");
-  }, []);
+  }, [transType]);
 
-  // 处理回答（用于设置初始属性）
+  // 修改 handleAnswer，最后一个问题后进入穿越类型选择
   const handleAnswer = (answer: Answer) => {
-    console.log("[Debug] Answer selected, applying changes:", answer.attributeChanges);
     applyAttributeChanges(answer.attributeChanges);
-
     if (currentQuestionIndex < questionsList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      console.log("[Debug] All questions answered. Final initial attributes:", attributes);
-      // 确保在调用 generateLifeEvents 时传递最新的 attributes
-      // 使用函数式更新来获取最新的状态值
-      setAttributes(currentAttrs => {
-          generateLifeEvents(currentAttrs); 
-          return currentAttrs; // 返回当前状态，因为 generateLifeEvents 不直接修改它
-      });
+      // 回答完毕，进入穿越类型选择
+      setTransType(null);
+      setStage('transTypeSelect');
     }
   };
 
@@ -676,8 +838,7 @@ const IsekaiPage: React.FC = () => {
 
  const renderEndScreen = () => {
     const finalEvent = displayedEvents[displayedEvents.length - 1];
-    const lifespan = typeof finalEvent?.age === 'number' ? finalEvent.age : '未知';
-    // 简单总评计算
+    const lifespanValue = typeof finalEvent?.age === 'number' ? finalEvent.age : lifespan;
     const totalScore = Object.values(attributes).reduce((sum, val) => sum + val, 0);
     const rating = totalScore >= 40 ? '传奇' : totalScore >= 30 ? '优秀' : totalScore >= 20 ? '普通' : '坎坷';
 
@@ -691,7 +852,9 @@ const IsekaiPage: React.FC = () => {
                  <SummaryAttributeItem><span>运气:</span> <span>{attributes.luck}</span></SummaryAttributeItem>
                  <SummaryAttributeItem><span>家境:</span> <span>{attributes.wealth}</span></SummaryAttributeItem>
              </SummaryAttributeContainer>
-             <LifeSummaryText>享年: {lifespan}岁</LifeSummaryText>
+             <LifeSummaryText>享年: {lifespanValue}岁</LifeSummaryText>
+             <LifeSummaryText>世界观: {worldSettings[currentWorld]?.label || '未知'}</LifeSummaryText>
+             <LifeSummaryText>觉醒能力: {awakenedAbilities.length > 0 ? awakenedAbilities.map(k => abilityEffects[k].label).join('、') : '无'}</LifeSummaryText>
              <LifeSummaryText>人生总评: {totalScore} ({rating})</LifeSummaryText>
             {/* 最终总结图片 */} 
              <FinalImageContainer>
@@ -699,7 +862,7 @@ const IsekaiPage: React.FC = () => {
                     sceneType="final-form"
                     worldType={result?.world || ''}
                     talent={result?.talent || ''}
-                    event={`最终人生总结: ${rating}, 享年${lifespan}`}
+                    event={`最终人生总结: ${rating}, 享年${lifespanValue}`}
                     userId={userId}
                 />
             </FinalImageContainer>
@@ -708,17 +871,30 @@ const IsekaiPage: React.FC = () => {
     );
  };
 
+  const renderTransTypeSelect = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+      <StageTitle>选择你的穿越方式</StageTitle>
+      {transmigrationTypes.map(type => (
+        <ChoiceButton key={type.key} onClick={() => {
+          setTransType(type.key);
+          // 生成事件链
+          setTimeout(() => {
+            generateLifeEvents(attributes, type.key);
+          }, 300);
+        }}>{type.label} - {type.desc}</ChoiceButton>
+      ))}
+    </motion.div>
+  );
+
   const renderCurrentStage = () => {
+    if (stage === 'transTypeSelect') return renderTransTypeSelect();
     switch (stage) {
       case Stage.QUESTIONS:
         return renderQuestionPage();
       case Stage.SIMULATION:
-      case Stage.END: // 结束界面也需要显示模拟过程的最终状态和总结
-          // 注意：END 阶段理论上应该渲染 renderEndScreen，但为了保持模拟器的连续性，
-          // 可以考虑将总结信息叠加在 Simulation 视图之上，或者单独渲染。
-          // 此处简化为直接渲染对应函数。
-          if (stage === Stage.END) return renderEndScreen();
-          return renderSimulationStage();
+      case Stage.END:
+        if (stage === Stage.END) return renderEndScreen();
+        return renderSimulationStage();
       default:
         return <div>加载中或未知阶段...</div>;
     }
