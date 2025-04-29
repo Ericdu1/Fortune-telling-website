@@ -201,8 +201,8 @@ const CharacterCard = styled.div`
 `;
 
 const CharacterImage = styled.div<{ backgroundImage: string }>`
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   margin: 0 auto 1.5rem;
   border-radius: 10px;
   background-image: ${props => props.backgroundImage};
@@ -212,8 +212,8 @@ const CharacterImage = styled.div<{ backgroundImage: string }>`
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   
   @media (max-width: 480px) {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     margin: 0 auto 1rem;
   }
 `;
@@ -679,31 +679,33 @@ const JojoMbtiPage: React.FC = () => {
     const imgWidth = img.naturalWidth;
     
     // 默认缩放系数
-    let scale = 1;
+    let scale = 1.2;
     
     // 如果布加拉提图片已加载，则使用其高度作为参考
     if (bucciaratiDimensions.current.loaded) {
       // 缩放系数 = 布加拉提高度 / 当前图片高度
-      scale = bucciaratiDimensions.current.height / imgHeight;
+      scale = bucciaratiDimensions.current.height / imgHeight * 1.2;
       
       // 对于特别宽的图片进行额外处理
       if ((imgWidth / imgHeight) > 1.2) {
-        scale *= 0.85; // 略微缩小过宽的图片
+        scale *= 0.9;
       }
       
       // 对于特别窄的图片进行额外处理
       if ((imgHeight / imgWidth) > 2) {
-        scale *= 0.9; // 略微缩小过窄的图片
+        scale *= 0.95;
       }
       
       // 特殊角色调整
       if (characterName === '乔纳森·乔斯达') {
-        scale *= 2.0; // 为乔纳森特别增加尺寸
+        scale *= 2.2;
         console.log('乔纳森特别调整，缩放系数加倍');
       } else if (characterName === '吉良吉影' || characterName === '岸边露伴') {
-        scale *= 1.1; // 放大10%
+        scale *= 1.15;
       } else if (characterName === '迪奥·布兰度' || characterName === '乔鲁诺·乔巴拿') {
-        scale *= 1.15; // 放大15%
+        scale *= 1.2;
+      } else {
+        scale *= 1.15;
       }
       
       // 应用计算后的缩放
@@ -716,19 +718,19 @@ const JojoMbtiPage: React.FC = () => {
       // 如果布加拉提图片未加载，则使用基于图片比例的默认调整
       if (characterName === '乔纳森·乔斯达') {
         // 乔纳森特别处理，即使没有布加拉提图片也放大
-        img.style.maxHeight = '85vh';
+        img.style.maxHeight = '90vh';
         img.style.maxWidth = '95%';
       } else if (imgHeight > imgWidth * 2) {
         // 特别瘦长的图片
-        img.style.maxHeight = '78vh';
-        img.style.maxWidth = '70%';
+        img.style.maxHeight = '85vh';
+        img.style.maxWidth = '75%';
       } else if (imgWidth > imgHeight * 1.5) {
         // 特别宽的图片
-        img.style.maxHeight = '70vh';
+        img.style.maxHeight = '75vh';
         img.style.maxWidth = '95%';
       } else {
         // 普通比例的图片
-        img.style.maxHeight = '78vh';
+        img.style.maxHeight = '85vh';
         img.style.maxWidth = '95%';
       }
     }

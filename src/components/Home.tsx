@@ -254,7 +254,7 @@ const FortuneTitle = styled.div`
     background: linear-gradient(135deg, #ffa502, #ff6b6b);
     border-radius: 16px;
     display: flex;
-    justify-content: center;
+  justify-content: center;
     align-items: center;
     font-size: 1.8rem;
     color: white;
@@ -763,13 +763,37 @@ const MoreSilhouette = styled.div`
   }
 `;
 
+// 添加异世界虚影
+const IsekaiSilhouette = styled.div`
+  position: absolute;
+  right: 15px;
+  bottom: 10px;
+  width: 120px;
+  height: 120px;
+  background-image: url('/images/isekai/logo.svg');
+  background-size: contain;
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  transform: rotate(0deg);
+  filter: brightness(120%);
+  z-index: 0;
+  transition: all 0.5s ease;
+  
+  ${FeatureCard}:hover & {
+    opacity: 0.25;
+    transform: rotate(5deg) scale(1.1);
+  }
+`;
+
 interface HomeProps {
   onStartTarot: () => void;
   onStartDaily: () => void;
   onStartJojoMbti: () => void;
+  onStartIsekai: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti }) => {
+const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti, onStartIsekai }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   
   useEffect(() => {
@@ -795,6 +819,12 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
       description: '发现你在JOJO奇妙冒险中的角色替身',
       image: '/images/banners/jojo-banner.jpg',
       action: onStartJojoMbti
+    },
+    {
+      title: '多维世界穿越测试',
+      description: '探索你专属的异世界穿越故事，发现你的潜在能力',
+      image: '/images/isekai/banner.svg',
+      action: onStartIsekai
     }
   ];
 
@@ -926,6 +956,54 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               <TarotSilhouette />
             </FeatureCard>
             
+            {/* 异世界穿越测试 - 新增功能 */}
+            <FeatureCard
+              gradientStart="255, 107, 107"
+              gradientEnd="255, 165, 0"
+              onClick={onStartIsekai}
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              custom={2}
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              theme="isekai"
+              style={{ position: 'relative', overflow: 'hidden' }}
+            >
+              <NewBadge><span>New</span></NewBadge>
+              <FeatureTitle>
+                <div className="icon-container" style={{ background: 'linear-gradient(135deg, #ff6b6b, #ffa500)' }}>
+                  <ExperimentOutlined />
+                </div>
+                <h3>异世界穿越测试</h3>
+              </FeatureTitle>
+              <FeatureDescription>
+                探索你专属的穿越故事，测试你在异世界会觉醒什么能力，面临怎样的命运挑战！
+              </FeatureDescription>
+              <CardFooter>
+                <NewTag><ThunderboltOutlined /> 新功能</NewTag>
+                <CardAction>开始测试 <RightOutlined /></CardAction>
+              </CardFooter>
+              <CardDecoration />
+              {/* 添加异世界虚影 - 使用内联样式 */}
+              <div style={{
+                position: 'absolute',
+                right: '15px',
+                bottom: '10px',
+                width: '120px',
+                height: '120px',
+                backgroundImage: 'url(/images/isekai/logo.svg)',
+                backgroundSize: 'contain',
+                backgroundPosition: 'bottom right',
+                backgroundRepeat: 'no-repeat',
+                opacity: 0.15,
+                transform: 'rotate(0deg)',
+                filter: 'brightness(120%)',
+                zIndex: 0,
+                transition: 'all 0.5s ease'
+              }} />
+            </FeatureCard>
+            
             {/* 更多功能（禁用） */}
             <DisabledCard
               gradientStart="108, 92, 231"
@@ -933,7 +1011,7 @@ const Home: React.FC<HomeProps> = ({ onStartTarot, onStartDaily, onStartJojoMbti
               variants={cardVariants}
               initial="hidden"
               animate="visible"
-              custom={2}
+              custom={3}
               theme="fortune"
             >
               <FeatureTitle>

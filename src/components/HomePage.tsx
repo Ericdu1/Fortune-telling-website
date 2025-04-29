@@ -14,7 +14,6 @@ import {
   StarOutlined,
   NotificationOutlined
 } from '@ant-design/icons';
-import HomeCard from './HomeCard';
 
 const { Title, Text } = Typography;
 
@@ -445,27 +444,27 @@ const cardVariants = {
 };
 
 interface HomeProps {
-  onStartFortune?: () => void;
-  onStartMBTI?: () => void;
-  onStartTarot?: () => void;
-  onStartAI?: () => void;
-  onViewHistory?: () => void;
-  onViewProfile?: () => void;
-  isLoggedIn?: boolean;
-  username?: string;
-  email?: string;
+  onStartFortune: () => void;
+  onStartMBTI: () => void;
+  onStartTarot: () => void;
+  onStartAI: () => void;
+  onViewHistory: () => void;
+  onViewProfile: () => void;
+  isLoggedIn: boolean;
+  username: string;
+  email: string;
 }
 
 const HomePage: React.FC<HomeProps> = ({
-  onStartFortune = () => {},
-  onStartMBTI = () => {},
-  onStartTarot = () => {},
-  onStartAI = () => {},
-  onViewHistory = () => {},
-  onViewProfile = () => {},
-  isLoggedIn = false,
-  username = "访客",
-  email = ""
+  onStartFortune,
+  onStartMBTI,
+  onStartTarot,
+  onStartAI,
+  onViewHistory,
+  onViewProfile,
+  isLoggedIn,
+  username,
+  email
 }) => {
   // 模拟一个推荐功能的状态
   const [recommended] = useState({
@@ -498,65 +497,191 @@ const HomePage: React.FC<HomeProps> = ({
   ];
 
   return (
-    <motion.div 
-      className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6 lg:px-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">AI 占卜屋</h1>
-          <p className="text-xl text-gray-300">探索命运的奥秘，发现未知的自我</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* JOJO MBTI测试卡片 */}
-          <HomeCard 
-            title="JOJO MBTI测试" 
-            description="测试你是JOJO中的哪个角色，发现你的替身能力与性格特点，探索你的潜能与命运" 
-            icon="jojo" 
-            path="/jojo-test" 
-            isNew={true}
-          />
-          
-          {/* 塔罗牌占卜卡片 */}
-          <HomeCard 
-            title="塔罗牌占卜" 
-            description="解读塔罗牌的神秘信息，指引未来方向，探索你未知的命运轨迹。每一张牌都蕴含着深刻的人生智慧。" 
-            icon="tarot" 
-            path="/tarot" 
-            isHot={true}
-          />
-          
-          {/* 每日运势卡片 */}
-          <HomeCard 
-            title="每日运势" 
-            description="每天一次的运势预测，让你了解今日的吉凶祸福。星座、塔罗、八字合一，精准解读你的今日运势。" 
-            icon="fortune" 
-            path="/daily-fortune" 
-          />
-          
-          {/* 异世界穿越测试卡片 */}
-          <HomeCard 
-            title="异世界穿越测试" 
-            description="测试你将穿越到哪个世界？觉醒什么能力？面临怎样的命运？生成你专属的穿越故事！" 
-            icon="isekai" 
-            path="/isekai-test" 
-            isNew={true}
-          />
-          
-          {/* 更多功能卡片 */}
-          <HomeCard 
-            title="更多功能" 
-            description="更多二次元占卜功能，如命运之轮、元素解析等功能即将上线。敬请期待更多精彩内容。" 
-            icon="more" 
-            path="/more" 
-            comingSoon={true}
-          />
-        </div>
-      </div>
-    </motion.div>
+    <Container className="fortune-container">
+      <PageHeader>
+        <StyledTitle level={1}>二次元占卜屋</StyledTitle>
+        <StyledSubtitle>
+          {isLoggedIn ? `欢迎回来，${username}` : '探索你的命运，揭示生活的奥秘'}
+        </StyledSubtitle>
+      </PageHeader>
+
+      {/* 轮播Banner */}
+      <HomeBanner>
+        <StyledCarousel autoplay effect="fade">
+          {banners.map((banner, index) => (
+            <div key={index} onClick={banner.onClick}>
+              <BannerContent bgImage={banner.image}>
+                <h3>{banner.title}</h3>
+                <p>{banner.description}</p>
+              </BannerContent>
+            </div>
+          ))}
+        </StyledCarousel>
+      </HomeBanner>
+
+      {/* 主要功能区域 */}
+      <section>
+        <SectionHeader>
+          <SectionTitle>
+            <ThunderboltOutlined style={{ color: '#ffd700' }} /> 核心功能
+          </SectionTitle>
+          <ViewMore href="#">查看全部</ViewMore>
+        </SectionHeader>
+
+        <FeaturesGrid>
+          <FeatureCard 
+            onClick={onStartFortune}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            custom={0}
+            whileHover={{ y: -5 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <FortuneIconBg>
+              <CalendarOutlined />
+            </FortuneIconBg>
+            <CardTitle>每日运势</CardTitle>
+            <CardDescription>
+              查看今日运势，掌握好运密码，每天更新
+            </CardDescription>
+            <CardFooter>
+              <UsageCount>今日已有 2,451 人使用</UsageCount>
+              <HotTag><FireOutlined /> 热门</HotTag>
+            </CardFooter>
+          </FeatureCard>
+
+          <FeatureCard 
+            onClick={onStartMBTI}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            whileHover={{ y: -5 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <MbtiIconBg>
+              <ProjectOutlined />
+            </MbtiIconBg>
+            <CardTitle>MBTI测试</CardTitle>
+            <CardDescription>
+              发现你的性格类型，了解真实的自己，获取个性化分析
+            </CardDescription>
+            <CardFooter>
+              <UsageCount>共有 15,723 人完成测试</UsageCount>
+              <NewTag><ThunderboltOutlined /> 新功能</NewTag>
+            </CardFooter>
+          </FeatureCard>
+
+          <FeatureCard 
+            onClick={onStartTarot}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            custom={2}
+            whileHover={{ y: -5 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <TarotIconBg>
+              <StarOutlined />
+            </TarotIconBg>
+            <CardTitle>塔罗牌占卜</CardTitle>
+            <CardDescription>
+              解读塔罗牌的神秘信息，指引未来方向，探索潜在可能
+            </CardDescription>
+            <CardFooter>
+              <UsageCount>今日已有 1,892 人使用</UsageCount>
+              <HotTag><FireOutlined /> 热门</HotTag>
+            </CardFooter>
+          </FeatureCard>
+
+          <FeatureCard 
+            onClick={onStartAI}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            custom={3}
+            whileHover={{ y: -5 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <DreamIconBg>
+              <RobotOutlined />
+            </DreamIconBg>
+            <CardTitle>AI解梦</CardTitle>
+            <CardDescription>
+              智能分析梦境含义，探索潜意识信息，获取心理洞察
+            </CardDescription>
+            <CardFooter>
+              <UsageCount>共有 8,574 人使用</UsageCount>
+              <Badge count="AI" style={{ backgroundColor: '#52c41a' }} />
+            </CardFooter>
+          </FeatureCard>
+        </FeaturesGrid>
+      </section>
+
+      {/* 推荐功能区域 */}
+      <RecommendedSection>
+        <SectionHeader>
+          <SectionTitle>
+            <NotificationOutlined style={{ color: '#9c88ff' }} /> 特别推荐
+          </SectionTitle>
+        </SectionHeader>
+
+        <RecommendedCard
+          onClick={recommended.onStart}
+          whileHover={{ y: -5 }}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <RecommendedIcon>
+            {recommended.icon}
+          </RecommendedIcon>
+          <RecommendedContent>
+            <RecommendedTitle>{recommended.title}</RecommendedTitle>
+            <RecommendedDesc>{recommended.description}</RecommendedDesc>
+          </RecommendedContent>
+          <Badge count="NEW" style={{ backgroundColor: '#1e90ff' }} />
+        </RecommendedCard>
+      </RecommendedSection>
+
+      {/* 用户功能区域 - 仅登录用户可见 */}
+      {isLoggedIn && (
+        <UserActionsSection>
+          <SectionHeader>
+            <SectionTitle>
+              <UserOutlined style={{ color: '#70a1ff' }} /> 个人中心
+            </SectionTitle>
+          </SectionHeader>
+
+          <UserInfoCard>
+            <UserAvatar size={64} src={`https://api.dicebear.com/7.x/micah/svg?seed=${username}`} />
+            <UserInfo>
+              <Username>{username}</Username>
+              <UserEmail>{email}</UserEmail>
+            </UserInfo>
+          </UserInfoCard>
+
+          <UserActions>
+            <ActionButton 
+              onClick={onViewHistory}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <HistoryOutlined /> 查看历史记录
+            </ActionButton>
+            <ActionButton 
+              onClick={onViewProfile}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <UserOutlined /> 个人资料设置
+            </ActionButton>
+          </UserActions>
+        </UserActionsSection>
+      )}
+    </Container>
   );
 };
 

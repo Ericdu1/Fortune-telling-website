@@ -11,14 +11,6 @@ import DailyFortune from './components/DailyFortune';
 import { HomeOutlined, StarOutlined, CalendarOutlined, UserOutlined, HistoryOutlined, ExperimentOutlined } from '@ant-design/icons';
 import GlobalStyles from './styles/GlobalStyles';
 import JojoMbtiPage from './components/JojoMbtiPage';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css';
-import Layout from './components/Layout';
-import HomePage from './components/HomePage';
-import JojoTest from './pages/JojoTest';
-import TarotPage from './pages/TarotPage';
-import FortunePage from './pages/FortunePage';
-import IsekaiTest from './pages/IsekaiTest';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -130,7 +122,8 @@ type Step =
   | 'tarot-share'
   | 'profile'
   | 'history'
-  | 'jojo-mbti';
+  | 'jojo-mbti'
+  | 'isekai-test';
 
 const positions = ['过去', '现在', '未来'];
 
@@ -226,6 +219,10 @@ const App: React.FC = () => {
             }}
             onStartDaily={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
             onStartJojoMbti={() => setState(prev => ({ ...prev, currentStep: 'jojo-mbti' }))}
+            onStartIsekai={() => {
+              // 打开异世界测试页面，使用相对路径
+              window.open('/isekai-test', '_blank');
+            }}
           />
         );
 
@@ -279,24 +276,69 @@ const App: React.FC = () => {
           <JojoMbtiPage />
         );
 
+      case 'isekai-test':
+        // 异世界测试是独立应用，这里只是为了类型安全
+        return null;
+
       default:
         return null;
     }
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="jojo-test" element={<JojoTest />} />
-          <Route path="tarot" element={<TarotPage />} />
-          <Route path="daily-fortune" element={<FortunePage />} />
-          <Route path="isekai-test" element={<IsekaiTest />} />
-          <Route path="*" element={<HomePage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <>
+      <GlobalStyles />
+      <AppContainer>
+        <Sidebar>
+          <SidebarItem 
+            active={state.currentStep === 'home'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'home' }))}
+          >
+            <HomeOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep.startsWith('tarot')}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'tarot-reading' }))}
+          >
+            <StarOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep.startsWith('daily')}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'daily-fortune' }))}
+          >
+            <CalendarOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep === 'jojo-mbti'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'jojo-mbti' }))}
+          >
+            <ExperimentOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            onClick={() => {
+              window.open('/isekai-test', '_blank');
+            }}
+          >
+            <ExperimentOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep === 'profile'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'profile' }))}
+          >
+            <UserOutlined />
+          </SidebarItem>
+          <SidebarItem 
+            active={state.currentStep === 'history'}
+            onClick={() => setState(prev => ({ ...prev, currentStep: 'history' }))}
+          >
+            <HistoryOutlined />
+          </SidebarItem>
+        </Sidebar>
+        <MainContent>
+          {renderStep()}
+        </MainContent>
+      </AppContainer>
+    </>
   );
 };
 
