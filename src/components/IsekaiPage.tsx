@@ -1,53 +1,62 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
-import { Button, Typography, Steps, Progress, Spin } from 'antd';
+import { Button, Spin, Progress } from 'antd'; // 移除不必要的 antd 组件
 import { motion } from 'framer-motion';
-import { ArrowLeftOutlined, HomeOutlined } from '@ant-design/icons';
-import ImageDisplay from './ImageDisplay'; // 导入图片显示组件
+import { HomeOutlined } from '@ant-design/icons';
+import ImageDisplay from './ImageDisplay';
 
-const { Title, Paragraph } = Typography;
-const { Step } = Steps;
-
-// --- Enums and Interfaces ---
+// --- Enums and Interfaces (保持或微调) ---
 
 enum Stage {
   QUESTIONS = 'questions',
   SIMULATION = 'simulation',
-  CHOICE = 'choice',
+  // CHOICE 状态合并到 SIMULATION 中处理
   END = 'end'
 }
 
 enum QuestionSection {
-  PERSONALITY = 'personality',
-  WORLD = 'world',
-  TALENT = 'talent',
-  DESTINY = 'destiny'
+  ATTRIBUTE_POINTS = 'attributes' // 简化问题阶段
 }
 
-interface AnswersType {
-  [QuestionSection.PERSONALITY]: number[];
-  [QuestionSection.WORLD]: number[];
-  [QuestionSection.TALENT]: number[];
-  [QuestionSection.DESTINY]: number[];
+// 属性定义
+interface Attributes {
+  strength: number; // 力量/体质
+  intelligence: number; // 智力
+  charisma: number; // 魅力/颜值
+  luck: number; // 运气
+  wealth: number; // 家境
+}
+
+// 简化为单一问题类型
+interface Answer {
+  text: string;
+  attributeChanges: Partial<Attributes>; // 回答对属性的影响
+}
+
+interface Question {
+  id: string;
+  text: string;
+  answers: Answer[];
 }
 
 interface ResultType {
   world: string;
   talent: string;
-  // ... other result details ...
 }
 
 interface LifeEvent {
-  age: string; // e.g., "5岁", "关键选择", "结局"
+  age: number | string; // 可以是数字年龄或特殊标记
   description: string;
-  isChoiceNode?: boolean; // 标记此事件后是否需要选择
-  choiceNodeId?: string; // 关联的选择节点ID
+  attributeChanges?: Partial<Attributes>; // 事件对属性的影响
+  isChoiceNode?: boolean;
+  choiceNodeId?: string;
 }
 
 interface ChoiceOption {
   text: string;
-  outcomeDescription: string; // 选择后的直接结果描述
-  nextEvents: LifeEvent[]; // 选择后的事件序列
+  attributeChanges?: Partial<Attributes>; // 选择对属性的影响
+  outcomeDescription: string;
+  nextEvents: LifeEvent[];
 }
 
 interface ChoiceNode {
@@ -55,485 +64,488 @@ interface ChoiceNode {
   title: string;
   description: string;
   options: ChoiceOption[];
+  imagePromptEvent?: string; // 用于生成该选择节点图片的事件描述
 }
 
-// --- Styled Components (极简风格) ---
+// --- Styled Components (人生重开模拟器风格) ---
 
 const PageContainer = styled.div`
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
+  max-width: 700px; // 更窄以聚焦内容
+  margin: 1rem auto;
   padding: 1rem;
+  background-color: #282c34; // 深灰背景
+  color: #e0e0e0;
+  font-family: 'SimSun', 'Microsoft YaHei', sans-serif; // 模拟器常用字体
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 `;
 
-const StageTitle = styled(Title)`
-  color: #e0e0e0; // 更亮的白色
+const StageTitle = styled.h1`
+  color: #e0e0e0;
   text-align: center;
-  font-size: 2.8rem; // 更大
-  margin-bottom: 2.5rem; // 增加间距
+  font-size: 2rem; // 调整以适合整体风格
+  margin-bottom: 2rem;
   font-weight: 700;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 `;
 
-const QuestionCard = styled(motion.div)`
-  background: rgba(30, 30, 60, 0.7);
-  padding: 2.5rem; // 增加内边距
-  border-radius: 16px;
-  border: 1px solid rgba(186, 104, 200, 0.4);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  margin-bottom: 2rem;
-`;
-
-const QuestionText = styled(Paragraph)`
-  color: #f0f0f0; // 更亮的文字
-  font-size: 1.3rem; // 更大
-  margin-bottom: 2rem;
+const QuestionText = styled.p`
+  color: #f0f0f0;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
   font-weight: 500;
+  text-align: center;
 `;
 
-const AnswerButton = styled(Button)`
-  // ... (样式保持或微调，确保清晰)
-  background: rgba(80, 10, 120, 0.5);
-  border: 1px solid rgba(186, 104, 200, 0.5);
-  color: white;
-  width: 100%;
-  margin: 0.7rem 0;
-  padding: 1.2rem;
-  height: auto;
-  white-space: normal;
-  text-align: left;
-  font-size: 1.1rem;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  &:hover {
-    background: rgba(120, 20, 180, 0.7);
-    border-color: #ba68c8;
-    transform: translateY(-2px);
+const AttributeBarContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: 0.8rem 0.5rem;
+  background-color: #3c3f41; // 稍亮灰色
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+`;
+
+const AttributeItem = styled.div`
+  text-align: center;
+  font-size: 0.95rem;
+  color: #b0b3b8;
+  span {
+    font-weight: bold;
+    color: #ffffff;
+    margin-left: 4px;
   }
 `;
 
-const SimulationContainer = styled(motion.div)`
+const EventLogContainer = styled.div`
+  height: 450px; // 固定高度，可滚动
+  overflow-y: auto;
+  border: 1px solid #444;
+  background-color: #1e1e1e; // 更深背景
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  scrollbar-width: thin; // 滚动条样式
+  scrollbar-color: #666 #1e1e1e;
+`;
+
+const EventLogItem = styled(motion.div)`
+  padding: 0.4rem 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  border-bottom: 1px dashed #3a3a3a; // 分隔线
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const ChoiceAreaContainer = styled(motion.div)`
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #444;
+`;
+
+const ChoiceTitle = styled.h3`
+  color: #ffd700; // 金色标题
   text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
 `;
 
-const EventCard = styled(motion.div)`
-  background: rgba(40, 40, 70, 0.8);
-  padding: 2rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(186, 104, 200, 0.3);
-`;
-
-const EventAge = styled(Title)`
-  color: #ba68c8 !important; // 强制颜色
-  font-size: 1.8rem !important; // 增加大小
-  margin-bottom: 1rem !important;
-  font-weight: 700 !important;
-`;
-
-const EventDescription = styled(Paragraph)`
-  color: #e5e5e5; // 亮白色
-  font-size: 1.2rem; // 更大
-  line-height: 1.8;
+const ChoiceDescription = styled.p`
+  color: #e0e0e0;
+  text-align: center;
+  font-size: 1.1rem;
   margin-bottom: 1.5rem;
 `;
 
-const NextButton = styled(Button)`
-  background: linear-gradient(90deg, #ba68c8 0%, #673ab7 100%);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 1rem 3rem;
-  font-size: 1.3rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(186, 104, 200, 0.3);
-  margin-top: 1.5rem;
-  transition: all 0.3s ease;
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(186, 104, 200, 0.4);
-  }
-`;
-
-const ChoiceModal = styled(motion.div)`
-  background: rgba(25, 25, 55, 0.9);
-  padding: 3rem;
-  border-radius: 16px;
-  margin-top: 2rem;
-  border: 1px solid rgba(186, 104, 200, 0.6);
-`;
-
-const ChoiceTitle = styled(Title)`
-  color: #ba68c8 !important;
-  text-align: center;
-  font-size: 2rem !important;
-  margin-bottom: 1.5rem !important;
-`;
-
-const ChoiceDescription = styled(Paragraph)`
+const ChoiceButton = styled(Button)`
+  display: block;
+  width: 100%;
+  margin: 0.6rem auto;
+  background-color: #4a4d50;
+  border-color: #666;
   color: #e0e0e0;
+  font-size: 1rem;
+  padding: 0.8rem;
+  height: auto;
   text-align: center;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-`;
-
-const ChoiceOptionButton = styled(AnswerButton)` // 复用样式
-  background: rgba(100, 30, 160, 0.6);
+  border-radius: 4px;
   &:hover {
-    background: rgba(130, 50, 190, 0.8);
+    background-color: #5a5d60;
+    border-color: #888;
+    color: #fff;
   }
 `;
 
 const EndScreenContainer = styled(motion.div)`
+  padding: 2rem;
   text-align: center;
-  padding: 3rem;
-  background: rgba(30, 30, 60, 0.8);
-  border-radius: 16px;
+`;
+
+const SummaryAttributeContainer = styled.div`
+  background-color: #3c3f41;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+`;
+
+const SummaryAttributeItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #555;
+  font-size: 1.1rem;
+  &:last-child {
+    border-bottom: none;
+  }
+  span:first-of-type {
+    color: #b0b3b8;
+  }
+  span:last-of-type {
+    font-weight: bold;
+    color: #ffffff;
+  }
+`;
+
+const LifeSummaryText = styled.p`
+  font-size: 1.2rem;
+  margin: 1.5rem 0;
+  color: #ccc;
+`;
+
+const RestartButton = styled(ChoiceButton)` // 复用样式
+  margin-top: 2rem;
+  background-color: #61dafb; // 亮蓝色
+  border-color: #61dafb;
+  color: #000;
+  font-weight: bold;
+  &:hover {
+    background-color: #72e6fc;
+    border-color: #72e6fc;
+  }
 `;
 
 const FinalImageContainer = styled.div`
-  max-width: 500px;
-  margin: 1rem auto 2rem auto;
+  max-width: 400px; // 结果图小一点
+  margin: 1.5rem auto;
 `;
 
-// --- Dummy Data (需替换为实际逻辑) ---
+// --- Placeholder Data ---
 
-const questions = {
-  [QuestionSection.PERSONALITY]: [
-    { question: "面对突发危险，你会采取什么行动？", answers: ["直接面对", "先观察", "凭直觉", "求助"] },
-    { question: "你更倾向于哪种力量？", answers: ["破坏", "恢复", "操控环境", "辅助"] },
-  ],
-  [QuestionSection.WORLD]: [
-    { question: "希望穿越到什么样的世界？", answers: ["魔法", "科技", "武侠", "诡异"] },
-  ],
-  [QuestionSection.TALENT]: [
-    { question: "倾向哪种特殊能力？", answers: ["元素", "精神", "物理", "时空"] },
-  ],
-  [QuestionSection.DESTINY]: [
-    { question: "认为自己的命运走向？", answers: ["英雄", "追求力量", "平凡", "建立势力"] },
-  ]
-};
-
-// 预设的关键节点选项 (示例)
-const choiceNodes: Record<string, ChoiceNode> = {
-  'choice_age_30_magic': {
-    id: 'choice_age_30_magic',
-    title: "30岁：魔法之路的关键抉择",
-    description: "你的魔法已小有成就，是时候决定未来的方向了：",
-    options: [
-      {
-        text: "钻研禁忌的黑暗魔法",
-        outcomeDescription: "你踏入了黑暗魔法的领域，力量飞速增长，但也引来了魔法议会的注意。",
-        nextEvents: [
-          { age: "35岁", description: "熟练掌握黑暗魔法，击败了一名追捕你的圣殿骑士。" },
-          { age: "40岁", description: "成为黑暗魔法大师，但心智也受到侵蚀。", isChoiceNode: true, choiceNodeId: 'choice_dark_master' }, // 下一个选择点
-        ]
-      },
-      {
-        text: "追求光明的神圣魔法",
-        outcomeDescription: "你选择侍奉光明，加入了神圣教团，学习治愈与守护的魔法。",
-        nextEvents: [
-          { age: "35岁", description: "成为教团的中坚力量，治愈了无数伤者。" },
-          { age: "50岁", description: "晋升为大主教，成为一方信仰的象征。" },
-          { age: "结局", description: "你一生致力于传播光明，最终在信徒的祈祷中安详离世，灵魂升入神国。" }
-        ]
-      },
-      // ... 更多选项 ...
+const initialQuestions: Question[] = [
+  {
+    id: 'q1', text: '你的出身似乎是？', answers: [
+      { text: '普通城市家庭', attributeChanges: { wealth: 5, intelligence: 4, charisma: 4 } },
+      { text: '乡村农家', attributeChanges: { wealth: 2, strength: 6, intelligence: 3 } },
+      { text: '富裕商贾之家', attributeChanges: { wealth: 8, intelligence: 5, charisma: 5 } },
+      { text: '书香门第', attributeChanges: { wealth: 6, intelligence: 7, strength: 2 } }
     ]
   },
-  'choice_dark_master': { // 第二个选择点示例
-      id: 'choice_dark_master',
-      title: "40岁：黑暗大师的最终道路",
-      description: "你已是黑暗魔法的顶尖存在，现在面临最后的选择：",
-      options: [
-          { text: "挑战魔王，夺取王座", outcomeDescription: "你向现任魔王发起挑战。", nextEvents: [{ age: "结局", description: "一场惊天动地的战斗后，你险胜魔王，成为了新的黑暗君主，统治了魔界千年。" }] },
-          { text: "寻求救赎，净化自身", outcomeDescription: "你尝试用仅存的光明力量净化黑暗。", nextEvents: [{ age: "结局", description: "在痛苦的挣扎中，你成功净化了部分黑暗，但力量大减，最终隐居山林，默默守护一方。" }] }
+  {
+    id: 'q2', text: '你童年最大的爱好是？', answers: [
+      { text: '读书学习', attributeChanges: { intelligence: 2 } },
+      { text: '户外运动', attributeChanges: { strength: 2 } },
+      { text: '和朋友玩耍', attributeChanges: { charisma: 1, luck: 1 } },
+      { text: '宅家幻想', attributeChanges: { luck: 2 } }
+    ]
+  },
+  // ... 更多问题以确定初始属性 ...
+];
+
+const choiceNodes: Record<string, ChoiceNode> = {
+  'choice_age_18_study': {
+    id: 'choice_age_18_study', title: '18岁：高考后的抉择', description: '高考结束，你站在了人生的岔路口：', imagePromptEvent: "A young student contemplating their future after exams, crossroads concept", options: [
+      { text: '听从父母，选择热门专业', attributeChanges: { wealth: 1, luck: -1 }, outcomeDescription: '你选择了热门但自己不喜欢的专业。', nextEvents: [ { age: 22, description: '大学毕业，找了一份普通的工作。' }, { age: 25, description: '工作压力大，开始感到迷茫。' }, { age: 30, description: '成家立业，生活平淡。' }, { age: "结局", description: '在平凡中度过一生。' }] },
+      { text: '追求梦想，选择冷门爱好', attributeChanges: { intelligence: 1, luck: 1 }, outcomeDescription: '你选择了自己热爱的冷门专业。', nextEvents: [ { age: 22, description: '毕业后在领域内小有成就。' }, { age: 28, description: '遇到瓶颈，但坚持不懈。' }, { age: 35, description: '终于取得突破，成为领域专家。' }, { age: "结局", description: '一生为热爱的事业奋斗，有所成就。' }] },
+      { text: '放弃升学，直接闯荡社会', attributeChanges: { strength: 1, wealth: -1 }, outcomeDescription: '你决定提前进入社会打拼。', nextEvents: [ { age: 20, description: '尝试多种工作，积累了经验。' }, { age: 25, description: '抓住机遇，开始创业。' }, { age: 32, description: '创业有成，小有财富。' , isChoiceNode: true, choiceNodeId: 'choice_success_biz'}, { age: "结局", description: '商海沉浮，最终财富自由。' }] }
+    ]
+  },
+  'choice_success_biz': { // 另一个示例
+      id: 'choice_success_biz', title: '32岁：商业成功的诱惑', description: '你的事业蒸蒸日上，但新的诱惑也随之而来：', imagePromptEvent: "A successful business person in a modern office facing a tempting offer", options: [
+          { text: "继续稳健经营", attributeChanges: {luck: 1}, outcomeDescription: "你选择稳扎稳打。", nextEvents: [{age: 40, description: "公司规模扩大，成为行业翘楚。"}, {age: "结局", description: "成为一代商业巨子，安享晚年。"}]},
+          { text: "冒险扩张，涉足灰色地带", attributeChanges: {wealth: 3, luck: -2}, outcomeDescription: "你决定铤而走险，追求更大利润。", nextEvents: [{age: 35, description: "短期获利丰厚，但也引起监管注意。"}, {age: 38, description: "因违规操作，公司遭遇重创，身陷囹圄。"}, {age: "结局", description: "在牢狱中度过余生。"}] }
       ]
   }
-  // ... 其他选择节点 ...
 };
 
 // --- Component Logic ---
 
 const IsekaiPage: React.FC = () => {
   const [stage, setStage] = useState<Stage>(Stage.QUESTIONS);
-  const [currentSection, setCurrentSection] = useState<QuestionSection>(QuestionSection.PERSONALITY);
+  const [questionsList] = useState<Question[]>(initialQuestions); // 问题列表
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswersType>({
-    [QuestionSection.PERSONALITY]: [],
-    [QuestionSection.WORLD]: [],
-    [QuestionSection.TALENT]: [],
-    [QuestionSection.DESTINY]: []
-  });
+  const [attributes, setAttributes] = useState<Attributes>({ strength: 5, intelligence: 5, charisma: 5, luck: 5, wealth: 5 }); // 初始默认值
 
-  const [result, setResult] = useState<ResultType | null>(null);
-  const [lifeEvents, setLifeEvents] = useState<LifeEvent[]>([]); // 完整的潜在事件列表
-  const [displayedEvents, setDisplayedEvents] = useState<LifeEvent[]>([]); // 已展示的事件
-  const [currentEventIndex, setCurrentEventIndex] = useState(-1); // 指向 displayedEvents 的最后一个
+  const [result, setResult] = useState<ResultType | null>(null); // 异世界结果 (简化，暂不使用)
+  const [lifeEvents, setLifeEvents] = useState<LifeEvent[]>([]); // 完整事件链
+  const [displayedEvents, setDisplayedEvents] = useState<LifeEvent[]>([]); // 已显示事件日志
 
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [currentTimeoutId, setCurrentTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [isAtChoice, setIsAtChoice] = useState(false);
   const [currentChoiceData, setCurrentChoiceData] = useState<ChoiceNode | null>(null);
 
+  const eventLogRef = useRef<HTMLDivElement>(null); // 用于自动滚动
   const [userId] = useState<string>(`user-${Math.random().toString(36).substring(2, 9)}`);
 
   // -- Helper Functions --
 
-  // 重置所有状态
+  // 应用属性变化
+  const applyAttributeChanges = useCallback((changes: Partial<Attributes> | undefined) => {
+    if (!changes) return;
+    setAttributes(prev => {
+      const next = { ...prev };
+      for (const key in changes) {
+        next[key as keyof Attributes] = Math.max(0, Math.min(10, (next[key as keyof Attributes] || 0) + (changes[key as keyof Attributes] || 0))); // 0-10 范围
+      }
+      return next;
+    });
+  }, []);
+
+  // 重置状态
   const resetState = useCallback(() => {
+    if (currentTimeoutId) clearTimeout(currentTimeoutId);
     setStage(Stage.QUESTIONS);
-    setCurrentSection(QuestionSection.PERSONALITY);
     setCurrentQuestionIndex(0);
-    setAnswers({ [QuestionSection.PERSONALITY]: [], [QuestionSection.WORLD]: [], [QuestionSection.TALENT]: [], [QuestionSection.DESTINY]: [] });
+    setAttributes({ strength: 5, intelligence: 5, charisma: 5, luck: 5, wealth: 5 });
     setResult(null);
     setLifeEvents([]);
     setDisplayedEvents([]);
-    setCurrentEventIndex(-1);
+    setIsAutoPlaying(false);
+    setCurrentTimeoutId(null);
     setIsAtChoice(false);
     setCurrentChoiceData(null);
-  }, []);
+  }, [currentTimeoutId]);
 
-  // 生成初始结果和事件（简化版）
-  const generateInitialResultAndEvents = useCallback(() => {
-    // TODO: 根据 answers 生成 result (world, talent)
-    const generatedResult: ResultType = {
-      world: "魔法奇幻世界", // 示例
-      talent: "精神力量", // 示例
-    };
-    setResult(generatedResult);
-
-    // TODO: 根据 result 生成初始 lifeEvents 序列
-    const initialEvents: LifeEvent[] = [
-      { age: "5岁", description: `你在${generatedResult.world}出生，拥有微弱的${generatedResult.talent}天赋。` },
-      { age: "10岁", description: "开始接触基础知识，天赋逐渐显现。" },
-      { age: "15岁", description: "进入学院学习，遇到了重要的导师。" },
-      { age: "20岁", description: "外出历练，首次遭遇真正的危险。" },
-      { age: "25岁", description: "完成一项重要成就，声名鹊起。" },
-      { age: "30岁", description: "站在人生的十字路口，需要做出关键抉择。", isChoiceNode: true, choiceNodeId: 'choice_age_30_magic' }, // 标记为选择节点
-      // 后续事件将在选择后添加
+  // 生成初始人生事件链 (模拟)
+  const generateLifeEvents = useCallback((initialAttrs: Attributes) => {
+    // TODO: 基于 initialAttrs 和随机性生成更复杂的事件链
+    const events: LifeEvent[] = [
+      { age: 0, description: '你出生了。' },
+      { age: 5, description: '开始上幼儿园。' },
+      { age: 7, description: '小学一年级，认识了新朋友。' },
+      { age: 10, description: '沉迷于某种爱好。' },
+      { age: 12, description: '青春期的小烦恼。' },
+      { age: 15, description: '中考结束，进入高中。' },
+      { age: 18, description: '高考结束，面临重要选择。' , isChoiceNode: true, choiceNodeId: 'choice_age_18_study'}
+      // 后续事件依赖选择
     ];
-    setLifeEvents(initialEvents);
-
-    // 显示第一个事件
-    setDisplayedEvents([initialEvents[0]]);
-    setCurrentEventIndex(0);
+    setLifeEvents(events);
+    setIsAutoPlaying(true); // 开始自动播放
     setStage(Stage.SIMULATION);
   }, []);
 
-  // 处理回答
-  const handleAnswer = (answerIndex: number) => {
-    const currentQuestions = questions[currentSection];
-    const updatedAnswers = {
-      ...answers,
-      [currentSection]: [...answers[currentSection], answerIndex]
-    };
-    setAnswers(updatedAnswers);
+  // 处理回答（用于设置初始属性）
+  const handleAnswer = (answer: Answer) => {
+    applyAttributeChanges(answer.attributeChanges);
 
-    if (currentQuestionIndex < currentQuestions.length - 1) {
+    if (currentQuestionIndex < questionsList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // 进入下一部分或结束答题
-      const sections = Object.values(QuestionSection);
-      const currentSectionIndex = sections.indexOf(currentSection);
-      if (currentSectionIndex < sections.length - 1) {
-        setCurrentSection(sections[currentSectionIndex + 1]);
-        setCurrentQuestionIndex(0);
-      } else {
-        // 所有问题回答完毕
-        generateInitialResultAndEvents();
-      }
+      // 所有问题回答完毕，生成初始事件并开始模拟
+      generateLifeEvents(attributes);
     }
   };
 
-  // 处理"下一步"
-  const handleNextEvent = useCallback(() => {
-    if (currentEventIndex >= lifeEvents.length - 1) {
-      setStage(Stage.END); // 到达事件列表末尾
-      return;
-    }
+  // 自动推进事件日志
+  useEffect(() => {
+    if (stage === Stage.SIMULATION && isAutoPlaying && !isAtChoice) {
+      const nextEventIndex = displayedEvents.length;
+      if (nextEventIndex < lifeEvents.length) {
+        const nextEvent = lifeEvents[nextEventIndex];
+        const delay = nextEvent.description.length * 50 + 500; // 根据文字长度调整延迟
 
-    const nextPotentialEventIndex = currentEventIndex + 1;
-    const nextEvent = lifeEvents[nextPotentialEventIndex];
+        const timeoutId = setTimeout(() => {
+          // 显示新事件
+          setDisplayedEvents(prev => [...prev, nextEvent]);
+          // 应用事件的属性变化
+          applyAttributeChanges(nextEvent.attributeChanges);
 
-    if (nextEvent.isChoiceNode && nextEvent.choiceNodeId) {
-      // 到达选择节点
-      const choiceData = choiceNodes[nextEvent.choiceNodeId];
-      if (choiceData) {
-        setCurrentChoiceData(choiceData);
-        setIsAtChoice(true);
-        setStage(Stage.CHOICE); // 切换到选择阶段
+          // 检查是否是选择节点
+          if (nextEvent.isChoiceNode && nextEvent.choiceNodeId) {
+            const choiceData = choiceNodes[nextEvent.choiceNodeId];
+            if (choiceData) {
+              setCurrentChoiceData(choiceData);
+              setIsAtChoice(true);
+              setIsAutoPlaying(false); // 暂停自动播放
+            } else {
+              console.error("Choice node not found:", nextEvent.choiceNodeId);
+              // 如果没找到选择，继续自动播放下一个（如果存在）
+              // 这里可以加一个错误处理事件
+            }
+          } else if (nextEventIndex + 1 >= lifeEvents.length || nextEvent.age === "结局") {
+            // 到达终点
+             setIsAutoPlaying(false);
+             setStage(Stage.END);
+          }
+
+        }, delay);
+        setCurrentTimeoutId(timeoutId);
       } else {
-        // 没找到选择节点，跳过，直接显示下一个事件（错误处理）
-        console.error("Choice node not found:", nextEvent.choiceNodeId);
-        if (nextPotentialEventIndex < lifeEvents.length - 1) {
-            setDisplayedEvents(prev => [...prev, lifeEvents[nextPotentialEventIndex + 1]]);
-            setCurrentEventIndex(nextPotentialEventIndex + 1);
-        } else {
-            setStage(Stage.END);
-        }
+        // 所有事件都已展示
+        setIsAutoPlaying(false);
+        setStage(Stage.END);
       }
-    } else {
-      // 普通事件，直接添加到显示列表
-      setDisplayedEvents(prev => [...prev, nextEvent]);
-      setCurrentEventIndex(nextPotentialEventIndex);
-       if (nextPotentialEventIndex === lifeEvents.length - 1) {
-         // 如果这是最后一个事件，直接标记为结束
-         setTimeout(() => setStage(Stage.END), 1500); // 稍作停留后结束
-       }
     }
-  }, [currentEventIndex, lifeEvents]);
+
+    // 清理 timeout
+    return () => {
+      if (currentTimeoutId) {
+        clearTimeout(currentTimeoutId);
+      }
+    };
+  }, [stage, isAutoPlaying, isAtChoice, displayedEvents, lifeEvents, applyAttributeChanges, currentTimeoutId]);
+
+  // 自动滚动日志到底部
+  useEffect(() => {
+    if (eventLogRef.current) {
+      eventLogRef.current.scrollTop = eventLogRef.current.scrollHeight;
+    }
+  }, [displayedEvents]);
 
   // 处理玩家选择
   const handleMakeChoice = useCallback((optionIndex: number) => {
-    if (!currentChoiceData || !result) return;
+    if (!currentChoiceData) return;
 
     const selectedOption = currentChoiceData.options[optionIndex];
 
-    // 1. 将选择结果描述作为一个事件添加到 displayedEvents
+    // 1. 添加选择结果描述到日志
     const outcomeEvent: LifeEvent = {
-      age: "关键决策",
+      age: "选择结果",
       description: selectedOption.outcomeDescription
     };
     setDisplayedEvents(prev => [...prev, outcomeEvent]);
-    const outcomeEventDisplayIndex = currentEventIndex + 1;
-    setCurrentEventIndex(outcomeEventDisplayIndex);
 
-    // 2. 更新 lifeEvents 序列 (将选择后的事件插入)
-    // 找到当前选择节点在 lifeEvents 中的索引
-    const choiceNodeIndexInLifeEvents = lifeEvents.findIndex(event => event.choiceNodeId === currentChoiceData.id);
-    if (choiceNodeIndexInLifeEvents !== -1) {
-      // 移除选择节点本身及之后的所有事件（因为路径改变了）
-      const eventsBeforeChoice = lifeEvents.slice(0, choiceNodeIndexInLifeEvents);
-      // 组合新路径
-      const newLifePath = [...eventsBeforeChoice, outcomeEvent, ...selectedOption.nextEvents];
-      setLifeEvents(newLifePath);
+    // 2. 应用选择的属性变化
+    applyAttributeChanges(selectedOption.attributeChanges);
+
+    // 3. 更新后续事件链
+    const currentEventLogIndex = displayedEvents.length; // 当前显示到的事件索引+1
+    // 找到触发选择的那个事件在原始lifeEvents中的索引（近似）
+    // 注意：这里简化处理，认为当前日志最后一条是选择节点前的最后事件
+    // 更精确需要记录触发选择的原始事件索引
+    const choiceTriggerEventIndex = lifeEvents.findIndex(e => e.choiceNodeId === currentChoiceData.id);
+    let baseEvents = [];
+    if (choiceTriggerEventIndex !== -1) {
+        baseEvents = lifeEvents.slice(0, choiceTriggerEventIndex + 1); // 保留到触发节点（包含）
     } else {
-        // 如果找不到原始选择节点，将新事件附加到末尾
-        const newLifePath = [...lifeEvents, outcomeEvent, ...selectedOption.nextEvents];
-        setLifeEvents(newLifePath);
+        // 如果找不到，就用当前日志作为基础（可能不精确）
+        baseEvents = displayedEvents;
     }
+    // 合并结果描述和新分支
+    const newLifePath = [...baseEvents, outcomeEvent, ...selectedOption.nextEvents];
+    setLifeEvents(newLifePath);
 
-    // 3. 重置选择状态，回到模拟阶段
+    // 4. 恢复自动播放
     setIsAtChoice(false);
     setCurrentChoiceData(null);
-    setStage(Stage.SIMULATION);
+    setIsAutoPlaying(true);
 
-  }, [currentChoiceData, currentEventIndex, lifeEvents, result]);
+  }, [currentChoiceData, displayedEvents, lifeEvents, applyAttributeChanges]);
 
   // -- Render Functions --
 
   const renderQuestionPage = () => {
-    const currentQuestions = questions[currentSection];
-    const currentQuestion = currentQuestions[currentQuestionIndex];
-    const totalQuestions = Object.values(questions).flat().length;
-    const answeredQuestions = Object.values(answers).flat().length;
-    const progress = Math.floor((answeredQuestions / totalQuestions) * 100);
-
-    return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-        <StageTitle>回答问题</StageTitle>
-        <Steps current={Object.values(QuestionSection).indexOf(currentSection)} style={{ marginBottom: '2rem' }}>
-          {Object.values(QuestionSection).map(sec => <Step key={sec} title={sec.charAt(0).toUpperCase() + sec.slice(1)} />)}
-        </Steps>
-        <Progress percent={progress} status="active" strokeColor="#ba68c8" style={{ marginBottom: '2rem' }} />
-        <QuestionCard>
-          <Title level={4} style={{ color: '#ba68c8', marginBottom: '1rem' }}>
-            {currentSection.toUpperCase()} - 问题 {currentQuestionIndex + 1}/{currentQuestions.length}
-          </Title>
-          <QuestionText>{currentQuestion.question}</QuestionText>
-          {currentQuestion.answers.map((answer, index) => (
-            <AnswerButton key={index} onClick={() => handleAnswer(index)}>{answer}</AnswerButton>
-          ))}
-        </QuestionCard>
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-             <Button icon={<HomeOutlined />} onClick={resetState}>返回主页(重置)</Button>
-         </div>
-      </motion.div>
-    );
-  };
-
-  const renderSimulationStage = () => {
-    if (currentEventIndex < 0 || !displayedEvents[currentEventIndex] || !result) {
-      return <Spin tip="正在生成人生轨迹..."></Spin>;
+    if (currentQuestionIndex >= questionsList.length) {
+      // 理论上不应到达这里，因为最后一个问题后会转到simulation
+      return <Spin tip="正在准备人生..."></Spin>;
     }
-    const currentEvent = displayedEvents[currentEventIndex];
-
-    return (
-      <SimulationContainer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-        <StageTitle>你的人生轨迹</StageTitle>
-        <EventCard key={currentEventIndex}> {/* 使用 key 强制重新渲染动画 */}
-          <EventAge>{currentEvent.age}</EventAge>
-          <EventDescription>{currentEvent.description}</EventDescription>
-          {/* 强制展示图片 */}
-          <ImageDisplay
-            sceneType={currentEvent.age === '穿越瞬间' ? 'isekai-moment' : currentEvent.isChoiceNode ? 'life-choice' : 'world-environment'} // 简化场景类型
-            worldType={result.world}
-            talent={result.talent}
-            event={currentEvent.description} // 用事件描述做提示
-            userId={userId}
-          />
-        </EventCard>
-        {stage !== Stage.END && (
-           <NextButton onClick={handleNextEvent}>下一步</NextButton>
-        )}
-      </SimulationContainer>
-    );
-  };
-
-  const renderChoiceModal = () => {
-    if (!currentChoiceData) return null;
-    const currentEvent = displayedEvents[currentEventIndex]; // 获取触发选择的前一个事件用于配图
+    const currentQuestion = questionsList[currentQuestionIndex];
 
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-         {/* 显示触发选择的那个事件和图片 */} 
-         {currentEvent && result && (
-             <EventCard>
-                 <EventAge>{currentEvent.age}</EventAge>
-                 <EventDescription>{currentEvent.description}</EventDescription>
-                 <ImageDisplay
-                    sceneType={'life-choice'} // 标记为选择场景
-                    worldType={result.world}
-                    talent={result.talent}
-                    event={currentEvent.description}
-                    userId={userId}
-                 />
-            </EventCard>
-         )}
-        <ChoiceModal>
-          <ChoiceTitle>{currentChoiceData.title}</ChoiceTitle>
-          <ChoiceDescription>{currentChoiceData.description}</ChoiceDescription>
-          {currentChoiceData.options.map((option, index) => (
-            <ChoiceOptionButton key={index} onClick={() => handleMakeChoice(index)}>
-              {option.text}
-            </ChoiceOptionButton>
-          ))}
-        </ChoiceModal>
+        <StageTitle>设定初始属性</StageTitle>
+        <QuestionText>{currentQuestion.text}</QuestionText>
+        {currentQuestion.answers.map((answer, index) => (
+          <ChoiceButton key={index} onClick={() => handleAnswer(answer)}>{answer.text}</ChoiceButton>
+        ))}
+         <Progress 
+             percent={((currentQuestionIndex + 1) / questionsList.length) * 100}
+             showInfo={false}
+             strokeColor="#61dafb"
+             style={{ marginTop: '2rem' }}
+         />
       </motion.div>
     );
   };
+
+  const renderSimulationStage = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+      <AttributeBarContainer>
+        <AttributeItem>力量: <span>{attributes.strength}</span></AttributeItem>
+        <AttributeItem>智力: <span>{attributes.intelligence}</span></AttributeItem>
+        <AttributeItem>魅力: <span>{attributes.charisma}</span></AttributeItem>
+        <AttributeItem>运气: <span>{attributes.luck}</span></AttributeItem>
+        <AttributeItem>家境: <span>{attributes.wealth}</span></AttributeItem>
+      </AttributeBarContainer>
+      <EventLogContainer ref={eventLogRef}>
+        {displayedEvents.map((event, index) => (
+          <EventLogItem
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 * index }} // 延迟出现
+          >
+            {typeof event.age === 'number' ? `${event.age}岁: ` : ``}{event.description}
+          </EventLogItem>
+        ))}
+        {/* 加载中的提示 */} 
+        {isAutoPlaying && stage === Stage.SIMULATION && <Spin size="small" style={{ display: 'block', marginTop: '10px' }} />}
+      </EventLogContainer>
+      {isAtChoice && currentChoiceData && (
+        <ChoiceAreaContainer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+           <ChoiceTitle>{currentChoiceData.title}</ChoiceTitle>
+           {/* 关键选择图片 */}
+           <FinalImageContainer>
+                <ImageDisplay
+                   sceneType="life-choice"
+                   worldType={result?.world || ''} // 尝试获取世界类型
+                   talent={result?.talent || ''} // 尝试获取天赋
+                   event={currentChoiceData.imagePromptEvent || currentChoiceData.description}
+                   userId={userId}
+               />
+           </FinalImageContainer>
+           <ChoiceDescription>{currentChoiceData.description}</ChoiceDescription>
+           {currentChoiceData.options.map((option, index) => (
+               <ChoiceButton key={index} onClick={() => handleMakeChoice(index)}>{option.text}</ChoiceButton>
+           ))}
+       </ChoiceAreaContainer>
+      )}
+    </motion.div>
+  );
 
  const renderEndScreen = () => {
     const finalEvent = displayedEvents[displayedEvents.length - 1];
+    const lifespan = typeof finalEvent?.age === 'number' ? finalEvent.age : '未知';
+    // 简单总评计算
+    const totalScore = Object.values(attributes).reduce((sum, val) => sum + val, 0);
+    const rating = totalScore >= 40 ? '传奇' : totalScore >= 30 ? '优秀' : totalScore >= 20 ? '普通' : '坎坷';
+
     return (
         <EndScreenContainer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-             <StageTitle>人生终点</StageTitle>
-             {finalEvent && result && (
-                <EventCard>
-                    <EventAge>{finalEvent.age}</EventAge>
-                    <EventDescription>{finalEvent.description}</EventDescription>
-                    <FinalImageContainer>
-                         <ImageDisplay
-                            sceneType={'final-form'}
-                            worldType={result.world}
-                            talent={result.talent}
-                            event={finalEvent.description}
-                            userId={userId}
-                        />
-                    </FinalImageContainer>
-                </EventCard>
-            )}
-            <NextButton icon={<HomeOutlined />} onClick={resetState}>重新开始穿越</NextButton>
+             <StageTitle>人生总结</StageTitle>
+             <SummaryAttributeContainer>
+                 <SummaryAttributeItem><span>力量:</span> <span>{attributes.strength}</span></SummaryAttributeItem>
+                 <SummaryAttributeItem><span>智力:</span> <span>{attributes.intelligence}</span></SummaryAttributeItem>
+                 <SummaryAttributeItem><span>魅力:</span> <span>{attributes.charisma}</span></SummaryAttributeItem>
+                 <SummaryAttributeItem><span>运气:</span> <span>{attributes.luck}</span></SummaryAttributeItem>
+                 <SummaryAttributeItem><span>家境:</span> <span>{attributes.wealth}</span></SummaryAttributeItem>
+             </SummaryAttributeContainer>
+             <LifeSummaryText>享年: {lifespan}岁</LifeSummaryText>
+             <LifeSummaryText>人生总评: {totalScore} ({rating})</LifeSummaryText>
+            {/* 最终总结图片 */} 
+             <FinalImageContainer>
+                 <ImageDisplay
+                    sceneType="final-form"
+                    worldType={result?.world || ''}
+                    talent={result?.talent || ''}
+                    event={`最终人生总结: ${rating}, 享年${lifespan}`}
+                    userId={userId}
+                />
+            </FinalImageContainer>
+            <RestartButton icon={<HomeOutlined />} onClick={resetState}>再次重开</RestartButton>
         </EndScreenContainer>
     );
  };
@@ -543,13 +555,14 @@ const IsekaiPage: React.FC = () => {
       case Stage.QUESTIONS:
         return renderQuestionPage();
       case Stage.SIMULATION:
-        return renderSimulationStage();
-      case Stage.CHOICE:
-        return renderChoiceModal();
-       case Stage.END:
-            return renderEndScreen();
+      case Stage.END: // 结束界面也需要显示模拟过程的最终状态和总结
+          // 注意：END 阶段理论上应该渲染 renderEndScreen，但为了保持模拟器的连续性，
+          // 可以考虑将总结信息叠加在 Simulation 视图之上，或者单独渲染。
+          // 此处简化为直接渲染对应函数。
+          if (stage === Stage.END) return renderEndScreen();
+          return renderSimulationStage();
       default:
-        return <div>未知阶段</div>;
+        return <div>加载中或未知阶段...</div>;
     }
   };
 
