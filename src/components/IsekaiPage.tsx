@@ -232,40 +232,89 @@ const FinalImageContainer = styled.div`
   margin: 1.5rem auto;
 `;
 
-// --- Placeholder Data ---
+// --- New Placeholder Data (前世今生主题) ---
 
 const initialQuestions: Question[] = [
   {
-    id: 'q1', text: '你的出身似乎是？', answers: [
-      { text: '普通城市家庭', attributeChanges: { wealth: 5, intelligence: 4, charisma: 4, strength: 4, luck: 3 } }, // 平衡
-      { text: '乡村农家', attributeChanges: { wealth: 2, strength: 6, intelligence: 3, charisma: 3, luck: 4 } }, // 体力好
-      { text: '富裕商贾之家', attributeChanges: { wealth: 8, intelligence: 5, charisma: 5, strength: 3, luck: 2 } }, // 有钱
-      { text: '书香门第', attributeChanges: { wealth: 6, intelligence: 7, strength: 2, charisma: 4, luck: 4 } } // 聪明
+    id: 'q1', text: '回顾你的前世，你最终的结局是？', answers: [
+      { text: '寿终正寝，平静离世', attributeChanges: { luck: 1, strength: -1 } },
+      { text: '意外身亡，充满不甘', attributeChanges: { luck: -2, strength: 1 } },
+      { text: '功成名就，名垂青史', attributeChanges: { wealth: 1, charisma: 1, intelligence: 1 } },
+      { text: '默默无闻，无人知晓', attributeChanges: { wealth: -1, charisma: -1 } }
     ]
   },
   {
-    id: 'q2', text: '你童年最大的爱好是？', answers: [
-      { text: '读书学习', attributeChanges: { intelligence: 2, strength: -1 } },
-      { text: '户外运动', attributeChanges: { strength: 2, intelligence: -1 } },
-      { text: '和朋友玩耍', attributeChanges: { charisma: 1, luck: 1 } },
-      { text: '宅家幻想', attributeChanges: { luck: 2, charisma: -1 } }
+    id: 'q2', text: '前世你的主要职业或身份更接近？', answers: [
+      { text: '钻研知识的学者/法师', attributeChanges: { intelligence: 3, strength: -1 } },
+      { text: '保家卫国的战士/骑士', attributeChanges: { strength: 3, intelligence: -1 } },
+      { text: '精打细算的商人/工匠', attributeChanges: { wealth: 3, charisma: -1 } },
+      { text: '善于交际的艺术家/外交官', attributeChanges: { charisma: 3, wealth: -1 } }
     ]
   },
   {
-      id: 'q3', text: '面对困难时，你倾向于？', answers: [
-          { text: '独立解决', attributeChanges: { strength: 1, intelligence: 1, luck: -1 } },
-          { text: '寻求帮助', attributeChanges: { charisma: 1 } },
-          { text: '看运气', attributeChanges: { luck: 2, strength: -1, intelligence: -1 } },
-          { text: '逃避', attributeChanges: { luck: -2 } }
-      ]
+    id: 'q3', text: '前世最大的遗憾是什么？', answers: [
+      { text: '未能实现毕生的追求', attributeChanges: { intelligence: 1, luck: -1 } },
+      { text: '错过了重要的人或感情', attributeChanges: { charisma: 1, luck: -1 } },
+      { text: '未能保护好珍视之物', attributeChanges: { strength: 1, luck: -1 } },
+      { text: '一生过于平凡缺少波澜', attributeChanges: { luck: 1 } } // 遗憾平凡反而增加运气
+    ]
   },
   {
-      id: 'q4', text: '你认为什么最重要？', answers: [
-          { text: '知识与智慧', attributeChanges: { intelligence: 2 } },
-          { text: '财富与地位', attributeChanges: { wealth: 2 } },
-          { text: '健康与力量', attributeChanges: { strength: 2 } },
-          { text: '人缘与魅力', attributeChanges: { charisma: 2 } }
-      ]
+    id: 'q4', text: '如果可以，你最希望在新世界获得什么？', answers: [
+      { text: '毁天灭地的绝对力量', attributeChanges: { strength: 3 } },
+      { text: '通晓万物的无上智慧', attributeChanges: { intelligence: 3 } },
+      { text: '颠倒众生的绝世魅力', attributeChanges: { charisma: 3 } },
+      { text: '取之不尽的惊人财富', attributeChanges: { wealth: 3 } },
+      { text: '逆转乾坤的滔天运气', attributeChanges: { luck: 3 } }
+    ]
+  },
+   {
+    id: 'q5', text: '面对一个全新的未知世界，你的第一反应是？', answers: [
+      { text: '谨慎观察，收集信息', attributeChanges: { intelligence: 1, luck: 1 } },
+      { text: '大胆探索，寻找机遇', attributeChanges: { strength: 1, luck: -1 } },
+      { text: '寻找当地势力寻求帮助或庇护', attributeChanges: { charisma: 1, wealth: 1 } },
+      { text: '尝试建立自己的规则和秩序', attributeChanges: { intelligence: 1, strength: 1 } }
+    ]
+  },
+  {
+    id: 'q6', text: '你更倾向于依赖什么来解决问题？', answers: [
+      { text: '逻辑分析与计划', attributeChanges: { intelligence: 2 } },
+      { text: '直觉与灵感', attributeChanges: { luck: 2 } },
+      { text: '力量与行动', attributeChanges: { strength: 2 } },
+      { text: '人脉与沟通', attributeChanges: { charisma: 2 } }
+    ]
+  },
+  {
+    id: 'q7', text: '在新世界中，你更看重？', answers: [
+      { text: '个人的成长与强大', attributeChanges: { strength: 1, intelligence: 1 } },
+      { text: '人际关系与情感连接', attributeChanges: { charisma: 1, luck: 1 } },
+      { text: '财富积累与物质享受', attributeChanges: { wealth: 2 } },
+      { text: '探索未知与追求真理', attributeChanges: { intelligence: 1, luck: 1 } }
+    ]
+  },
+  {
+    id: 'q8', text: '你认为运气在人生中扮演什么角色？', answers: [
+      { text: '决定性因素，实力不值一提', attributeChanges: { luck: 3, strength: -1, intelligence: -1 } },
+      { text: '重要，但实力是基础', attributeChanges: { luck: 1 } },
+      { text: '不重要，我命由我不由天', attributeChanges: { strength: 1, intelligence: 1, luck: -1 } },
+      { text: '可以通过努力改变', attributeChanges: { intelligence: 1, luck: 1 } }
+    ]
+  },
+  {
+    id: 'q9', text: '面对诱惑（如禁忌知识、强大力量），你会？', answers: [
+      { text: '坚守底线，果断拒绝', attributeChanges: { intelligence: 1, luck: 1 } },
+      { text: '谨慎评估，可能尝试', attributeChanges: { luck: -1 } },
+      { text: '欣然接受，力量至上', attributeChanges: { strength: 2, luck: -2 } },
+      { text: '试图掌控它，化为己用', attributeChanges: { intelligence: 2, luck: -1 } }
+    ]
+  },
+  {
+    id: 'q10', text: '如果可以选择新世界的初始身份，你希望是？', answers: [
+      { text: '没落贵族的后裔，身负复兴使命', attributeChanges: { wealth: 3, charisma: 1, luck: -1 } },
+      { text: '天赋异禀的孤儿，潜力无限', attributeChanges: { strength: 1, intelligence: 1, charisma: 1, luck: 2, wealth: 1 } },
+      { text: '某个强大组织的底层成员，渴望晋升', attributeChanges: { strength: 1, intelligence: 1, wealth: 2 } },
+      { text: '与世隔绝的隐士传人，身怀绝技', attributeChanges: { intelligence: 2, strength: 1, charisma: -1, wealth: 1 } }
+    ]
   },
 ];
 
@@ -291,7 +340,7 @@ const IsekaiPage: React.FC = () => {
   const [stage, setStage] = useState<Stage>(Stage.QUESTIONS);
   const [questionsList] = useState<Question[]>(initialQuestions); // 问题列表
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [attributes, setAttributes] = useState<Attributes>({ strength: 5, intelligence: 5, charisma: 5, luck: 5, wealth: 5 }); // 初始默认值
+  const [attributes, setAttributes] = useState<Attributes>({ strength: 3, intelligence: 3, charisma: 3, luck: 3, wealth: 3 }); // 重置初始属性为一个基准值，问题会在此基础上修改
 
   const [result, setResult] = useState<ResultType | null>(null); // 异世界结果 (简化，暂不使用)
   const [lifeEvents, setLifeEvents] = useState<LifeEvent[]>([]); // 完整事件链
@@ -324,7 +373,7 @@ const IsekaiPage: React.FC = () => {
     if (currentTimeoutId) clearTimeout(currentTimeoutId);
     setStage(Stage.QUESTIONS);
     setCurrentQuestionIndex(0);
-    setAttributes({ strength: 5, intelligence: 5, charisma: 5, luck: 5, wealth: 5 });
+    setAttributes({ strength: 3, intelligence: 3, charisma: 3, luck: 3, wealth: 3 });
     setResult(null);
     setLifeEvents([]);
     setDisplayedEvents([]);
@@ -334,104 +383,123 @@ const IsekaiPage: React.FC = () => {
     setCurrentChoiceData(null);
   }, [currentTimeoutId]);
 
-  // 生成初始人生事件链 (实现基础逻辑)
+  // 生成初始人生事件链 (极简化 + 调试日志)
   const generateLifeEvents = useCallback((initialAttrs: Attributes) => {
-    // 简单示例逻辑：根据初始属性生成几条基础事件
-    const events: LifeEvent[] = [];
-    events.push({ age: 0, description: '在一个平凡的世界，你出生了。' });
-
-    if (initialAttrs.wealth >= 7) {
-      events.push({ age: 3, description: '家境优渥，你从小衣食无忧。' });
-    } else if (initialAttrs.wealth <= 3) {
-      events.push({ age: 3, description: '家境贫寒，童年生活比较拮据。' });
-    }
-
-    events.push({ age: 6, description: '你开始上小学了。' });
-
-    if (initialAttrs.intelligence >= 7) {
-      events.push({ age: 8, description: '你在学习上展现出过人的天赋。' });
-    } else if (initialAttrs.intelligence <= 3) {
-      events.push({ age: 8, description: '学习似乎对你来说有点困难。' });
-    }
-
-    if (initialAttrs.strength >= 7) {
-      events.push({ age: 10, description: '你精力充沛，是学校里的运动健将。' });
-    }
-
-    if (initialAttrs.charisma >= 7) {
-      events.push({ age: 12, description: '你很受欢迎，身边总围绕着一群朋友。' });
-    }
-
-    events.push({ age: 15, description: '初中毕业，面临第一次重要的升学选择。' });
-
-    // 添加触发关键选择节点的事件
-    events.push({ age: 18, description: '高考结束，你站在人生的第一个重要岔路口。' , isChoiceNode: true, choiceNodeId: 'choice_age_18_study'});
-
+    console.log("[Debug] Generating life events with initial attributes:", initialAttrs);
+    // 确保基于最终的 initialAttrs 生成事件
+    const events: LifeEvent[] = [
+        { age: 0, description: '前世的记忆消散，你在新的世界睁开了双眼。' },
+        { age: 5, description: `基于你的出身(${initialAttrs.wealth > 6 ? '优渥' : '普通'})，你的早期教育开始了。` },
+        { age: 7, description: `童年爱好(${initialAttrs.intelligence > initialAttrs.strength ? '偏静' : '偏动'})塑造了你的性格。` },
+        { age: 10, description: '你开始思考人生的意义，也许是前世遗憾的影响？' },
+        { age: 12, description: `你在${initialAttrs.luck > 5 ? '好运' : '一般运气'}的伴随下度过了少年时光。` },
+        { age: 15, description: '第一次面临重大考验，你凭借智慧或力量度过。' },
+        { age: 18, description: '成年之际，你必须为自己的未来做出关键抉择。' , isChoiceNode: true, choiceNodeId: 'choice_age_18_study'} // 使用之前的18岁选择节点
+    ];
+    console.log("[Debug] Generated events:", events);
     setLifeEvents(events);
-    setIsAutoPlaying(true); // 开始自动播放
+    setIsAutoPlaying(true);
     setStage(Stage.SIMULATION);
+    console.log("[Debug] Simulation stage set, auto play started.");
   }, []);
 
   // 处理回答（用于设置初始属性）
   const handleAnswer = (answer: Answer) => {
+    console.log("[Debug] Answer selected, applying changes:", answer.attributeChanges);
     applyAttributeChanges(answer.attributeChanges);
 
     if (currentQuestionIndex < questionsList.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // 所有问题回答完毕，生成初始事件并开始模拟
-      generateLifeEvents(attributes);
+      console.log("[Debug] All questions answered. Final initial attributes:", attributes);
+      // 确保在调用 generateLifeEvents 时传递最新的 attributes
+      // 使用函数式更新来获取最新的状态值
+      setAttributes(currentAttrs => {
+          generateLifeEvents(currentAttrs); 
+          return currentAttrs; // 返回当前状态，因为 generateLifeEvents 不直接修改它
+      });
     }
   };
 
-  // 自动推进事件日志
+  // 添加新的状态检查函数
+  const checkAndFixLifeEvents = useCallback((events: LifeEvent[]) => {
+    if (!events || events.length === 0) {
+      console.error("[Debug] Empty or invalid life events detected");
+      return false;
+    }
+    
+    const lastEvent = events[events.length - 1];
+    if (lastEvent.age !== "结局" && !lastEvent.isChoiceNode) {
+      console.warn("[Debug] Life events chain doesn't end properly");
+      return false;
+    }
+    
+    return true;
+  }, []);
+
+  // 修改后的 useEffect
   useEffect(() => {
-    if (stage === Stage.SIMULATION && isAutoPlaying && !isAtChoice) {
-      const nextEventIndex = displayedEvents.length;
-      if (nextEventIndex < lifeEvents.length) {
-        const nextEvent = lifeEvents[nextEventIndex];
-        const delay = nextEvent.description.length * 50 + 500; // 根据文字长度调整延迟
+    if (stage !== Stage.SIMULATION || !isAutoPlaying || isAtChoice) {
+      return;
+    }
 
-        const timeoutId = setTimeout(() => {
-          // 显示新事件
-          setDisplayedEvents(prev => [...prev, nextEvent]);
-          // 应用事件的属性变化
-          applyAttributeChanges(nextEvent.attributeChanges);
+    const nextEventIndex = displayedEvents.length;
+    
+    // 检查生命事件链的有效性
+    if (!checkAndFixLifeEvents(lifeEvents)) {
+      console.error("[Debug] Invalid life events chain detected");
+      setIsAutoPlaying(false);
+      setStage(Stage.END);
+      return;
+    }
 
-          // 检查是否是选择节点
-          if (nextEvent.isChoiceNode && nextEvent.choiceNodeId) {
-            const choiceData = choiceNodes[nextEvent.choiceNodeId];
-            if (choiceData) {
-              setCurrentChoiceData(choiceData);
-              setIsAtChoice(true);
-              setIsAutoPlaying(false); // 暂停自动播放
-            } else {
-              console.error("Choice node not found:", nextEvent.choiceNodeId);
-              // 如果没找到选择，继续自动播放下一个（如果存在）
-              // 这里可以加一个错误处理事件
-            }
-          } else if (nextEventIndex + 1 >= lifeEvents.length || nextEvent.age === "结局") {
-            // 到达终点
-             setIsAutoPlaying(false);
-             setStage(Stage.END);
-          }
+    if (nextEventIndex >= lifeEvents.length) {
+      console.log("[Debug] All events displayed");
+      setIsAutoPlaying(false);
+      setStage(Stage.END);
+      return;
+    }
 
-        }, delay);
-        setCurrentTimeoutId(timeoutId);
-      } else {
-        // 所有事件都已展示
+    const nextEvent = lifeEvents[nextEventIndex];
+    const delay = Math.min((nextEvent.description.length * 50) + 300, 2000); // 设置最大延迟
+
+    const timeoutId = setTimeout(() => {
+      if (stage !== Stage.SIMULATION) {
+        console.log("[Debug] Stage changed during timeout, aborting");
+        return;
+      }
+
+      setDisplayedEvents(prev => [...prev, nextEvent]);
+      
+      if (nextEvent.attributeChanges) {
+        applyAttributeChanges(nextEvent.attributeChanges);
+      }
+
+      if (nextEvent.isChoiceNode && nextEvent.choiceNodeId) {
+        const choiceData = choiceNodes[nextEvent.choiceNodeId];
+        if (choiceData) {
+          setCurrentChoiceData(choiceData);
+          setIsAtChoice(true);
+          setIsAutoPlaying(false);
+        } else {
+          console.error("[Debug] Choice node not found:", nextEvent.choiceNodeId);
+          setIsAutoPlaying(false);
+          setStage(Stage.END);
+        }
+      } else if (nextEventIndex + 1 >= lifeEvents.length || nextEvent.age === "结局") {
         setIsAutoPlaying(false);
         setStage(Stage.END);
       }
-    }
+    }, delay);
 
-    // 清理 timeout
+    setCurrentTimeoutId(timeoutId);
+
     return () => {
       if (currentTimeoutId) {
         clearTimeout(currentTimeoutId);
       }
     };
-  }, [stage, isAutoPlaying, isAtChoice, displayedEvents, lifeEvents, applyAttributeChanges, currentTimeoutId]);
+  }, [stage, isAutoPlaying, isAtChoice, displayedEvents.length, lifeEvents, checkAndFixLifeEvents]);
 
   // 自动滚动日志到底部
   useEffect(() => {
@@ -440,40 +508,58 @@ const IsekaiPage: React.FC = () => {
     }
   }, [displayedEvents]);
 
-  // 处理玩家选择
+  // 修改后的 handleMakeChoice
   const handleMakeChoice = useCallback((optionIndex: number) => {
-    if (!currentChoiceData) return;
+    if (!currentChoiceData) {
+      console.error("[Debug] No choice data available");
+      return;
+    }
 
     const selectedOption = currentChoiceData.options[optionIndex];
+    if (!selectedOption) {
+      console.error("[Debug] Invalid option selected");
+      return;
+    }
 
-    // 1. 添加选择结果描述到日志
+    // 确保选项的后续事件链是有效的
+    if (!selectedOption.nextEvents || selectedOption.nextEvents.length === 0) {
+      console.error("[Debug] No next events in selected option");
+      setIsAutoPlaying(false);
+      setStage(Stage.END);
+      return;
+    }
+
     const outcomeEvent: LifeEvent = {
       age: "选择结果",
       description: selectedOption.outcomeDescription
     };
+
+    // 使用函数式更新确保状态更新的原子性
     setDisplayedEvents(prev => [...prev, outcomeEvent]);
-
-    // 2. 应用选择的属性变化
-    applyAttributeChanges(selectedOption.attributeChanges);
-
-    // 3. 更新后续事件链
-    const currentEventLogIndex = displayedEvents.length; // 当前显示到的事件索引+1
-    // 找到触发选择的那个事件在原始lifeEvents中的索引（近似）
-    // 注意：这里简化处理，认为当前日志最后一条是选择节点前的最后事件
-    // 更精确需要记录触发选择的原始事件索引
-    const choiceTriggerEventIndex = lifeEvents.findIndex(e => e.choiceNodeId === currentChoiceData.id);
-    let baseEvents = [];
-    if (choiceTriggerEventIndex !== -1) {
-        baseEvents = lifeEvents.slice(0, choiceTriggerEventIndex + 1); // 保留到触发节点（包含）
-    } else {
-        // 如果找不到，就用当前日志作为基础（可能不精确）
-        baseEvents = displayedEvents;
+    
+    if (selectedOption.attributeChanges) {
+      applyAttributeChanges(selectedOption.attributeChanges);
     }
-    // 合并结果描述和新分支
-    const newLifePath = [...baseEvents, outcomeEvent, ...selectedOption.nextEvents];
-    setLifeEvents(newLifePath);
 
-    // 4. 恢复自动播放
+    const choiceTriggerEventIndex = lifeEvents.findIndex(e => e.choiceNodeId === currentChoiceData.id);
+    const baseEvents = choiceTriggerEventIndex !== -1 
+      ? lifeEvents.slice(0, choiceTriggerEventIndex + 1)
+      : [...displayedEvents];
+
+    // 确保新的事件链以结局结束
+    const newEvents = selectedOption.nextEvents;
+    const lastEvent = newEvents[newEvents.length - 1];
+    if (lastEvent.age !== "结局" && !lastEvent.isChoiceNode) {
+      newEvents.push({
+        age: "结局",
+        description: "你的故事暂时告一段落..."
+      });
+    }
+
+    const newLifePath = [...baseEvents, outcomeEvent, ...newEvents];
+    
+    // 批量更新状态
+    setLifeEvents(newLifePath);
     setIsAtChoice(false);
     setCurrentChoiceData(null);
     setIsAutoPlaying(true);
